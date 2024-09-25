@@ -48,15 +48,6 @@ for(i in nethet_variables)
 }
 
 
-# ggplot(data, aes(x=ft_right))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=ft_left))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=ft_center))+
-#   geom_bar()
-
 ft_variables = names(data)[grepl("ft_", names(data))]
 
 for(i in ft_variables)
@@ -70,29 +61,6 @@ for(i in ft_variables)
   
 }
 
-# ggplot(data, aes(x=ft_notplaced))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=ft_populists))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=ft_cr))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=ft_cl))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=ft_prr))+
-#   geom_bar()
-
-# ggplot(data, aes(x=trust_party))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=trust_eu))+
-#   geom_bar()
-# 
-# ggplot(data, aes(x=trust_exp))+
-#   geom_bar()
 
 trust_variables = names(data)[grepl("trust_", names(data))]
 
