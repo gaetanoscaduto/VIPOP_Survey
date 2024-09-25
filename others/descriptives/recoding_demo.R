@@ -181,12 +181,15 @@ table(data$attention_check2)
 ### changing variables names
 
 #tipi 
-change=paste0(rep("tipi_", 10), c("ext","agr_r","con","neu","ope","ext_r","agr_r","con_r","neu_r","ope_r"))
+change=paste0(rep("tipi_", 10), c("ext","agr_r","con","neu","ope","ext_r","agr","con_r","neu_r","ope_r"))
 
 change
 
-which(grepl("tipi",names(data)))
-names(data)[15:24] = change
+which(grepl("tipi_",names(data)))
+
+data <- data %>%
+  rename_with(~ change, starts_with("tipi_") & !ends_with("REC"))
+
 names(data)[15:24]
 
 #nethet
@@ -195,7 +198,10 @@ change=paste0(rep("nethet_", 5), c("right","left","center","notplaced","dontknow
 change
 
 which(grepl("nethet",names(data)))
-names(data)[which(grepl("nethet",names(data)))] = change
+
+data <- data %>%
+  rename_with(~ change, starts_with("nethet_") & !ends_with("REC"))
+
 names(data)[which(grepl("nethet",names(data)))]
 
 #ft
@@ -204,9 +210,11 @@ change=paste0(rep("ft_", 8), c("right","left","center","notplaced","populists","
 
 change
 
-which(grepl("ft",names(data)))
-names(data)[which(grepl("ft",names(data)))] = change
-names(data)[which(grepl("ft",names(data)))]
+which(grepl("ft_",names(data)))
+data <- data %>%
+  rename_with(~ change, starts_with("ft_") & !ends_with("REC"))
+
+names(data)[which(grepl("ft_",names(data)))]
 
 
 #trust
@@ -216,7 +224,10 @@ change=paste0(rep("trust_", 3), c("party","eu","exp"))
 change
 
 which(grepl("trust",names(data)))
-names(data)[which(grepl("trust",names(data)))] = change
+
+data <- data %>%
+  rename_with(~ change, starts_with("trust_") & !ends_with("REC"))
+
 names(data)[which(grepl("trust",names(data)))]
 
 
@@ -229,5 +240,11 @@ change=paste0(rep("populism_", 3), c("will","lobby","struggle", "science",
 change
 
 which(grepl("populism",names(data)))
-names(data)[which(grepl("populism",names(data)))] = change
+
+data <- data %>%
+  rename_with(~ change, starts_with("populism_") & !ends_with("REC"))
+
 names(data)[which(grepl("populism",names(data)))]
+
+export(data, "data_recoded.RDS")
+export(data, "data_recoded.dta")
