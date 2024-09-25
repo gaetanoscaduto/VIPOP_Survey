@@ -1,0 +1,316 @@
+---
+title: "Visual Conjoint Experiments with Simulated Instagram Profiles: A Guide for Replication and explaining the code in R."
+author: "Gaetano Scaduto"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+First of all, install the necessary packages and call the libraries
+
+```{r, }
+install.packages("magick")
+install.packages("openxlsx")
+install.packages("dplyr")
+install.packages("showtext", dependencies=T)
+
+library(magick)
+library(fs)
+library(openxlsx)
+library(dplyr)
+```
+
+Insert the national contexts in which the experiments will be fielded. The code has been designed to be flexible for cross-country research, but works the same for a single country. Yet, folders must be still organized as if the research was conducted in multiple contexts for the code to be executed properly.
+
+```{r}
+
+contexts = c("IT","CZ","SW","FR") 
+
+```
+
+Ad this point you assign the attribute and attribute levels of all the information that **is not conveyed by the profile pictures**. The information conveyed by the profile pictures (gender, age, ethinicity) is instead contained in the filename of the profile pictures themselves (see for example [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/tree/main/example_materials/immagini/Propics/Round)).
+
+```{r}
+job=c("Lawyer","Waiter","Entrepreneur","Teacher","Politician")
+issue=c("leftneg","leftpos","rightneg","rightpos")
+nostalgia=c("past1","past2","future1","future2")
+valence=c("corruption1","corruption2", "honesty1", "honesty2")
+food=c("vegan","ethnicrich","meatpoor","meatrich")
+animal=c("catpoor","catrich","dogpoor","dogrich")
+crowd=c("mixedpeople","whitepeople","mixedelite","whiteelite")
+```
+
+Insert your input directory (main_path).[^1] To see how the directory must be organized, see an example [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/tree/main/example_materials/immagini). The content and name of the directories could be adjusted in order to accomodate different research designs. In that case, all subsequent reference in the code to the name of such directories must be changed as well.
+
+[^1]: Note that if working with Google drive, you need to delete the .ini files in the "propic/round/" subfolders.
+
+```{r}
+main_path = "your_path_here"
+```
+
+Insert your output directory (output_wd) and the path for the excel sheet containing the textual information for each national context. This directory should contain as many subdirectories as the national contexts are and each subdirectory should be named exactly as the contexts in the vector (e.g., IT, FR).
+
+```{r}
+output_wd = "your_output_path_here"
+```
+
+Insert the excel file containing, for every context, the names of the politicians and the pieces that compose the info available in their bios (job, candidacy statement).
+
+An example of how this excel sheet must be structured is available [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/blob/main/example_materials/Names%20and%20infos.xlsx):
+
+```{r}
+
+data_name_and_info = read.xlsx("your_path_here")
+```
+
+The information in this sheet gets reorganized in a list as follows.
+
+```{r}
+name_and_info=list()
+for(country in contexts)
+{
+  data_context = data_name_and_info |>
+    filter(context==country)
+  
+  list_black_female_names =   trimws(strsplit(data_context$female_black_name, ",")[[1]])
+  list_black_male_names =   trimws(strsplit(data_context$male_black_name, ",")[[1]])
+  list_white_male_names = trimws(strsplit(data_context$male_white_name, ",")[[1]])
+  list_white_female_names = trimws(strsplit(data_context$female_white_name, ",")[[1]])
+  
+  list_white_surnames_female = trimws(strsplit(data_context$white_surname_female, ",")[[1]])
+  list_white_surnames_male = trimws(strsplit(data_context$white_surname_male, ",")[[1]])
+  list_black_surnames_female = trimws(strsplit(data_context$black_surname, ",")[[1]])
+  list_black_surnames_male = trimws(strsplit(data_context$black_surname, ",")[[1]])
+    
+  name_and_info[[country]] = list(Name=list(White=list(Female=list_white_female_names,
+                                                     Male=list_white_male_names
+                                                     ),
+                                          Black=list(Female=list_black_female_names,
+                                                     Male=list_black_male_names
+                                                     )
+                                          ),
+                                  Surname=list(White=list(Male=list_white_surnames_male,
+                                                          Female=list_white_surnames_female
+                                                          ),
+                                             Black=list(Male=list_black_surnames_male,
+                                                        Female=list_black_surnames_female
+                                                        )
+                                             ),
+                                  Job=list(Female=list(Lawyer=data_context$female_lawyer,
+                                                     Waiter=data_context$female_waiter,
+                                                     Entrepreneur=data_context$female_entrepreneur,
+                                                     Teacher= data_context$female_teacher,
+                                                     Politician =data_context$female_politician
+                                                     ),
+                                           Male=list(Lawyer=data_context$male_lawyer,
+                                                   Waiter=data_context$male_waiter,
+                                                   Entrepreneur=data_context$male_entrepreneur,
+                                                   Teacher= data_context$male_teacher,
+                                                   Politician =data_context$male_politician
+                                                   )
+                                          ),
+                                  Candidacy=list(Female=data_context$female_candidacy,
+                                                 Male=data_context$male_candidacy
+                                                 )
+                                )
+  
+}
+```
+
+Given the probabilities we assigned to the possibilities of seeing black vs white politicians profiles (5% vs 95%), we assign them accordingly.
+
+```{r}
+
+probabilities = c(0.0125,0.0125, 0.0125,0.0125, 
+                   0.2375,0.2375,0.2375,0.2375) 
+```
+
+We then load the empty template to generate the profiles. Notice that all the size and proportion are based exactly on this specific template. We advise researchers who want to use this code to use the same exact picture for empty templates available [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/blob/main/example_materials/immagini/Template/template_empty1.png).
+
+```{r}
+template = image_read(paste0(main_path,"Template/template_empty1.png"))
+```
+
+```{r}
+for(context in contexts)
+{
+
+npics=15000 #adjust according to need
+for(i in 1:npics)
+{
+ #start building the image name
+  namebuild=context
+  
+  ###########
+  #select the propic at random
+  #############
+  propic_path = paste0(main_path, "Propics/Round")
+  
+  propic_dirs <- dir_ls(propic_path, type = "directory")
+  
+  #We have a 95% chance of generating a white profile, 
+  #a 5% of generating a black one
+  
+  sel_dir <- sample(propic_dirs, 1, prob=probabilities)
+  
+  # workaround to solve the problem with accented and encoding. 
+  #Split the main path and paste it every time 
+  #and work only on the relevant part of the path
+  
+  split_strings <- strsplit(sel_dir, "immagini/", fixed = TRUE)[[1]]
+  
+  propics <- dir_ls(paste0(main_path, split_strings[2]), type = "file")
+  
+  #Remove the annoying google drive .ini file from the sampling
+  propics= propics[grepl("desktop.ini", as.character(propics))==F]
+  
+  # Choose one file at random from these files
+  propic <- sample(propics, 1)
+  
+  propic <- strsplit(propic, "immagini/", fixed = TRUE)[[1]][2]
+
+  #keep building the name including ethnicity, 
+  #gender and age which are contained in the file name
+  namebuild=gsub(".png", "", paste0(namebuild, "_", gsub("/", "_",strsplit(propic, "Round/", fixed = TRUE)[[1]][2])))
+  
+  #Read and scale the propic
+  propic <- image_read(paste0(main_path,propic)) |>
+    image_scale("330")
+  
+  #############
+  #Sample the specific characteristics 
+  #and build the ic name
+  #############
+  
+  temp_age=ifelse(grepl("35",namebuild)==T, "35", "70") 
+  temp_gender=ifelse(grepl("female",namebuild)==T, "Female", "Male")
+  temp_ethnicity=ifelse(grepl("black",namebuild)==T, "Black", "White")
+  temp_job=sample(job, 1)
+  temp_issue=sample(issue, 1)
+  temp_nostalgia=sample(nostalgia, 1)
+  temp_valence =sample(valence, 1)
+  temp_food=sample(food, 1)
+  temp_animal=sample(animal, 1)
+  temp_crowd=sample(crowd, 1)
+  
+  temp_name = sample(name_and_info[[context]][["Name"]][[temp_ethnicity]][[temp_gender]], 1)
+  temp_surname= sample(name_and_info[[context]][["Surname"]][[temp_ethnicity]][[temp_gender]], 1)
+  
+  namebuild=paste0(namebuild, "_",
+                   temp_name, "_",
+                   temp_surname, "_",
+                   temp_job, "_",
+                   temp_issue, "_",
+                   temp_nostalgia, "_",
+                   temp_valence, "_",
+                   temp_food, "_",
+                   temp_animal, "_",
+                   temp_crowd, "_",
+                   i, 
+                   # i ensures that every name is 
+                   # unique even if characteristics were the same 
+                   ".png")
+  
+  #######
+  #Put name and bio in the pic, 
+  #according to gender, ethnicity, and language
+  #######
+  
+
+    ### annotatate the immage with bio, acording to gender
+    
+    #jobs, according to gender
+    temp_job_context = name_and_info[[context]][["Job"]][[temp_gender]][[temp_job]]
+    
+    #the candidacy announcement, according to gender
+    
+    temp_candidacy_announcement = name_and_info[[context]][["Candidacy"]][[temp_gender]]
+    
+    #annotating bio
+    
+    temp_bio = paste0("\n", 
+                      temp_job_context,
+                      "\n",
+                      temp_candidacy_announcement
+                      )
+                         
+
+  #######
+  #Issues
+  #######
+  
+  issue_pic = image_read(paste0(main_path, "Issue/", context, "/", temp_issue, ".png")) |>
+      image_scale("480")
+  
+  ##### 
+  #food
+  #####
+
+  food_pic = image_read(paste0(main_path, "Food/", temp_food, ".png")) |>
+      image_scale("480")
+
+  ##### 
+  #nostalgia
+  #####
+  
+  nostalgia_pic = image_read(paste0(main_path,"Nostalgia/", context, "/", temp_nostalgia, ".png")) |>
+      image_scale("480")
+  
+  ##### 
+  #crowd
+  #####
+  
+  crowd_pic = image_read(paste0(main_path, "Crowd/", temp_crowd, ".png")) |>
+      image_scale("480")
+  
+  ##### 
+  #valence
+  #####
+    
+  valence_pic = image_read(paste0(main_path, "Valence/", context, "/", temp_valence, ".png")) |>
+      image_scale("480")
+  
+  ##### 
+  #animal
+  #####
+  
+  animal_pic = image_read(paste0(main_path, "Animal/", temp_animal, ".png")) |>
+      image_scale("480")
+
+  ##### 
+  # Compose the finale image
+  #####
+  
+  pic = template |> 
+    image_annotate(paste(temp_name, temp_surname),
+                   size = 60,
+                   color = "Black",
+                   font = "helvetica",
+                   location = "+50+380"
+                   ) |>
+    image_annotate(temp_bio,
+                   size = 50,
+                   font= "helvetica",
+                   color = "#392C2B",
+                   location = "+50+425"
+                   ) |>
+    image_composite(propic, offset = "+60+30") |>
+    image_composite(issue_pic, offset = "+0+1059") |> 
+    image_composite(food_pic, offset = "+489+1059") |>
+    image_composite(nostalgia_pic, offset = "+978+1059") |>
+    image_composite(crowd_pic, offset = "+0+1548") |>
+    image_composite(valence_pic, offset = "+489+1548") |>
+    image_composite(animal_pic, offset = "+978+1548") |>
+      image_scale("x900")
+  
+  image_write(pic, paste0(output_wd, context, "/", namebuild))
+  
+  print(paste0(i, " ",context, " ", Sys.time()))
+}
+
+}
+```
