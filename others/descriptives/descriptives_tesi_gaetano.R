@@ -44,7 +44,8 @@ descriptive |>
 descriptive <- data |> 
   select(gender, AGE_GROUP, EDU_LEVEL, region_feel, 
          TIPI_CON_REC, TIPI_OPE_REC,
-         diet, animal, holiday) |>
+         diet, animal, holiday,
+         ideology) |>
   tbl_summary(
     missing = "ifany",
     digits = everything() ~ 1, 
@@ -58,6 +59,7 @@ descriptive <- data |>
       diet ~ "Diet", 
       animal ~ "Favorite pet",
       holiday ~ "Favorite holiday"
+      ideology ~ "Political ideology"
     )
   )
 
