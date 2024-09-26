@@ -4,7 +4,7 @@ library(ggplot2)
 
 data = readRDS("data_recoded.RDS")
 
-output_dir = "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/others/descriptives/plots_pilot/"
+output_dir = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot/"
 
 ggplot(data, aes(x=interest))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
