@@ -26,6 +26,19 @@ data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicoc
 
 # todo
  
+ 
+ data = data |>
+   mutate(region, 
+          macroregion = case_when(
+            region %in% c("Lombardia", "Piemonte", "Val d'Aosta", "Liguria") ~ "North-West",
+            region %in% c("Veneto", "Trentino-Alto Adige", "Emilia-Romagna", "Friuli-Venezia Giulia") ~ "North-East",
+            region %in% c("Lazio", "Marche", "Toscana", "Umbria") ~ "Center",
+            region %in% c("Abruzzo", "Basilicata", "Molise", "Calabria", "Campania", "Puglia", "Sardegna", "Sicilia") ~ "South",
+            is.na(region) ~ NA
+          ) 
+   )
+
+ table(data$macroregion)
 # - region_feel (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
  #todo
