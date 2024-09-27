@@ -213,9 +213,9 @@ plot(cj(data,
 #### ACTUAL ESTIMATIONS ####
 ##############################
 
-
-############ ATEs (MATCH/MISMATC)
-
+####################################
+############ ATEs (MATCH/MISMATCH)
+######################################
 # Estimation: The marginal mean associated with S_i^k=1 for respondents 
 #in the natural mediation arm
 
@@ -275,7 +275,7 @@ for(category in categories[1:3])
 
 p = v[["Sociodemographics"]]/v[["Psychological"]]/v[["Lifestyle"]]
 
-p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
+p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
                   caption="Marginal means of the natural mediation arm")
 
 ggsave(paste0(output_wd,"estimations/", "ATEs_mm_general_base_match.png"), p, height = 10, width = 10)
@@ -338,7 +338,7 @@ for(category in categories[1:3])
 p = v[["Sociodemographics"]]/v[["Psychological"]]/v[["Lifestyle"]]
 
 p
-p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
+p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (recoding match/mismatch)",
                   caption="AMCEs of the natural mediation arm")
 
 ggsave(paste0(output_wd,"estimations/","ATEs_amces_general_base_match.png"), p, height = 10, width = 10)
@@ -414,8 +414,9 @@ for(category in categories[1:3])
     #scale_x_continuous(breaks = seq(0,1,by=0.2))+
     xlim(0,1)+
     #xlab("Marginal mean")+
-    scale_y_discrete(limits = rev(sublevels[[category]]))
-    #theme(legend.position = "none")
+    scale_y_discrete(limits = rev(sublevels[[category]]))+
+    scale_color_discrete(name="Attribute")
+    #theme(legend.text = element_text("Attribute"))
   
   v[[category]] = p
   
@@ -424,7 +425,221 @@ for(category in categories[1:3])
 p = v[["Sociodemographics"]]/v[["Psychological"]]/v[["Lifestyle"]]
 
 p
-p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
+p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (nominal values)",
                   caption="Marginal means of the natural mediation arm")
 
-ggsave(paste0(output_wd,"estimations/", "ATEs_mm_general_base_match.png"), p, height = 10, width = 10)
+ggsave(paste0(output_wd,"estimations/", "ATEs_mm_general_base_nominal.png"), p, height = 10, width = 10)
+
+
+#same but with amce
+
+
+mm <- cj(data[data$cpd_exparm == "natural", ],
+         cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+           cpd_consc + cpd_ope +
+           cpd_diet + cpd_animal + cpd_holiday,
+         id = ~respid,
+         estimate = "amce")
+
+
+mm$category="Sociodemographics"
+
+mm$category=ifelse(grepl("ope",mm$feature) | grepl("consc",mm$feature), 
+                   "Psychological",
+                   ifelse(grepl("diet",mm$feature) | grepl("animal",mm$feature) | grepl("holiday",mm$feature),
+                          "Lifestyle",
+                          "Sociodemographics"))
+
+mm
+
+mm$feature = factor(features, levels = unique(features))
+mm$level=factor(levels, levels = levels)
+
+mm
+
+v = list()
+
+for(category in categories[1:3])
+{
+  p = ggplot(mm[mm$category == category, ])+
+    geom_vline(aes(xintercept=0), col="black", alpha=1/4)+
+    geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature))+
+    ylab("")+
+    xlab(category)+
+    #scale_x_continuous(breaks = seq(0,1,by=0.2))+
+    xlim(-1,1)+
+    #xlab("Marginal mean")+
+    scale_y_discrete(limits = rev(sublevels[[category]]))+
+    scale_color_discrete(name="Attribute")
+  #theme(legend.position = "none")
+  
+  v[[category]] = p
+  
+}
+
+p = v[["Sociodemographics"]]/v[["Psychological"]]/v[["Lifestyle"]]
+
+p
+p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (nominal values)",
+                    caption="AMCEs of the natural mediation arm")
+
+ggsave(paste0(output_wd,"estimations/", "ATEs_amce_general_base_nominal.png"), p, height = 10, width = 10)
+
+
+
+
+
+########################################
+############ ADCEs (MATCH/MISMATCH)#####
+########################################
+
+#ESTIMATION
+# The marginal mean associated with S_i^k=1 for respondents 
+# in the maniulated mediation arm with ideological similarity condition
+
+# The marginal mean associated with S_i^k=1 for respondents in the 
+#maniulated mediation arm with ideological dissimilarity condition
+
+# INTERPRETATION
+#The effects that similarity in each attribute k has on the willingness to
+#engage in political conversations that is due neither to mediation nor to 
+#interaction with political inferences.
+
+mm <- data |>
+  filter(cpd_match_ideology == "ideology_match" & !is.na(cpd_match_ideology)) |>
+  cj(cpd_chosen ~  cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
+           cpd_match_consc + cpd_match_ope +
+           cpd_match_diet + cpd_match_animal + cpd_match_holiday,
+         id = ~respid,
+         estimate = "mm")
+
+mm
+mm$variable = as.character(mm$level)
+
+for(i in 1:nrow(mm))
+{
+  mm$variable[i] = toTitleCase(paste(strsplit(as.character(mm$level[i]), "_")[[1]], collapse=" "))
+}
+
+mm$variable
+mm$variable=factor(mm$variable, levels = mm$variable)
+
+#mm$level <- fct_reorder(mm$level, desc(mm$estimate))
+mm
+
+
+mm$category="Sociodemographics"
+
+mm$category=ifelse(grepl("ope",mm$feature) | grepl("consc",mm$feature), 
+                   "Psychological",
+                   ifelse(grepl("diet",mm$feature) | grepl("animal",mm$feature) | grepl("holiday",mm$feature),
+                          "Lifestyle",
+                          ifelse(grepl("ideology",mm$feature),
+                                 "Political",
+                                 "Sociodemographics")
+                          )
+                   )
+
+mm
+v = list()
+
+for(category in categories[1:3])
+{
+  p = ggplot(mm[mm$category == category, ])+
+    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=variable, col=feature))+
+    ylab("")+
+    xlab(category)+
+    #scale_x_continuous(breaks = seq(0,1,by=0.2))+
+    xlim(0,1)+
+    #xlab("Marginal mean")+
+    scale_y_discrete(limits = rev(subcategories[[category]])) +
+    theme(legend.position = "none")
+  
+  v[[category]] = p
+  
+}
+
+p = v[["Sociodemographics"]]/v[["Psychological"]]/v[["Lifestyle"]]
+
+p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological match",
+                    caption="Marginal means of the manipulated mediation arm")
+
+p
+ggsave(paste0(output_wd,"estimations/", "ACDEs_mm_general_base_match.png"), p, height = 10, width = 10)
+
+
+#interaction with political inferences.
+
+mm <- data |>
+  filter(cpd_match_ideology == "ideology_mismatch" & !is.na(cpd_match_ideology)) |>
+  cj(cpd_chosen ~  cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
+       cpd_match_consc + cpd_match_ope +
+       cpd_match_diet + cpd_match_animal + cpd_match_holiday,
+     id = ~respid,
+     estimate = "mm")
+
+mm
+mm$variable = as.character(mm$level)
+
+for(i in 1:nrow(mm))
+{
+  mm$variable[i] = toTitleCase(paste(strsplit(as.character(mm$level[i]), "_")[[1]], collapse=" "))
+}
+
+mm$variable
+mm$variable=factor(mm$variable, levels = mm$variable)
+
+#mm$level <- fct_reorder(mm$level, desc(mm$estimate))
+mm
+
+
+mm$category="Sociodemographics"
+
+mm$category=ifelse(grepl("ope",mm$feature) | grepl("consc",mm$feature), 
+                   "Psychological",
+                   ifelse(grepl("diet",mm$feature) | grepl("animal",mm$feature) | grepl("holiday",mm$feature),
+                          "Lifestyle",
+                          ifelse(grepl("ideology",mm$feature),
+                                 "Political",
+                                 "Sociodemographics")
+                   )
+)
+
+mm
+v = list()
+
+for(category in categories[1:3])
+{
+  p = ggplot(mm[mm$category == category, ])+
+    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=variable, col=feature))+
+    ylab("")+
+    xlab(category)+
+    #scale_x_continuous(breaks = seq(0,1,by=0.2))+
+    xlim(0,1)+
+    #xlab("Marginal mean")+
+    scale_y_discrete(limits = rev(subcategories[[category]])) +
+    theme(legend.position = "none")
+  
+  v[[category]] = p
+  
+}
+
+p = v[["Sociodemographics"]]/v[["Psychological"]]/v[["Lifestyle"]]
+
+p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological mismatch",
+                    caption="Marginal means of the manipulated mediation arm")
+
+p
+ggsave(paste0(output_wd,"estimations/", "ACDEs_mm_general_base_mismatch.png"), p, height = 10, width = 10)
+
+
+######### TO DO ON MONDAY 
+# ACDES WITH AMCE INSTEAD OF MM
+# COMPUTE ELIMINATED EFFECTS
+# MAKE THE CODE READABLE BECAUSE YOU WILL NEVER UNDERSTAND IT IN TWO WEEKS
+
+
+
+
