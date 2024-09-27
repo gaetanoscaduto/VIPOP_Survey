@@ -148,6 +148,7 @@ for(i in 1:nrow(data)) #for every row in data
   }
 }
 
+table(cjdata$cpd_chosen)
 #make them all factors so that they work with cj functions
 
 ###################
@@ -206,11 +207,23 @@ cjdata$match_holiday = NULL
 cjdata$match_ideology = NULL
 
 
+
 for(i in 1:ncol(cjdata))
 {
   cjdata[, i] = factor(cjdata[, i]) 
   #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
+
+#the following factor needs to be reordered
+cjdata[, "cpd_age"] = factor(cjdata[, "cpd_age"], levels = c("under30",
+                                                             "between30and59",
+                                                             "over60"))
+
+#l'unico che non voglio factor è chosen!
+
+cjdata[, "cpd_chosen"] = as.numeric(cjdata[, "cpd_chosen"])-1
+
+
 
 #check if everything is okay with making them all factors
 for(i in 1:ncol(cjdata))
