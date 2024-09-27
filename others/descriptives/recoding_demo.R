@@ -19,8 +19,78 @@ data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicoc
           ) 
    )
  
+ # gender cpd
+ 
+ cpd_gender_names = names(data)[grepl("C1",names(data)) & grepl("A1_", names(data))]
+ for(var in cpd_gender_names)
+   {
+   data = data |>
+     mutate(!!var := case_when(
+              !!sym(var) == "1" ~ "female",
+              !!sym(var) == "2" ~ "male",
+              is.na(!!sym(var)) ~ NA
+            ) 
+     )
+   
+ } 
+ 
+ 
+ # age group
+ 
+ 
+ data = data |>
+   mutate(AGE_GROUP, 
+          AGE_GROUP = case_when(
+            AGE_GROUP == "1" ~ "under30",
+            AGE_GROUP == "2" ~ "between30and59",
+            AGE_GROUP == "3" ~ "over60",
+            is.na(AGE_GROUP) ~ NA
+          ) 
+   )
+ 
+ # age cpd
+ 
+ 
+ cpd_age_names = names(data)[grepl("C1",names(data)) & grepl("A2_", names(data))]
+ for(var in cpd_age_names)
+ {
+   data = data |>
+     mutate(!!var := case_when(
+       !!sym(var) == "1" ~ "under30",
+       !!sym(var) == "2" ~ "between30and59",
+       !!sym(var) == "3" ~ "over60",
+       is.na(!!sym(var)) ~ NA
+     ) 
+     )
+   
+ } 
 # - education (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 # TODo
+ 
+ data = data |>
+   mutate(EDU_LEVEL, 
+          EDU_LEVEL = case_when(
+            EDU_LEVEL == "1" ~ "nocollege",
+            EDU_LEVEL == "2" ~ "college",
+            is.na(EDU_LEVEL) ~ NA
+          ) 
+   )
+ 
+# education cpd
+ 
+ 
+ cpd_educ_names = names(data)[grepl("C1",names(data)) & grepl("A3_", names(data))]
+ for(var in cpd_educ_names)
+ {
+   data = data |>
+     mutate(!!var := case_when(
+       !!sym(var) == "1" ~ "nocollege",
+       !!sym(var) == "2" ~ "college",
+       is.na(!!sym(var)) ~ NA
+     ) 
+     )
+   
+ } 
  
 # - region (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
@@ -72,6 +142,21 @@ data = data |>
          ) 
   )
 
+## cpd diet
+
+cpd_diet_names = names(data)[grepl("C1",names(data)) & grepl("A7_", names(data))]
+for(var in cpd_diet_names)
+{
+  data = data |>
+    mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "omnivore",
+      !!sym(var) == "2" ~ "vegetarian",
+      !!sym(var) == "3" ~ "vegan",
+      is.na(!!sym(var)) ~ NA
+    ) 
+    )
+  
+} 
 
 # - animal (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 # 
@@ -85,6 +170,24 @@ data = data |>
                        .default = "default"
   ) 
 )
+
+# cpd animal
+
+
+cpd_animal_names = names(data)[grepl("C1",names(data)) & grepl("A8_", names(data))]
+for(var in cpd_animal_names)
+{
+  data = data |>
+    mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "cat",
+      !!sym(var) == "2" ~ "dog",
+      !!sym(var) == "3" ~ "none",
+      is.na(!!sym(var)) ~ NA
+    ) 
+    )
+  
+} 
+
 # - holiday (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 #
 
@@ -97,6 +200,23 @@ data = data |>
                          .default = "default"
   ) 
 )
+
+#holiday cpd
+
+
+cpd_holiday_names = names(data)[grepl("C1",names(data)) & grepl("A9_", names(data))]
+for(var in cpd_holiday_names)
+{
+  data = data |>
+    mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "outdoor",
+      !!sym(var) == "2" ~ "city",
+      !!sym(var) == "3" ~ "relax",
+      is.na(!!sym(var)) ~ NA
+    ) 
+    )
+  
+} 
 
 # - ideology (dovrebbe essere categoriale in quanto ci sono anche modalità non numeriche)
 
@@ -121,6 +241,64 @@ data = data |>
 )
 table(data$socialposition)
 
+## tipi con for cpd (match)
+
+
+data = data |>
+  mutate(TIPI_CON_REC, 
+         TIPI_CON_REC = case_when(
+           TIPI_CON_REC == "1" ~ "con_disagree",
+           TIPI_CON_REC == "2" ~ "con_neither",
+           TIPI_CON_REC == "3" ~ "con_agree",
+           is.na(TIPI_CON_REC) ~ NA
+         ) 
+  )
+
+
+cpd_con_names = names(data)[grepl("C1",names(data)) & grepl("A5_", names(data))]
+for(var in cpd_con_names)
+{
+  data = data |>
+    mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "con_disagree",
+      !!sym(var) == "2" ~ "con_neither",
+      !!sym(var) == "3" ~ "con_agree",
+      is.na(!!sym(var)) ~ NA
+    ) 
+  )
+  
+} 
+
+### tipi ope for cpd
+
+
+data = data |>
+  mutate(TIPI_OPE_REC, 
+         TIPI_OPE_REC = case_when(
+           TIPI_OPE_REC == "1" ~ "ope_disagree",
+           TIPI_OPE_REC == "2" ~ "ope_neither",
+           TIPI_OPE_REC == "3" ~ "ope_agree",
+           is.na(TIPI_OPE_REC) ~ NA
+         ) 
+  )
+
+
+cpd_ope_names = names(data)[grepl("C1",names(data)) & grepl("A6_", names(data))]
+for(var in cpd_ope_names)
+{
+  data = data |>
+    mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "ope_disagree",
+      !!sym(var) == "2" ~ "ope_neither",
+      !!sym(var) == "3" ~ "ope_agree",
+      is.na(!!sym(var)) ~ NA
+    ) 
+    )
+  
+} 
+
+
+
 table(data$ideology)
 data = data |>
   mutate(ideology = recode(ideology,
@@ -141,6 +319,40 @@ data = data |>
   ) 
   )
 table(data$ideology)
+
+# ideology for cpd match
+
+
+data = data |>
+  mutate(IDEOLOGY_REC, 
+         IDEOLOGY_REC = case_when(
+           IDEOLOGY_REC == "1" ~ "right",
+           IDEOLOGY_REC == "2" ~ "left",
+           IDEOLOGY_REC == "3" ~ "center",
+           IDEOLOGY_REC == "4" ~ "notplaced",
+           is.na(IDEOLOGY_REC) ~ NA
+         ) 
+  )
+
+### cpd
+
+
+cpd_ideo_names = names(data)[grepl("C1",names(data)) & grepl("A10_", names(data))]
+for(var in cpd_ideo_names)
+{
+  data = data |>
+    mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "right",
+      !!sym(var) == "2" ~ "left",
+      !!sym(var) == "3" ~ "center",
+      !!sym(var) == "4" ~ "notplaced",
+      is.na(!!sym(var)) ~ NA
+    ) 
+    )
+  
+} 
+
+
 
 
 table(data$sns_use)

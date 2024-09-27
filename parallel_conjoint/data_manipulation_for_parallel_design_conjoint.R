@@ -35,46 +35,46 @@ profiles_per_resp = ntask*nprofiles #total number of profiles each respondent se
 
 #create the empty dataframe with placeholders
 
-cjdata = data.frame("respid" = rep("respid", N*ntask*nprofiles)) #respondent's id (for merging and clustering)
+cjdata = data.frame("respid" = rep(NA, N*ntask*nprofiles)) #respondent's id (for merging and clustering)
 
-cjdata$cpd_task_number = "task_number" #sequential number of the task
-cjdata$cpd_profile_number = "profile_number" #sequential number of the profile
+cjdata$cpd_task_number = NA#"task_number" #sequential number of the task
+cjdata$cpd_profile_number = NA#"profile_number" #sequential number of the profile
 
 #the conjoint attribute as seen by the respondent (for now with placeholders)
 # We use MISTAKE as a placeholder because if they values are not changed at the end of the script tù
 #then it means there has been a mistake
-cjdata$cpd_gender = "MISTAKE c_gender"
-cjdata$cpd_age = "MISTAKE c_age"
-cjdata$cpd_educ = "MISTAKE c_educ"
-cjdata$cpd_regionfeel = "MISTAKE c_regionfeel"
-cjdata$cpd_consc = "MISTAKE c_consc"
-cjdata$cpd_ope = "MISTAKE c_ope"
-cjdata$cpd_diet = "MISTAKE c_diet"
-cjdata$cpd_animal = "MISTAKE c_animal"
-cjdata$cpd_holiday = "MISTAKE c_holiday"
-cjdata$cpd_ideology = "MISTAKE c_ideology"
+cjdata$cpd_gender = NA#"MISTAKE c_gender"
+cjdata$cpd_age = NA#"MISTAKE c_age"
+cjdata$cpd_educ = NA# "MISTAKE c_educ"
+cjdata$cpd_regionfeel = NA#"MISTAKE c_regionfeel"
+cjdata$cpd_consc = NA#"MISTAKE c_consc"
+cjdata$cpd_ope = NA#"MISTAKE c_ope"
+cjdata$cpd_diet = NA#"MISTAKE c_diet"
+cjdata$cpd_animal = NA#"MISTAKE c_animal"
+cjdata$cpd_holiday = NA#"MISTAKE c_holiday"
+cjdata$cpd_ideology = NA#"MISTAKE c_ideology"
 
 #the conjoint attribute recoded as to whether they match or not the respondent's characteristics
-cjdata$cpd_match_gender = "MISTAKE cpd_match_gender"
-cjdata$cpd_match_age = "MISTAKE cpd_match_age"
-cjdata$cpd_match_educ = "MISTAKE cpd_match_educ"
-cjdata$cpd_match_regionfeel = "MISTAKE cpd_match_regionfeel"
-cjdata$cpd_match_consc = "MISTAKE cpd_match_consc"
-cjdata$cpd_match_ope = "MISTAKE cpd_match_ope"
-cjdata$cpd_match_diet = "MISTAKE cpd_match_diet"
-cjdata$cpd_match_animal = "MISTAKE cpd_match_animal"
-cjdata$cpd_match_holiday = "MISTAKE cpd_match_holiday"
-cjdata$cpd_match_ideology = "MISTAKE cpd_match_ideology" #the ideology variable is missing for those
+cjdata$cpd_match_gender = NA#"MISTAKE cpd_match_gender"
+cjdata$cpd_match_age = NA#"MISTAKE cpd_match_age"
+cjdata$cpd_match_educ = NA#"MISTAKE cpd_match_educ"
+cjdata$cpd_match_regionfeel = NA#"MISTAKE cpd_match_regionfeel"
+cjdata$cpd_match_consc = NA#"MISTAKE cpd_match_consc"
+cjdata$cpd_match_ope = NA#"MISTAKE cpd_match_ope"
+cjdata$cpd_match_diet = NA#"MISTAKE cpd_match_diet"
+cjdata$cpd_match_animal = NA#"MISTAKE cpd_match_animal"
+cjdata$cpd_match_holiday = NA#"MISTAKE cpd_match_holiday"
+cjdata$cpd_match_ideology = NA#"MISTAKE cpd_match_ideology" #the ideology variable is missing for those
 #that are in the natural mediation arm
 
 
 
 #the experimental arm where the respondent is allocated (manipulated or natural)
-cjdata$cpd_exparm = "cpd_exparm"
+cjdata$cpd_exparm = NA#"cpd_exparm"
 
 
 #the profile the respondent has chosen
-cjdata$cpd_chosen = "cpd_chosen"
+cjdata$cpd_chosen = NA#"cpd_chosen"
 
 
 ##### check if everything is okay with the variable name
@@ -131,46 +131,24 @@ for(i in 1:nrow(data)) #for every row in data
                                                         )
                                             )
     
-    #we set the value for the variable indicating whether the profile was chosen or not
+    #we set the value for the variable indicating whether the profile was chosen or not 
+    #it is a dummy variable: 0 = not chosen, 1=chosen
     cjdata[this_row, "cpd_chosen"] = ifelse(cjdata[this_row, "cpd_exparm"]=="natural", 
                                                  data[i, paste0("nat_med_", (j*k+1)%/%2)],
                                                  ifelse(cjdata[this_row, "cpd_exparm"]=="mediated", 
                                                         data[i, paste0("mat_med_", (j*k+1)%/%2)],
                                                         "ERROR - missing"))
       
-    
+    # if the profile that has been chosen is the one that in this moment is in the
+    #cell we set it at 1, else we set it at 0
+    cjdata[this_row, "cpd_chosen"] = ifelse(cjdata[this_row, "cpd_chosen"] == j,
+                                            1, 0)
     }
       
   }
 }
 
 #make them all factors so that they work with cj functions
-
-for(i in 1:ncol(cjdata))
-{
-  cjdata[, i] = factor(cjdata[, i])
-}
-
-#check if everything is okay with making them all factors
-for(i in 1:ncol(cjdata))
-{
-print(is.factor(cjdata[, i]))
-}
-
-
-#very rough visual randomization check
-
-for (i in 4:ncol(data)) {
-
-  print(names(cjdata)[i])
-  
-  print(table(cjdata[, i], useNA = "always"))
-  
-  # Pause and wait for user input to proceed
-  readline(prompt = "Press [Enter] to proceed to the next variable:")
-  
-  # Continue to the next iteration
-}
 
 ###################
 ### CREATION OF THE "MATCH" VARIABLES
@@ -198,7 +176,7 @@ cjdata$match_ope = cjdata$TIPI_OPE_REC
 cjdata$match_diet = cjdata$diet
 cjdata$match_animal = cjdata$animal
 cjdata$match_holiday = cjdata$holiday
-cjdata$match_ideology = cjdata$IDEOLOGY_REC
+cjdata$match_ideology = cjdata$IDEOLOGY_REC #PROBABILMENTE DA RICODIFICARE ANCORA QUESTA
 
 
 #YOU NEED TO CHECK THAT THE LEVELS OF THE VARIABLES IN THE CONJOINT AND AT THE RESPONDENT
@@ -211,8 +189,8 @@ cjdata$match_ideology = cjdata$IDEOLOGY_REC
 for(variable in variables_to_set)
 {
   cjdata[, paste0("cpd_match_", variable)] = ifelse(cjdata[, paste0("cpd_", variable)] == cjdata[, paste0("match_", variable)],
-                                                  "match",
-                                                  "mismatch")
+                                                  paste0(variable, "_match"),
+                                                  paste0(variable, "_mismatch"))
 }
 
 #remove these now useless variables
@@ -227,20 +205,49 @@ cjdata$match_animal = NULL
 cjdata$match_holiday = NULL
 cjdata$match_ideology = NULL
 
-# rough check regarding the probability of seeing a match or not 
 
-for (variable in variables_to_set)
+for(i in 1:ncol(cjdata))
 {
-  
-  print(paste0("match ", variable))
-  
-  print(table(cjdata[, paste0("cpd_match_", variable)], useNA = "always"))
-  
-  # Pause and wait for user input to proceed
-  readline(prompt = "Press [Enter] to proceed to the next variable:")
-  
-  # Continue to the next iteration
+  cjdata[, i] = factor(cjdata[, i]) 
+  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
+
+#check if everything is okay with making them all factors
+for(i in 1:ncol(cjdata))
+{
+  print(is.factor(cjdata[, i]))
+}
+
+
+#very rough visual randomization check
+# 
+# for (i in 4:ncol(data)) {
+#   
+#   print(names(cjdata)[i])
+#   
+#   print(table(cjdata[, i], useNA = "always"))
+#   
+#   # Pause and wait for user input to proceed
+#   readline(prompt = "Press [Enter] to proceed to the next variable:")
+#   
+#   # Continue to the next iteration
+# }
+
+
+# rough check regarding the probability of seeing a match or not 
+# 
+# for (variable in variables_to_set)
+# {
+#   
+#   print(paste0("match ", variable))
+#   
+#   print(table(cjdata[, paste0("cpd_match_", variable)], useNA = "always"))
+#   
+#   # Pause and wait for user input to proceed
+#   readline(prompt = "Press [Enter] to proceed to the next variable:")
+#   
+#   # Continue to the next iteration
+# }
 
 
 #at this point we can export the dataset for further analyses in other scripts 
