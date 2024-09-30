@@ -11,6 +11,8 @@ library(gt)
 library(gtsummary)
 library(openxlsx)
 
+setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
+
 data = readRDS("data_recoded.RDS")
 
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/others/descriptives/Descriptives_tesi_gaetano/")
@@ -58,7 +60,7 @@ descriptive <- data |>
       TIPI_OPE_REC ~ "Openness",
       diet ~ "Diet", 
       animal ~ "Favorite pet",
-      holiday ~ "Favorite holiday"
+      holiday ~ "Favorite holiday",
       ideology ~ "Political ideology"
     )
   )

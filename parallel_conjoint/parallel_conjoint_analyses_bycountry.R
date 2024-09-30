@@ -1,5 +1,6 @@
 ###############################################################################
-#this script is for the analyses related to the parallel conjoint design
+#this script is for the analyses related to the parallel conjoint design,
+# considering all countries at the same time
 ###############################################################################
 
 
@@ -25,7 +26,7 @@ pacman::p_load(
 #fashion in the mm dataset resulting from the cj function. The
 #functio
 
-set_categories_and_levels = function(effects, 
+set_categories_and_levels_bycountry = function(effects, 
                                      type=c("match","nominal"), 
                                      nominal_attributes=nominal_attributes){
   
@@ -34,23 +35,22 @@ set_categories_and_levels = function(effects,
   effects$category="Sociodemographics"
   
   effects$category=ifelse(grepl("ope",effects$feature) | grepl("consc",effects$feature), 
-                     "Psychological",
-                     ifelse(grepl("diet",effects$feature) | grepl("animal",effects$feature) | grepl("holiday",effects$feature),
-                            "Lifestyle",
-                            "Sociodemographics"))
+                          "Psychological",
+                          ifelse(grepl("diet",effects$feature) | grepl("animal",effects$feature) | grepl("holiday",effects$feature),
+                                 "Lifestyle",
+                                 "Sociodemographics"))
   
   if(type=="match")
   {
     effects$variable = as.character(effects$level)
-  
+    
     for(i in 1:nrow(effects))
     {
       effects$variable[i] = toTitleCase(paste(strsplit(as.character(effects$level[i]), "_")[[1]], collapse=" "))
     }
-  
-    effects$variable
-    effects$level=factor(effects$variable, levels = effects$variable)
-  
+    
+    effects$level=factor(effects$variable)
+    
   }
   if(type=="nominal")
   {
@@ -65,7 +65,7 @@ set_categories_and_levels = function(effects,
 
 ##Function to draw plots for the effects
 
-draw_plot_effects = function(effects, 
+draw_plot_effects_bycountry = function(effects_pooled, effects_bycountry, 
                              type=c("match", "nominal"), #"match" or "nominal" 
                              categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
                              #("sociodemo", "psycho", "lifestyle")
@@ -74,7 +74,7 @@ draw_plot_effects = function(effects,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
                              x_intercept=999 #the vertical line to signal the difference from the insignificance
-                           ){
+){
   
   estimator=match.arg(estimator)
   type=match.arg(type)
@@ -85,30 +85,86 @@ draw_plot_effects = function(effects,
     #with [-1; 1] for amces and [0, 1] for mm
   {
     
-  leftlim=ifelse(estimator!="mm", -1, 0)
-  rightlim=1
-  intercept = ifelse(estimator!="mm", 0, 0.5)
-  
+    leftlim=ifelse(estimator!="mm", -1, 0)
+    rightlim=1
+    intercept = ifelse(estimator!="mm", 0, 0.5)
+    
   }
   
+  effects_IT= effects_bycountry |> filter(country=="IT")
+  effects_FR= effects_bycountry |> filter(country=="FR")
+  effects_SW= effects_bycountry |> filter(country=="SW")
+  effects_CZ= effects_bycountry |> filter(country=="CZ")
   for(category in categories[1:3])
   {
-    p = ggplot(effects[effects$category == category, ])+
+    p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-      geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature))+
+      geom_pointrange(data=effects_IT[effects_IT$category == category, ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
+                      col='#43c612',
+                      shape=19,
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/5),
+                      show.legend = F)+
+      geom_pointrange(data=effects_FR[effects_FR$category == category, ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
+                      col='blue',
+                      shape=19,
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/10),
+                      show.legend = F)+
+      geom_pointrange(data=effects_SW[effects_SW$category == category, ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
+                      col='#e4d000',
+                      shape=19,
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = -1/10),
+                      show.legend = F)+
+      geom_pointrange(data=effects_CZ[effects_CZ$category == category, ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
+                      col='red',
+                      shape=19,
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = -1/5),
+                      show.legend = F)+
+      geom_pointrange(data=effects_pooled[effects_pooled$category == category, ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
+                      col='black',
+                      shape=19,
+                      alpha = 1,
+                      #size=1.3,
+                      show.legend = F)+
       ylab("")+
       xlab(category)+
       xlim(leftlim,rightlim)+
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
-      theme(legend.position = "none")
+      theme(legend.position = "none")+
+      
+      # Manually add the legend
+      annotate("point", x = 0.93, y = 2.2, colour = '#43c612', size = 3) + # Italy
+      annotate("text", x = 0.95, y = 2.2, label = "IT", hjust = 0) +
+      
+      annotate("point", x = 0.93, y = 1.9, colour = 'blue', size = 3) +  # France
+      annotate("text", x = 0.95, y = 1.9, label = "FR", hjust = 0) +
+      
+      annotate("point", x = 0.93, y = 1.6, colour = '#e4d000', size = 3) +  # Sweden
+      annotate("text", x = 0.95, y = 1.6, label = "SW", hjust = 0) +
+      
+      annotate("point", x = 0.93, y = 1.3, colour = 'red', size = 3) +  # Czech Republic
+      annotate("text", x = 0.95, y = 1.3, label = "CZ", hjust = 0) +
+      
+      annotate("point", x = 0.93, y = 1, colour = 'black', size = 3) +  # Pooled
+      annotate("text", x = 0.95, y = 1, label = "POOL", hjust = 0)
     
     v[[category]] = p
     
   }
   
-  p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1)
-    
-  return(p)
+  return(v)
 }
 
 
@@ -120,31 +176,31 @@ categories= c("Sociodemographics", "Psychological", "Lifestyle", "Political")
 
 #Our levels regarding match and mismatches (for labeling)
 y_labels_match = list(Sociodemographics=c("Gender Match", "Gender Mismatch",
-                                         "Age Match", "Age Mismatch",
-                                         "Educ Match", "Educ Mismatch",
-                                         "Regionfeel Match", "Regionfeel Mismatch"),
-                     Psychological = c("Consc Match", "Consc Mismatch", 
-                                       "Ope Match", "Ope Mismatch"),
-                     Lifestyle =c("Diet Match", "Diet Mismatch",
-                                  "Animal Match", "Animal Mismatch",
-                                  "Holiday Match", "Holiday Mismatch"
-                     ),
-                     Political = c("Ideology Match",
-                                   "Ideology Mismatch"))
+                                          "Age Match", "Age Mismatch",
+                                          "Educ Match", "Educ Mismatch",
+                                          "Regionfeel Match", "Regionfeel Mismatch"),
+                      Psychological = c("Consc Match", "Consc Mismatch", 
+                                        "Ope Match", "Ope Mismatch"),
+                      Lifestyle =c("Diet Match", "Diet Mismatch",
+                                   "Animal Match", "Animal Mismatch",
+                                   "Holiday Match", "Holiday Mismatch"
+                      ),
+                      Political = c("Ideology Match",
+                                    "Ideology Mismatch"))
 
 y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                         "Under 30", "Between 30 and 59","Over 60",
-                                         "Degree","No degree",
-                                         "Regionfeel1","Regionfeel2","Regionfeel3"),
-                   Psychological = c("High Consc.","Med. Consc.","Low Consc.",
-                                     "High Ope.","Med. Ope.","Low Ope."),
-                   Lifestyle = c("Omnivore","Vegetarian","Vegan",
-                                 "Cat","Dog","No pet",
-                                 "City","Outdoor","Relax"),
-                   Political = c("Right-wing",
-                                 "Left-wing",
-                                 "Center",
-                                 "Not collocated"))
+                                              "Under 30", "Between 30 and 59","Over 60",
+                                              "Degree","No degree",
+                                              "Regionfeel1","Regionfeel2","Regionfeel3"),
+                        Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                          "High Ope.","Med. Ope.","Low Ope."),
+                        Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                      "Cat","Dog","No pet",
+                                      "City","Outdoor","Relax"),
+                        Political = c("Right-wing",
+                                      "Left-wing",
+                                      "Center",
+                                      "Not collocated"))
 
 y_labels_plots=list(match=y_labels_match, 
                     nominal=y_labels_nominal)
@@ -152,25 +208,25 @@ y_labels_plots=list(match=y_labels_match,
 #Our nominal attributes (here called nominal_attributes)
 
 nominal_attributes= c("Gender", "Gender",
-            "Age", "Age","Age",
-            "Education","Education",
-            "Regionfeel","Regionfeel","Regionfeel",
-            "Conscientiousness","Conscientiousness","Conscientiousness",
-            "Openness","Openness","Openness",
-            "Diet","Diet","Diet",
-            "Animal","Animal","Animal",
-            "Holiday","Holiday","Holiday")
+                      "Age", "Age","Age",
+                      "Education","Education",
+                      "Regionfeel","Regionfeel","Regionfeel",
+                      "Conscientiousness","Conscientiousness","Conscientiousness",
+                      "Openness","Openness","Openness",
+                      "Diet","Diet","Diet",
+                      "Animal","Animal","Animal",
+                      "Holiday","Holiday","Holiday")
 
 #Levels (as a vector)
 levels_vector= c("Female", "Male",
-          "Under 30", "Between 30 and 59","Over 60",
-          "Degree","No degree",
-          "Regionfeel1","Regionfeel2","Regionfeel3",
-          "High Consc.","Med. Consc.","Low Consc.",
-          "High Ope.","Med. Ope.","Low Ope.",
-          "Omnivore","Vegetarian","Vegan",
-          "Cat","Dog","No pet",
-          "City","Outdoor","Relax")
+                 "Under 30", "Between 30 and 59","Over 60",
+                 "Degree","No degree",
+                 "Regionfeel1","Regionfeel2","Regionfeel3",
+                 "High Consc.","Med. Consc.","Low Consc.",
+                 "High Ope.","Med. Ope.","Low Ope.",
+                 "Omnivore","Vegetarian","Vegan",
+                 "Cat","Dog","No pet",
+                 "City","Outdoor","Relax")
 
 
 formula_match = cpd_chosen ~  cpd_match_gender + cpd_match_age + 
@@ -189,7 +245,13 @@ formula_nominal = cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/parallel_conjoint/")
 
 output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/conjoint_parallel_design/"
+
 data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd.RDS")
+
+#genero fake dataset per provare, cancella quando arrivano dati definitivi
+data=rbind(data, data, data, data)
+
+data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 
 #############################################################
@@ -207,25 +269,52 @@ data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIP
 
 subdir = "ATEs/match/MMs/"
 
-
-effects <- data |>
+effects_pooled <- data |>
   filter(cpd_exparm == "natural") |>
-  cj(formula_match, id = ~respid, estimate = "mm")
+  cj(formula_match, id = ~respid,
+     estimate = "mm")
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-
-p = draw_plot_effects(effects, "match", categories=categories, estimator="mm",y_labels=y_labels_plots)
-
-p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
-                    caption="Marginal means of the natural mediation arm")
-
-p
-ggsave(paste0(output_wd,"estimations/", subdir, "ATEs_mm_general_base_match.png"), p, height = 10, width = 10)
+effects_bycountry <- data |>
+  filter(cpd_exparm == "natural") |>
+  cj(formula_match, id = ~respid, by= ~country,
+     estimate = "mm")
 
 
+effects_pooled=set_categories_and_levels_bycountry(effects_pooled,
+                                                   "match",
+                                                   nominal_attributes=nominal_attributes)
+
+effects_bycountry=set_categories_and_levels_bycountry(effects_bycountry,
+                                                   "match",
+                                                   nominal_attributes=nominal_attributes)
+
+
+
+v = draw_plot_effects_bycountry(effects_pooled,
+                             effects_bycountry, 
+                             "match", 
+                             categories=categories, 
+                             estimator="mm", 
+                             y_labels=y_labels_plots)
+
+for(category in categories)
+  {
+  v[[category]]=v[[category]]+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
+                                            caption="Marginal means of the natural mediation arm")
+  
+  ggsave(paste0(output_wd,"estimations/", subdir, category, "_bycountry.png"), 
+         v[[category]], 
+         height = 9, 
+         width = 9)
+
+  }
+
+###################################################################################################
+################################################################################
+# TUTTO QUELLO CHE SEGUE è ANCORA DA RIADATTARE DALL'ALTRO SCRIPT
+###################################################################################################
+###################################################################################################
+######################################################################################################
 
 ### Same as before, but with AMCes (for appendix)
 
@@ -235,11 +324,11 @@ effects <- data |>
   filter(cpd_exparm == "natural") |>
   cj(formula_match, id = ~respid, estimate = "amce")
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, "match", categories=categories, estimator="mm",y_labels=y_labels_plots)
+p = draw_plot_effects_bycountry(effects, "match", categories=categories, estimator="mm",y_labels=y_labels_plots)
 
 p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (recoding match/mismatch)",
                     caption="AMCEs of the natural mediation arm")
@@ -256,11 +345,11 @@ effects <- data |>
   filter(cpd_exparm == "natural") |>
   cj(formula_nominal, id = ~respid, estimate = "mm")
 
-effects=set_categories_and_levels(effects, "nominal", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "nominal", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, "nominal", categories=categories, estimator="mm",y_labels=y_labels_plots)
+p = draw_plot_effects_pooled(effects, "nominal", categories=categories, estimator="mm",y_labels=y_labels_plots)
 
 p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (nominal values)",
                     caption="Marginal means of the natural mediation arm")
@@ -276,11 +365,11 @@ effects <- data |>
   filter(cpd_exparm == "natural") |>
   cj(formula_nominal, id = ~respid, estimate = "amce")
 
-effects=set_categories_and_levels(effects, "nominal", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "nominal", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, "nominal", categories=categories, estimator="amce",y_labels=y_labels_plots)
+p = draw_plot_effects_pooled(effects, "nominal", categories=categories, estimator="amce",y_labels=y_labels_plots)
 
 p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (nominal values)",
                     caption="AMCEs of the natural mediation arm")
@@ -318,13 +407,13 @@ effects <- data |>
      estimate = "mm")
 
 
-effects=set_categories_and_levels(effects, 
+effects=set_categories_and_levels_pooled(effects, 
                                   "match", 
                                   nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, 
+p = draw_plot_effects_pooled(effects, 
                       type="match", 
                       categories=categories, 
                       estimator="mm")
@@ -350,11 +439,11 @@ effects <- data |>
      id = ~respid,
      estimate = "mm")
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, type="match", categories=categories, estimator="mm")
+p = draw_plot_effects_pooled(effects, type="match", categories=categories, estimator="mm")
 
 p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological mismatch",
                     caption="Marginal means of the manipulated mediation arm")
@@ -376,11 +465,11 @@ effects <- data |>
      estimate = "amce")
 
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, type="match", categories=categories, estimator="amce")
+p = draw_plot_effects_pooled(effects, type="match", categories=categories, estimator="amce")
 
 p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological match",
                     caption="Marginal means of the manipulated mediation arm")
@@ -403,7 +492,7 @@ effects <- data |>
      estimate = "amce")
 
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
@@ -442,11 +531,11 @@ effects <- data |>
      by = ~cpd_exparm)
 
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="mm_differences")
+p = draw_plot_effects_pooled(effects, type = "match", categories=categories, estimator="mm_differences")
 
 
 p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological match",
@@ -466,11 +555,11 @@ effects <- data |>
      by = ~cpd_exparm)
 
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="mm_differences")
+p = draw_plot_effects_pooled(effects, type = "match", categories=categories, estimator="mm_differences")
 
 
 p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological mismatch",
@@ -493,11 +582,11 @@ effects <- data |>
      by = ~cpd_exparm)
 
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="amce_differences")
+p = draw_plot_effects_pooled(effects, type = "match", categories=categories, estimator="amce_differences")
 
 
 p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological match",
@@ -517,11 +606,11 @@ effects <- data |>
      by = ~cpd_exparm)
 
 
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
+effects=set_categories_and_levels_pooled(effects, "match", nominal_attributes=nominal_attributes)
 
 effects
 
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="amce_differences")
+p = draw_plot_effects_pooled(effects, type = "match", categories=categories, estimator="amce_differences")
 
 
 p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological mismatch",

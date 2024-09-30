@@ -73,9 +73,6 @@ for(i in unique(aus$feature))
     ylab("")+
     xlab("")+
     ggtitle(as.character(i))+
-    #scale_x_continuous(breaks = seq(0, round(max(aus$estimate), digits = -1), by = round(max(aus$estimate)/10, digits = -1)),
-                      # limits = c(0,max(aus$estimate)+1))+
-    # coord_flip()+
     theme(text = element_text(size = 15),
           legend.position = "none",
           plot.title = element_text(size=14))
@@ -123,9 +120,6 @@ for(i in unique(aus$feature))
     ylab("")+
     xlab("")+
     ggtitle(as.character(i))+
-    #scale_x_continuous(breaks = seq(0, round(max(aus$estimate), digits = -1), by = round(max(aus$estimate)/10, digits = -1)),
-    # limits = c(0,max(aus$estimate)+1))+
-    # coord_flip()+
     theme(text = element_text(size = 15),
           legend.position = "none",
           plot.title = element_text(size=14))
@@ -142,7 +136,7 @@ ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_match
 
 
 
-#### Checking whether there is a preference for the right wing profile
+#### Checking whether there is a preference for the profile shone to the right
 
 data$cpd_profile_number = as.factor(data$cpd_profile_number)
 
