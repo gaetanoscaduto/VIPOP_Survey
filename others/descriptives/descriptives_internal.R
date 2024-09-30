@@ -87,6 +87,4 @@ for(i in populism_variables)
     ylab("")
 
   ggsave(paste0(output_dir, i, ".png"), width=10, height=10)
-  
-  
 }
