@@ -210,7 +210,7 @@ cjdata$match_animal = NULL
 cjdata$match_holiday = NULL
 cjdata$match_ideology = NULL
 
-cjdata$cpd_exparm = ifelse(cjdata$cpd_exparm=="natural", "natural",
+cjdata$cpd_exparm2 = ifelse(cjdata$cpd_exparm=="natural", "natural",
                        ifelse(cjdata$cpd_match_ideology=="ideology_match", 
                               "ideology_match",
                               "ideology_mismatch"))
