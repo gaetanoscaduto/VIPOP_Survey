@@ -149,6 +149,10 @@ for(i in 1:nrow(data)) #for every row in data
 }
 
 table(cjdata$cpd_chosen)
+
+#partial recode of exparm
+
+
 #make them all factors so that they work with cj functions
 
 ###################
@@ -206,6 +210,10 @@ cjdata$match_animal = NULL
 cjdata$match_holiday = NULL
 cjdata$match_ideology = NULL
 
+cjdata$cpd_exparm = ifelse(cjdata$cpd_exparm=="natural", "natural",
+                       ifelse(cjdata$cpd_match_ideology=="ideology_match", 
+                              "ideology_match",
+                              "ideology_mismatch"))
 
 
 for(i in 1:ncol(cjdata))
