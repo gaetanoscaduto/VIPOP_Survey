@@ -114,6 +114,75 @@ draw_plot_effects = function(effects,
 
 
 
+full_analysis = function(data,
+                         formula, #the conjoint formula
+                         effect=c("ATEs", "ACDEs", "EEs"), #the three possible effects to compute
+                         type=c("match", "nominal"), #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                         estimator=c("mm","amce"), #marginal means and amces
+                         arm=c("natural", "ideology_match", "ideology_mismatch"), #natural mediation arm, or manipulated mediation arm with ideological match, 
+                         #or manipulated mediation arm with ideological mismatch
+                         subdir #the subdirectory where the plots will be saved
+){
+  
+  
+  ###### This function performs the whole analysis, draws the graphs and saves
+  #them in the appropriate repositories. 
+  #It calls the other functions previously defined plus the functions in cjregg and
+  #patchwork
+  
+  #Notice that the function behaves slightly differently for EEs, that need to be
+  #treated a bit differntly due to the complications
+  
+  effect=match.arg(effect)
+  type=match.arg(type)
+  estimator=match.arg(estimator)
+  arm=match.arg(arm)
+  
+  if(effect!= "EEs")
+  {
+    effects_pooled <- data |>
+      filter(cpd_exparm2 == arm) |>
+      cj(formula, id = ~respid,
+         estimate = estimator)
+  }
+  if(effect== "EEs")
+  {
+    estimator= paste0(estimator, "_differences")
+    
+    effects_pooled <- data |>
+      filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
+      cj(formula_match,
+         id = ~respid,
+         estimate = estimator,
+         by = ~cpd_exparm)
+    
+  }
+  
+  
+  
+  effects_pooled = set_categories_and_levels(effects_pooled,
+                                                     type,
+                                                     nominal_attributes=nominal_attributes)
+  
+  p = draw_plot_effects(effects_pooled,
+                        type = type,
+                        categories=categories,
+                        estimator=estimator,
+                        y_labels=y_labels_plots)
+  
+  p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", type),
+                                                           caption= paste0(toupper(estimator), " s of the", arm, " mediation arm"))
+    
+    ggsave(paste0(output_wd,"estimations/", subdir,"singlecountry.png"), 
+           p, 
+           height = 10, 
+           width = 10)
+  
+}
+
+
+
+
 
 #Our categories of apolitical traits
 categories= c("Sociodemographics", "Psychological", "Lifestyle", "Political")
@@ -191,6 +260,9 @@ setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dotto
 output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/conjoint_parallel_design/"
 data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd.RDS")
 
+data=rbind(data, data, data, data)
+data=rbind(data, data, data, data)
+
 context = "IT"
 # context = "FR"
 # context = "SW"
@@ -214,86 +286,57 @@ context = "IT"
 
 subdir = "ATEs/match/MMs/"
 
+# formula=formula_match
+# effect = "ATEs"
+# type="match"
+# estimator="mm"
+# arm="natural"
 
-effects <- data |>
-  filter(cpd_exparm == "natural") |>
-  cj(formula_match, id = ~respid, estimate = "mm")
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-
-p = draw_plot_effects(effects, "match", categories=categories, estimator="mm",y_labels=y_labels_plots)
-
-p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment",
-                    caption="Marginal means of the natural mediation arm")
-
-p
-ggsave(paste0(output_wd,"estimations/", subdir, "ATEs_mm_general_base_match.png"), p, height = 10, width = 10)
-
+full_analysis(data,
+              formula_match,
+              "ATEs",
+              "match",
+              "mm",
+              "natural",
+              subdir)
 
 
 ### Same as before, but with AMCes (for appendix)
 
 subdir = "ATEs/match/AMCEs/"
 
-effects <- data |>
-  filter(cpd_exparm == "natural") |>
-  cj(formula_match, id = ~respid, estimate = "amce")
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, "match", categories=categories, estimator="mm",y_labels=y_labels_plots)
-
-p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (recoding match/mismatch)",
-                    caption="AMCEs of the natural mediation arm")
-
-ggsave(paste0(output_wd,"estimations/",subdir, "ATEs_amces_general_base_match.png"), p, height = 10, width = 10)
-
-
+full_analysis(data,
+              formula_match,
+              "ATEs",
+              "match",
+              "amce",
+              "natural",
+              subdir)
 
 ############ ATEs (nominal value)
 
 subdir = "ATEs/nominal/MMs/"
 
-effects <- data |>
-  filter(cpd_exparm == "natural") |>
-  cj(formula_nominal, id = ~respid, estimate = "mm")
-
-effects=set_categories_and_levels(effects, "nominal", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, "nominal", categories=categories, estimator="mm",y_labels=y_labels_plots)
-
-p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (nominal values)",
-                    caption="Marginal means of the natural mediation arm")
-
-ggsave(paste0(output_wd,"estimations/", subdir, "ATEs_mm_general_base_nominal.png"), p, height = 10, width = 10)
+full_analysis(data,
+              formula_nominal,
+              "ATEs",
+              "nominal",
+              "mm",
+              "natural",
+              subdir)
 
 
 #same but with amce
 
 subdir = "ATEs/nominal/AMCEs/"
 
-effects <- data |>
-  filter(cpd_exparm == "natural") |>
-  cj(formula_nominal, id = ~respid, estimate = "amce")
-
-effects=set_categories_and_levels(effects, "nominal", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, "nominal", categories=categories, estimator="amce",y_labels=y_labels_plots)
-
-p=p+plot_annotation(title = "ATEs of the Parallel Design Conjoint Experiment (nominal values)",
-                    caption="AMCEs of the natural mediation arm")
-
-ggsave(paste0(output_wd,"estimations/", subdir, "ATEs_amce_general_base_nominal.png"), p, height = 10, width = 10)
-
+full_analysis(data,
+              formula_nominal,
+              "ATEs",
+              "nominal",
+              "amce",
+              "natural",
+              subdir)
 
 ########################################
 ############ ADCEs (MATCH/MISMATCH)#####
@@ -317,31 +360,13 @@ ggsave(paste0(output_wd,"estimations/", subdir, "ATEs_amce_general_base_nominal.
 
 subdir = "ACDEs/match/MMs/"
 
-
-effects <- data |>
-  filter(cpd_match_ideology == "ideology_match" & !is.na(cpd_match_ideology)) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "mm")
-
-
-effects=set_categories_and_levels(effects, 
-                                  "match", 
-                                  nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, 
-                      type="match", 
-                      categories=categories, 
-                      estimator="mm")
-
-
-p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological match",
-                    caption="Marginal means of the manipulated mediation arm")
-
-#p
-ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_mms_match.png"), p, height = 10, width = 10)
+full_analysis(data,
+              formula_match,
+              "ACDEs",
+              "match",
+              "mm",
+              "ideology_match",
+              subdir)
 
 
 ######################################
@@ -350,25 +375,13 @@ ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_mms_match.png"), p, heigh
 
 subdir = "ACDEs/mismatch/MMs/"
 
-
-effects <- data |>
-  filter(cpd_match_ideology == "ideology_mismatch" & !is.na(cpd_match_ideology)) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "mm")
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type="match", categories=categories, estimator="mm")
-
-p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological mismatch",
-                    caption="Marginal means of the manipulated mediation arm")
-
-
-ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_mms_mismatch.png"), p, height = 10, width = 10)
-
+full_analysis(data,
+              formula_match,
+              "ACDEs",
+              "match",
+              "mm",
+              "ideology_mismatch",
+              subdir)
 
 ######################################
 #### ACDEs for ideological match with AMCE
@@ -376,25 +389,13 @@ ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_mms_mismatch.png"), p, he
 
 subdir = "ACDEs/match/AMCEs/"
 
-effects <- data |>
-  filter(cpd_match_ideology == "ideology_match" & !is.na(cpd_match_ideology)) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "amce")
-
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type="match", categories=categories, estimator="amce")
-
-p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological match",
-                    caption="Marginal means of the manipulated mediation arm")
-
-#p
-ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_amces_match.png"), p, height = 10, width = 10)
-
+full_analysis(data,
+              formula_match,
+              "ACDEs",
+              "match",
+              "amce",
+              "ideology_match",
+              subdir)
 
 ############################################################################
 ################ ACDEs for ideological mismatch with AMCE################### 
@@ -403,24 +404,13 @@ ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_amces_match.png"), p, hei
 subdir = "ACDEs/mismatch/AMCEs/"
 
 
-effects <- data |>
-  filter(cpd_match_ideology == "ideology_mismatch" & !is.na(cpd_match_ideology)) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "amce")
-
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type="match", categories=categories, estimator="amce")
-
-p=p+plot_annotation(title = "ACDEs of the Parallel Design Conjoint Experiment, ideological match",
-                    caption="Marginal means of the manipulated mediation arm")
-
-#p
-ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_amces_mismatch.png"), p, height = 10, width = 10)
+full_analysis(data,
+              formula_match,
+              "ACDEs",
+              "match",
+              "amce",
+              "ideology_mismatch",
+              subdir)
 
 
 ############################################################################
@@ -441,99 +431,53 @@ ggsave(paste0(output_wd,"estimations/", subdir, "ACDEs_amces_mismatch.png"), p, 
 subdir = "EEs/match/MMs/"
 
 
-effects <- data |>
-  filter(cpd_exparm == "natural" | (cpd_exparm=="mediated" & cpd_match_ideology == "ideology_match")) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "mm_differences",
-     by = ~cpd_exparm)
+# formula=formula_match
+# effect = "EEs"
+# type="match"
+# estimator="mm"
+# arm="ideology_match"
 
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="mm_differences")
-
-
-p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological match",
-                    caption="Marginal mean differences between the natural mediation arm\nand the manipulated mediation arm, when the ideological match is shown")
-
-ggsave(paste0(output_wd,"estimations/", subdir, "EEs_mms_match.png"), p, height = 10, width = 10)
+full_analysis(data,
+              formula_match,
+              "EEs",
+              "match",
+              "mm",
+              "ideology_match",
+              subdir)
 
 ##### ELIMINATED EFFECTS WITH MM FOR IDEOLOGICAL MISMATCH
 
 subdir = "EEs/mismatch/MMs/"
 
-effects <- data |>
-  filter(cpd_exparm == "natural" | (cpd_exparm=="mediated" & cpd_match_ideology == "ideology_mismatch")) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "mm_differences",
-     by = ~cpd_exparm)
-
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="mm_differences")
-
-
-p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological mismatch",
-                    caption="Marginal mean differences between the natural mediation arm\nand the manipulated mediation arm, when the ideological match is shown")
-
-ggsave(paste0(output_wd,"estimations/", subdir, "EEs_mms_mismatch.png"), p, height = 10, width = 10)
-
-
+full_analysis(data,
+              formula_match,
+              "EEs",
+              "match",
+              "mm",
+              "ideology_mismatch",
+              subdir)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MATCH
 
 subdir = "EEs/match/AMCEs/"
 
-
-effects <- data |>
-  filter(cpd_exparm == "natural" | (cpd_exparm=="mediated" & cpd_match_ideology == "ideology_match")) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "amce_differences",
-     by = ~cpd_exparm)
-
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="amce_differences")
-
-
-p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological match",
-                    caption="AMCE differences between the natural mediation arm\nand the manipulated mediation arm, when the ideological match is shown")
-
-ggsave(paste0(output_wd,"estimations/", subdir, "EEs_amces_match.png"), p, height = 10, width = 10)
+full_analysis(data,
+              formula_match,
+              "EEs",
+              "match",
+              "amce",
+              "ideology_match",
+              subdir)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MISMATCH
 
 subdir = "EEs/mismatch/AMCEs/"
 
-effects <- data |>
-  filter(cpd_exparm == "natural" | (cpd_exparm=="mediated" & cpd_match_ideology == "ideology_mismatch")) |>
-  cj(formula_match,
-     id = ~respid,
-     estimate = "amce_differences",
-     by = ~cpd_exparm)
-
-
-effects=set_categories_and_levels(effects, "match", nominal_attributes=nominal_attributes)
-
-effects
-
-p = draw_plot_effects(effects, type = "match", categories=categories, estimator="amce_differences")
-
-
-p=p+plot_annotation(title = "Eliminated Effects of the Parallel Design Conjoint Experiment, ideological mismatch",
-                    caption="AMCE differences between the natural mediation arm\nand the manipulated mediation arm, when the ideological match is shown")
-
-ggsave(paste0(output_wd,"estimations/", subdir, "EEs_amces_mismatch.png"), p, height = 10, width = 10)
-
+full_analysis(data,
+              formula_match,
+              "EEs",
+              "match",
+              "amce",
+              "ideology_mismatch",
+              subdir)
 

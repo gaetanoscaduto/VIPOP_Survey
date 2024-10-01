@@ -170,7 +170,7 @@ draw_plot_effects_bycountry = function(effects_pooled, effects_bycountry,
 }
 
 
-full_analysis = function(data,
+full_analysis_bycountry = function(data,
                          formula, #the conjoint formula
                          effect=c("ATEs", "ACDEs", "EEs"), #the three possible effects to compute
                          type=c("match", "nominal"), #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
@@ -208,11 +208,13 @@ full_analysis = function(data,
   }
   if(effect== "EEs")
   {
+    estimator= paste0(estimator, "_differences")
+    
     effects_pooled <- data |>
       filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
       cj(formula_match,
          id = ~respid,
-         estimate = paste0(estimator, "_differences"),
+         estimate = estimator,
          by = ~cpd_exparm)
     
     effects_bycountry =data.frame()
@@ -222,7 +224,7 @@ full_analysis = function(data,
         filter((cpd_exparm2 == "natural" | cpd_exparm2 == arm) & country == country) |>
         cj(formula_match,
            id = ~respid,
-           estimate = paste0(estimator, "_differences"),
+           estimate = estimator,
            by = ~cpd_exparm)
       
       temp_effects_bycountry$country = country
@@ -368,7 +370,7 @@ data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 subdir = "ATEs/match/MMs/"
 
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "ATEs",
               "match",
@@ -380,7 +382,7 @@ full_analysis(data,
 ### Same as before, but with AMCes (for appendix)
 subdir = "ATEs/match/MMs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "ATEs",
               "match",
@@ -395,7 +397,7 @@ full_analysis(data,
 subdir = "ATEs/nominal/MMs/"
 
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_nominal,
               "ATEs",
               "nominal",
@@ -408,7 +410,7 @@ full_analysis(data,
 
 subdir = "ATEs/nominal/AMCEs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_nominal,
               "ATEs",
               "nominal",
@@ -440,7 +442,7 @@ full_analysis(data,
 subdir = "ACDEs/match/MMs/"
 
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "ACDEs",
               "match",
@@ -457,7 +459,7 @@ full_analysis(data,
 subdir = "ACDEs/mismatch/MMs/"
 
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "ACDEs",
               "match",
@@ -471,7 +473,7 @@ full_analysis(data,
 
 subdir = "ACDEs/match/AMCEs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "ACDEs",
               "match",
@@ -485,7 +487,7 @@ full_analysis(data,
 
 subdir = "ACDEs/mismatch/AMCEs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "ACDEs",
               "match",
@@ -511,7 +513,7 @@ full_analysis(data,
 
 subdir = "EEs/match/MMs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "EEs",
               "match",
@@ -524,7 +526,7 @@ full_analysis(data,
 
 subdir = "EEs/mismatch/MMs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "EEs",
               "match",
@@ -537,7 +539,7 @@ full_analysis(data,
 
 subdir = "EEs/match/AMCEs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "EEs",
               "match",
@@ -549,7 +551,7 @@ full_analysis(data,
 
 subdir = "EEs/mismatch/AMCEs/"
 
-full_analysis(data, 
+full_analysis_bycountry(data, 
               formula_match,
               "EEs",
               "match",
