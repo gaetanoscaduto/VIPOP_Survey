@@ -4,7 +4,7 @@ library(dplyr)
 data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
 
 
- View(data)
+View(data)
  
 # - gender (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 
