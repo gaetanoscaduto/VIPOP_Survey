@@ -109,7 +109,7 @@ visconj_varnames
 #initialize the variables
 for(varname in visconj_varnames)
 {
-  data[, varname] = "empty"
+  data[, varname] = NA
 }
 
 
