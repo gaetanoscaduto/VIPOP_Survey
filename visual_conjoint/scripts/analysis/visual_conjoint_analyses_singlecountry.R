@@ -64,17 +64,25 @@ draw_plot_effects = function(effects,
     
   }
   
-
-    p = ggplot(effects)+
+v=list()
+  for(attribute in unique(attributes))
+  {
+   p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-      geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature))+
-      ylab("")+
-      xlab("Effects")+
+      geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                          y=level, col=feature))+
+      ylab(attribute)+
+      xlab("\n")+
       xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = rev(levels_vector)) +
-      theme(legend.position = "none")
+      scale_y_discrete(limits = y_labels_plots[[tolower(attribute)]]) +
+      theme(legend.position = "none",
+            axis.text.y = element_text(size=10),
+            axis.title.y = element_text(size=12))
+   
+   v[[attribute]] = p
+  }
   
-  
+  p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
   return(p)
 }
 
@@ -110,7 +118,7 @@ full_analysis = function(data,
                         estimator=estimator,
                         y_labels=y_labels_plots)
   
-  p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment, "),
+  p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment"),
                                  caption= toupper(estimator))
   
   ggsave(paste0(output_wd,"estimations/", subdir,"singlecountry.png"), 
@@ -184,7 +192,7 @@ context = "IT"
 ######################################
 
 
-subdir = ""
+subdir = "MMs/"
 
 full_analysis(data,
               formula_rw,
@@ -194,181 +202,9 @@ full_analysis(data,
 
 ### Same as before, but with AMCes (for appendix)
 
-subdir = "ATEs/match/AMCEs/"
+subdir = "AMCEs/"
 
 full_analysis(data,
-              formula_match,
-              "ATEs",
-              "match",
+              formula_rw,
               "amce",
-              "natural",
               subdir)
-
-############ ATEs (nominal value)
-
-subdir = "ATEs/nominal/MMs/"
-
-full_analysis(data,
-              formula_nominal,
-              "ATEs",
-              "nominal",
-              "mm",
-              "natural",
-              subdir)
-
-
-#same but with amce
-
-subdir = "ATEs/nominal/AMCEs/"
-
-full_analysis(data,
-              formula_nominal,
-              "ATEs",
-              "nominal",
-              "amce",
-              "natural",
-              subdir)
-
-########################################
-############ ADCEs (MATCH/MISMATCH)#####
-########################################
-
-#ESTIMATION
-# The marginal mean associated with S_i^k=1 for respondents 
-# in the maniulated mediation arm with ideological similarity condition
-
-# The marginal mean associated with S_i^k=1 for respondents in the 
-#maniulated mediation arm with ideological dissimilarity condition
-
-# INTERPRETATION
-#The effects that similarity in each attribute k has on the willingness to
-#engage in political conversations that is due neither to mediation nor to 
-#interaction with political inferences.
-
-######################################
-#### ACDEs for ideological match with MM
-######################################
-
-subdir = "ACDEs/match/MMs/"
-
-full_analysis(data,
-              formula_match,
-              "ACDEs",
-              "match",
-              "mm",
-              "ideology_match",
-              subdir)
-
-
-######################################
-#### ACDEs for ideological mismatch with MM
-###################################### 
-
-subdir = "ACDEs/mismatch/MMs/"
-
-full_analysis(data,
-              formula_match,
-              "ACDEs",
-              "match",
-              "mm",
-              "ideology_mismatch",
-              subdir)
-
-######################################
-#### ACDEs for ideological match with AMCE
-###################################### 
-
-subdir = "ACDEs/match/AMCEs/"
-
-full_analysis(data,
-              formula_match,
-              "ACDEs",
-              "match",
-              "amce",
-              "ideology_match",
-              subdir)
-
-############################################################################
-################ ACDEs for ideological mismatch with AMCE################### 
-############################################################################
-
-subdir = "ACDEs/mismatch/AMCEs/"
-
-
-full_analysis(data,
-              formula_match,
-              "ACDEs",
-              "match",
-              "amce",
-              "ideology_mismatch",
-              subdir)
-
-
-############################################################################
-########################## ELIMINATED EFFECTS ##############################
-############################################################################
-
-#ESTIMATION
-# Point estimation: the difference between ATE and ACDE. 
-#for standard errors see Acharya et al. (2018) Or Lòpez-Ortega 2023
-
-#INTERPRETATION
-# The portion of the ATE explained by political inferences, either through 
-#mediation or through interaction between S_i^k and the specific ideology inferred.
-
-
-##### ELIMINATED EFFECTS WITH MM FOR IDEOLOGICAL MATCH
-
-subdir = "EEs/match/MMs/"
-
-
-# formula=formula_match
-# effect = "EEs"
-# type="match"
-# estimator="mm"
-# arm="ideology_match"
-
-full_analysis(data,
-              formula_match,
-              "EEs",
-              "match",
-              "mm",
-              "ideology_match",
-              subdir)
-
-##### ELIMINATED EFFECTS WITH MM FOR IDEOLOGICAL MISMATCH
-
-subdir = "EEs/mismatch/MMs/"
-
-full_analysis(data,
-              formula_match,
-              "EEs",
-              "match",
-              "mm",
-              "ideology_mismatch",
-              subdir)
-
-##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MATCH
-
-subdir = "EEs/match/AMCEs/"
-
-full_analysis(data,
-              formula_match,
-              "EEs",
-              "match",
-              "amce",
-              "ideology_match",
-              subdir)
-
-##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MISMATCH
-
-subdir = "EEs/mismatch/AMCEs/"
-
-full_analysis(data,
-              formula_match,
-              "EEs",
-              "match",
-              "amce",
-              "ideology_mismatch",
-              subdir)
-

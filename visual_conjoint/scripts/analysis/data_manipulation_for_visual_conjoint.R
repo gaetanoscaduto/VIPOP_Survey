@@ -240,10 +240,26 @@ for(i in 1:nrow(data)) #for every row in data
 
 table(cjdata$vcd_chosen)
 
+
+# I want to adjust the content of some cells to a more readable/correct format
+
+cjdata = cjdata |>
+  mutate(vcd_food, 
+         vcd_food = case_when(
+           vcd_food == "ethnicrich" ~ "Ethnic",
+           vcd_food == "meatpoor" ~ "Meatpoor",
+           vcd_food == "meatrich" ~ "Meatrich",
+           vcd_food == "vegan" ~ "Vegan",
+           is.na(vcd_food) ~ NA
+         ) 
+  )
+
+
+
 ## everything becomes now a factor
 for(i in 1:ncol(cjdata))
 {
-  cjdata[, i] = factor(cjdata[, i]) 
+  cjdata[, i] = factor(toTitleCase(as.character(cjdata[, i]))) 
   #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
 
