@@ -44,8 +44,8 @@ ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomat
 # With ggplot
 aus = cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
                  vcd_gender + vcd_age + vcd_photo +
-                 vcd_name + vcd_surname +
-                 vcd_job + vcd_issue + vcd_nostalgia+
+                 vcd_name + vcd_surname + vcd_job + 
+                 vcd_issue + vcd_nostalgia + vcd_valence+
                  vcd_animal + vcd_food + vcd_crowd,
                id = ~respid)
 
@@ -90,8 +90,8 @@ data$vcd_profile_number = as.factor(data$vcd_profile_number)
 
 plot(cj(data, 
         vcd_chosen_rw ~ vcd_ethnicity + 
-          vcd_gender + vcd_age + 
-          vcd_job + vcd_issue + vcd_nostalgia+
+          vcd_gender + vcd_age + vcd_job + 
+          vcd_issue + vcd_nostalgia + vcd_valence + 
           vcd_animal + vcd_food + vcd_crowd,
         id = ~respid,
         by = ~vcd_profile_number,
@@ -107,9 +107,9 @@ data$vcd_profile_number = as.numeric(data$vcd_profile_number)-1
 
 plot(cj(data, 
         vcd_chosen_rw ~ vcd_ethnicity + 
-          vcd_gender + vcd_age +
-          vcd_job + vcd_issue + vcd_nostalgia+
-          vcd_animal + vcd_food + vcd_crowd,,
+          vcd_gender + vcd_age + vcd_job + 
+          vcd_issue + vcd_nostalgia + vcd_valence +
+          vcd_animal + vcd_food + vcd_crowd,
         id = ~respid,
         estimate = "mm"),
      vline = 0.5)

@@ -1,6 +1,6 @@
 ###############################################################################
 #this script is for the analyses related to the parallel conjoint design, 
-#when considering a country at a time or pooled all toghe
+#when considering a country at a time or pooled all together
 ###############################################################################
 
 
