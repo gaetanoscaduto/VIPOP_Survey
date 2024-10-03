@@ -131,6 +131,7 @@ for(i in 1:nrow(data)) #for every row in data
 
 ########################################################
 #DA QUA IN POI TUTTO DA RIADATTARE
+# cerca di capire perché CI SONO DEGLI STRANI NA NEL CJDATA$CCD_CONTINUOUS
 ########################################################
 
 
