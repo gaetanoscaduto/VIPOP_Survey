@@ -5,41 +5,7 @@ library(ggplot2)
 data = readRDS("data_recoded.RDS")
 
 output_dir = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot/"
-output_dir_s = "/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot" 
 
-#Silvia's Variables
-ggplot(data, aes(x=gender))+
-  geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
-  scale_y_continuous(labels = scales::percent_format())+
-  ylab("")
-ggsave(paste0(output_dir,"gender.png"), width=10, height=10)
-
-ggplot(data, aes(x=age))+
-  geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
-  scale_y_continuous(labels = scales::percent_format())+
-  ylab("")
-ggsave(paste0(output_dir,"age.png"), width=10, height=10)
-
-ggplot(data, aes(x=AGE_GROUP))+
-  geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
-  scale_y_continuous(labels = scales::percent_format())+
-  ylab("")
-ggsave(paste0(output_dir,"agegroup.png"), width=10, height=10)
-
-ggplot(data, aes(x=education))+
-  geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
-  scale_y_continuous(labels = scales::percent_format())+
-  ylab("")
-ggsave(paste0(output_dir,"education.png"), width=10, height=10)
-
-ggplot(data, aes(x=EDU_LEVEL))+
-  geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
-  scale_y_continuous(labels = scales::percent_format())+
-  ylab("")
-ggsave(paste0(output_dir,"education_level.png"), width=10, height=10)
-
-
-#Gaetano's Variables
 ggplot(data, aes(x=interest))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format())+
