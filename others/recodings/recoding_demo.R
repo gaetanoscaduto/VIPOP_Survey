@@ -4,7 +4,7 @@ library(dplyr)
 data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
 
 
-View(data)
+#View(data)
  
 # - gender (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 
@@ -356,6 +356,87 @@ for(var in cpd_ideo_names)
 
 
 table(data$sns_use)
+
+
+#ricodificare le variabili del classic conjoint design
+
+conjattr_full = c("gender",
+                  "age",
+                  "religion",
+                  "citysize",
+                  "job",
+                  "consc",
+                  "ope",
+                  "neu",
+                  "restaurant",
+                  "transport",
+                  "animal")
+
+#conjoint classic gender
+
+ccd_varnames=list(gender=c(""),
+               age=c(""),
+               religion=c(""),
+               citysize=c(""),
+               job=c(""),
+               consc=c(""),
+               ope=c(""),
+               neu=c(""),
+               restaurant=c(""),
+               transport=c(""),
+               animal=c("")
+               )
+
+
+# i put in ccd_varnames[attribute] the names of the variables that in the dataset
+#correspond to a that conjoint attribute
+
+for(attribute in conjattr_full)
+{
+  A_name = paste0("A", which(conjattr_full==attribute), "_")
+  ccd_varnames[[attribute]]= names(data)[grepl("C3",names(data)) & grepl(A_name, names(data))]
+}
+
+
+# Define the list with label mappings for each variable
+label_list <- list(gender=c("Female", "Male", "Non-binary"),
+                   age=c("25","45","65"),
+                   religion=c("Practitioner","Non practitioner", "Non believer"),
+                   citysize=c("Big", "Small", "Medium"), #ricorda di correggere l'ordine di sti factor
+                   job=c("Entrepreneur", "Teacher", "Waiter", "Lawyer"),
+                   consc=c("Reliable", "Disorganized"),
+                   ope=c("Open", "Rigid"),
+                   neu=c("Calm", "Anxious"),
+                   restaurant=c("Traditional", "Vegan","Asian","Steakhouse"),
+                   transport=c("Bycicle","Public Transport","SUV"),
+                   animal=c("Large dog","Small dog","Cat", "No pets")
+                   )
+
+# Function to recode old variable based on label list
+recode_variable <- function(old_var, label_var) {
+  recoded_var <- sapply(old_var, function(x)  {
+    if (is.na(x)) {
+      return(NA)  # Return NA if the value is missing
+    } else if (is.numeric(x) && x <= length(label_var) && x > 0) {
+      return(label_var[x])
+    } else {
+      return(NA)  # Return NA for out-of-range or invalid values
+    }
+  })
+  return(recoded_var)
+}
+
+
+for(attribute in conjattr_full)
+{
+  for(var_to_recode in ccd_varnames[[attribute]])
+  
+    data[, var_to_recode] = recode_variable( data[, var_to_recode], label_list[[attribute]])
+} 
+
+#View(data[, ccd_varnames$animal])
+
+View(data[, ccd_varnames$neu])
 
 # - attention_check_1 (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 # 

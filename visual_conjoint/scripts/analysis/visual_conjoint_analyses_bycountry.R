@@ -1,7 +1,5 @@
 #visual_conjoint_analyses_bycountry
 
-#visual_cnjoint_analyses_singlecountry
-
 ###############################################################################
 #this script is for the analyses related to the visual conjoint design, 
 #when considering a country at a time or pooled all together

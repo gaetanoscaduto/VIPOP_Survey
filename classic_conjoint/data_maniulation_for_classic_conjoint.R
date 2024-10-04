@@ -10,7 +10,7 @@
 #########################
 
 
-# load a bunch of packages
+# load a bunch of packages, the more the merrier
 
 pacman::p_load(
   cregg, dplyr, ggpubr, cowplot, 
@@ -46,6 +46,7 @@ cjdata$ccd_profile_number = NA#"profile_number" #sequential number of the profil
 
 conjattr_full = c("gender",
                   "age",
+                  "religion",
                   "citysize",
                   "job",
                   "consc",
@@ -57,6 +58,7 @@ conjattr_full = c("gender",
 
 cjdata$ccd_gender = NA
 cjdata$ccd_age = NA
+cjdata$ccd_religion = NA
 cjdata$ccd_citysize = NA
 cjdata$ccd_job = NA
 cjdata$ccd_consc = NA
@@ -70,7 +72,7 @@ cjdata$ccd_animal = NA
 #the experimental arm where the respondent is allocated (manipulated or natural)
 
 #the profile the respondent has chosen
-cjdata$ccd_chosen = NA
+cjdata$ccd_chosen_rw = NA
 cjdata$ccd_continuous = NA
 cjdata$ccd_populism = NA
 
@@ -110,7 +112,7 @@ for(i in 1:nrow(data)) #for every row in data
       
       #we set the value for the variable indicating whether the profile was chosen or not 
       #it is a dummy variable: 0 = not chosen, 1=chosen
-      cjdata[this_row, "ccd_chosen"] = data[i, paste0("cjcl_",k,"_ideo_dic")]
+      cjdata[this_row, "ccd_chosen_rw"] = data[i, paste0("cjcl_",k,"_ideo_dic")]
       
       cjdata[this_row, "ccd_continuous"] = data[i, paste0("cjcl_",k,"_ideo__1")]
       
@@ -118,7 +120,7 @@ for(i in 1:nrow(data)) #for every row in data
       
       # if the profile that has been chosen is the one that in this moment is in the
       #cell we set it at 1, else we set it at 0
-      cjdata[this_row, "ccd_chosen"] = ifelse(cjdata[this_row, "ccd_chosen"] == j,
+      cjdata[this_row, "ccd_chosen_rw"] = ifelse(cjdata[this_row, "ccd_chosen_rw"] == j,
                                                  1, 0)
       
       cjdata[this_row, "ccd_populism"] = ifelse(cjdata[this_row, "ccd_populism"] == j,
@@ -132,74 +134,12 @@ for(i in 1:nrow(data)) #for every row in data
 ########################################################
 #DA QUA IN POI TUTTO DA RIADATTARE
 # cerca di capire perché CI SONO DEGLI STRANI NA NEL CJDATA$CCD_CONTINUOUS
+# quando arriva il pilota devi vedere se quella variabile ha dei missing
 ########################################################
 
 
 
-
-
 #make them all factors so that they work with cj functions
-
-###################
-### CREATION OF THE "MATCH" VARIABLES
-###################
-
-cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__")
-
-cjdata=cjdata1
-
-rm(cjdata1)
-
-variables_to_set=c("gender","age","educ","regionfeel",
-                   "consc","ope",
-                   "diet", "animal","holiday",
-                   "ideology")
-
-#creation of mock variables to make names uniform
-
-cjdata$match_gender = cjdata$gender
-cjdata$match_age = cjdata$AGE_GROUP
-cjdata$match_educ = cjdata$EDU_LEVEL
-cjdata$match_regionfeel = cjdata$region_feel
-cjdata$match_consc = cjdata$TIPI_CON_REC
-cjdata$match_ope = cjdata$TIPI_OPE_REC
-cjdata$match_diet = cjdata$diet
-cjdata$match_animal = cjdata$animal
-cjdata$match_holiday = cjdata$holiday
-cjdata$match_ideology = cjdata$IDEOLOGY_REC #PROBABILMENTE DA RICODIFICARE ANCORA QUESTA
-
-
-#YOU NEED TO CHECK THAT THE LEVELS OF THE VARIABLES IN THE CONJOINT AND AT THE RESPONDENT
-# LEVEL ARE EQUIVALENT BEFORE! CHECK WHEN YOU HAVE CINT'S FINAL DATA!
-
-
-
-# The following loop sets the values of the match variables. These can be either "match" or "mismatch"
-# but are initialized as "mistakes" so we know if everything went well
-for(variable in variables_to_set)
-{
-  cjdata[, paste0("cpd_match_", variable)] = ifelse(cjdata[, paste0("cpd_", variable)] == cjdata[, paste0("match_", variable)],
-                                                    paste0(variable, "_match"),
-                                                    paste0(variable, "_mismatch"))
-}
-
-#remove these now useless variables
-cjdata$match_gender = NULL
-cjdata$match_age = NULL
-cjdata$match_educ = NULL
-cjdata$match_regionfeel = NULL
-cjdata$match_consc = NULL
-cjdata$match_ope = NULL
-cjdata$match_diet = NULL
-cjdata$match_animal = NULL
-cjdata$match_holiday = NULL
-cjdata$match_ideology = NULL
-
-cjdata$cpd_exparm2 = ifelse(cjdata$cpd_exparm=="natural", "natural",
-                            ifelse(cjdata$cpd_match_ideology=="ideology_match", 
-                                   "ideology_match",
-                                   "ideology_mismatch"))
-
 
 for(i in 1:ncol(cjdata))
 {
@@ -207,57 +147,25 @@ for(i in 1:ncol(cjdata))
   #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
 
-#the following factor needs to be reordered
-cjdata[, "cpd_age"] = factor(cjdata[, "cpd_age"], levels = c("under30",
-                                                             "between30and59",
-                                                             "over60"))
-
-#l'unico che non voglio factor è chosen!
-
-cjdata[, "cpd_chosen"] = as.numeric(cjdata[, "cpd_chosen"])-1
-
-
-
-#check if everything is okay with making them all factors
+cjdata[, "ccd_chosen_rw"] = as.numeric(cjdata[, "ccd_chosen_rw"])-1
+cjdata[, "ccd_populism"] = as.numeric(cjdata[, "ccd_populism"])-1
+cjdata[, "ccd_continuous"] = as.numeric(cjdata[, "ccd_continuous"])
+#check if everything is okay with making them all factors but the outcomes
 for(i in 1:ncol(cjdata))
 {
   print(is.factor(cjdata[, i]))
 }
 
+#merge
 
-#very rough visual randomization check
-# 
-# for (i in 4:ncol(data)) {
-#   
-#   print(names(cjdata)[i])
-#   
-#   print(table(cjdata[, i], useNA = "always"))
-#   
-#   # Pause and wait for user input to proceed
-#   readline(prompt = "Press [Enter] to proceed to the next variable:")
-#   
-#   # Continue to the next iteration
-# }
+cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__")
+
+cjdata=cjdata1
+
+rm(cjdata1)
 
 
-# rough check regarding the probability of seeing a match or not 
-# 
-# for (variable in variables_to_set)
-# {
-#   
-#   print(paste0("match ", variable))
-#   
-#   print(table(cjdata[, paste0("cpd_match_", variable)], useNA = "always"))
-#   
-#   # Pause and wait for user input to proceed
-#   readline(prompt = "Press [Enter] to proceed to the next variable:")
-#   
-#   # Continue to the next iteration
-# }
 
-
-#at this point we can export the dataset for further analyses in other scripts 
-
-export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_cpd.RDS"))
+export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_ccd.RDS"))
 
 #end
