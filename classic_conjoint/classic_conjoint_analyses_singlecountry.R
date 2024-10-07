@@ -48,7 +48,7 @@ draw_plot_effects = function(effects,
                              y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
-                             x_intercept=999 #the vertical line to signal the difference from the insignificance
+                             x_intercept=999
 ){
   
   estimator=match.arg(estimator)
@@ -58,11 +58,13 @@ draw_plot_effects = function(effects,
   if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
     #with [-1; 1] for amces and [0, 1] for mm
   {
-    
     leftlim=ifelse(estimator!="mm", -1, 0)
     rightlim=1
     intercept = ifelse(estimator!="mm", 0, 0.5)
-    
+  }
+  else #continuous outcome 0-10s
+  {
+    intercept = 5
   }
   
   v=list()
@@ -93,7 +95,8 @@ draw_plot_effects = function(effects,
 full_analysis = function(data,
                          formula, #the conjoint formula
                          estimator=c("mm","amce"), #marginal means and amces
-                         subdir #the subdirectory where the plots will be saved
+                         subdir,#the subdirectory where the plots will be saved
+                         continuous=F #to change if we are dealing with continuous outcome
 ){
   
   
@@ -102,8 +105,8 @@ full_analysis = function(data,
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
   
-  # formula=formula_rw
-  # estimator="mm"
+  # formula=formula_continuous
+  #  estimator="mm"
   
   estimator=match.arg(estimator)
   
@@ -115,9 +118,20 @@ full_analysis = function(data,
   effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                     attributes = attributes)
   
+  if(continuous==F)
+  {
   p = draw_plot_effects(effects_pooled,
                         estimator=estimator,
                         y_labels=y_labels_plots)
+  }
+  else
+  {
+    p = draw_plot_effects(effects_pooled,
+                          estimator=estimator,
+                          y_labels=y_labels_plots,
+                          leftlim = 0, 
+                          rightlim = 10)
+  }
   
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Classic Conjoint Experiment"),
                                  caption= toupper(estimator))
@@ -126,6 +140,8 @@ full_analysis = function(data,
          p, 
          height = 10, 
          width = 10)
+  
+  return(p)
   
 }
 
@@ -163,6 +179,11 @@ attributes= c("Gender", "Gender", "Gender",
 
 
 formula_rw = ccd_chosen_rw ~ ccd_gender+
+  ccd_age+ccd_religion+ccd_citysize+ccd_job+
+  ccd_consc+ccd_ope+ ccd_neu+
+  ccd_restaurant+ccd_transport+ccd_animal
+
+formula_continuous = ccd_continuous ~ ccd_gender+
   ccd_age+ccd_religion+ccd_citysize+ccd_job+
   ccd_consc+ccd_ope+ ccd_neu+
   ccd_restaurant+ccd_transport+ccd_animal
@@ -210,3 +231,13 @@ full_analysis(data,
               formula_rw,
               "amce",
               subdir)
+
+######### Continuous outcome, mm
+
+subdir = "Continuous/"
+
+full_analysis(data,
+              formula_continuous,
+              "mm",
+              subdir,
+              continuous = T)

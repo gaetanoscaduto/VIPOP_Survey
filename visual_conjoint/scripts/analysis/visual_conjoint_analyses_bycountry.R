@@ -67,7 +67,6 @@ draw_plot_effects_bycountry = function(effects_pooled,
     leftlim=ifelse(estimator!="mm", -1, 0)
     rightlim=1
     intercept = ifelse(estimator!="mm", 0, 0.5)
-    
   }
   
   effects_IT= effects_bycountry |> filter(country=="IT")
@@ -82,86 +81,62 @@ draw_plot_effects_bycountry = function(effects_pooled,
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(data=effects_IT[effects_IT$feature == attribute, ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level),
-                      col=wesanderson::wes_palettes$Darjeeling1[1],
-                      shape=19,
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/5),
-                      show.legend = F
-                      )+
+                      show.legend = T)+
       geom_pointrange(data=effects_FR[effects_FR$feature == attribute, ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
-                      col=wesanderson::wes_palettes$Darjeeling1[2],
-                      shape=17,
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/10),
-                      show.legend = F)+
+                      show.legend = T)+
       geom_pointrange(data=effects_SW[effects_SW$feature == attribute, ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
-                      col=wesanderson::wes_palettes$Darjeeling1[3],
-                      shape=15,
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
-                      show.legend = F)+
+                      show.legend = T)+
       geom_pointrange(data=effects_CZ[effects_CZ$feature == attribute, ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature),
-                      col=wesanderson::wes_palettes$Darjeeling1[4],
-                      shape=18,
-                      size=1,
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = -1/10),
-                      show.legend = F)+
+                      show.legend = T)+
       geom_pointrange(data=effects_pooled[effects_pooled$feature == attribute, ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level),
-                      col='black',
-                      shape=1,
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
                       alpha = 1,
                       position = position_nudge(y = -1/5),
                       #size=1.3,
-                      show.legend = F)+
+                      show.legend = T)+
       ylab(attribute)+
       xlab("Effect size")+
       xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = these_labels) +
-      theme(legend.position = "none",
-           axis.text.y = element_text(size=10),
-           axis.title.y = element_text(size=12)
-           )+
-      
-      # Manually add the legend
-      annotate("point", x = 0.93, y = 0.5+5*length(these_labels)/28,
-               colour = wesanderson::wes_palettes$Darjeeling1[1], 
-               size = 3, shape=19) + # Italy
-      annotate("text", x = 0.95, y = 0.5+5*length(these_labels)/28, 
-               label = "IT", hjust = 0) +
-      
-      annotate("point", x = 0.93, y = 0.5+4*length(these_labels)/28, 
-               colour = wesanderson::wes_palettes$Darjeeling1[2], 
-               size = 3, shape=17) +  # France
-      annotate("text", x = 0.95, y = 0.5+4*length(these_labels)/28,
-               label = "FR", hjust = 0) +
-      
-      annotate("point", x = 0.93, y = 0.5+3*length(these_labels)/28, 
-               colour = wesanderson::wes_palettes$Darjeeling1[3], 
-               size = 3, shape=15) +  # Sweden
-      annotate("text", x = 0.95, y = 0.5+3*length(these_labels)/28, 
-               label = "SW", hjust = 0) +
-      
-      annotate("point", x = 0.93, y = 0.5+2*length(these_labels)/28,
-               colour = wesanderson::wes_palettes$Darjeeling1[4], 
-               size = 3, shape=18) +  # Czech Republic
-      annotate("text", x = 0.95, y = 0.5+2*length(these_labels)/28, 
-               label = "CZ", hjust = 0)+ 
+      scale_y_discrete(limits = these_labels)+
+      scale_color_manual(
+        values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                   "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                   "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                   "POOL" = 'black'),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      scale_shape_manual(
+        values = c("IT" = 19, 
+                   "FR" = 17, 
+                   "SW" = 15, 
+                   "CZ" = 18, 
+                   "POOL" = 1),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      theme(
+        legend.position = "right",  # You can change this to "top", "bottom", etc.
+        axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 12)
+      )
     
-      annotate("point", x = 0.93, y = 0.5+1*length(these_labels)/28, 
-               colour = 'black', 
-               size = 3, shape=1) +  # Pooled
-      annotate("text", x = 0.95, y = 0.5+1*length(these_labels)/28,
-               label = "POOL", hjust = 0)
-      
     
     
     v[[attribute]] = p
