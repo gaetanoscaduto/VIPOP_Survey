@@ -17,7 +17,8 @@ ggsave(paste0(output_dir,"gender.png"), width=10, height=10)
 
 
 #nb: qui la domanda nella descrizione variabile è "indica anno di nascita"
-ggplot(data, aes(x=age))+
+#Gaetano: l'ho ricodificata qui per età
+ggplot(data, aes(x=(2024-age)))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format())+
   ylab("")
@@ -84,7 +85,7 @@ for(i in tipi_variables)
     scale_y_continuous(labels = scales::percent_format())+
     ylab("")
   print(p)
-  #ggsave(paste0(output_dir, i, ".png"), width=10, height=10)
+  ggsave(paste0(output_dir, i, ".png"), width=10, height=10)
 }
 
 
@@ -158,13 +159,13 @@ ggplot(data, aes(x=nat_med_1))+
 
 ggsave(paste0(output_dir,"natmed1.png"), width=10, height=10)
 
-#!non esiste man_med, c'è mat_med!
+#!non esiste man_med! # da Gaetano: si chiama MAT med
 ggplot(data, aes(x=mat_med))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format())+
   ylab("")
 
-ggsave(paste0(output_dir,"man_med.png"), width=10, height=10)
+ggsave(paste0(output_dir,"mat_med.png"), width=10, height=10)
 
 
 #nb: not recoded
