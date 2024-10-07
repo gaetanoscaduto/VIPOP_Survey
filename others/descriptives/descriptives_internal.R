@@ -158,8 +158,8 @@ ggplot(data, aes(x=nat_med_1))+
 
 ggsave(paste0(output_dir,"natmed1.png"), width=10, height=10)
 
-#!non esiste man_med!
-ggplot(data, aes(x=man_med))+
+#!non esiste man_med, c'è mat_med!
+ggplot(data, aes(x=mat_med))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format())+
   ylab("")
