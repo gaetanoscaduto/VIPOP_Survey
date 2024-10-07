@@ -1,7 +1,7 @@
 library(rio)
 library(dplyr)
 
-data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
+#data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
 data = import("/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/GitHub/VIPOP_Survey/demo_data.sav")
 
 
@@ -354,9 +354,94 @@ for(var in cpd_ideo_names)
 } 
 
 
+# - interest/exposure variables (recodifica levels nomi abbreviati e aggiunta dicotomiche)
 
-
+#sns_use - recode
 table(data$sns_use)
+
+data = data |>
+  mutate(sns_use_rec = recode(sns_use,
+                              "1" = "nev_hardev",
+                              "2" = "monthly",
+                              "3" = "weekly",
+                              "4" = "daily",
+                              "5" = "sev_aday",
+         ) 
+  )
+
+table(data$sns_use_rec)
+
+#sns_use - dicotomica
+data = data |>
+  mutate(sns_use_dummy = recode(sns_use,
+                              "1" = "rarely",
+                              "2" = "rarely",
+                              "3" = "rarely",
+                              "4" = "often",
+                              "5" = "often",
+  ) 
+  )
+
+table(data$sns_use_dummy)
+##
+
+#interest - recode
+table(data$interest)
+
+data = data |>
+  mutate(interest_rec = recode(interest,
+                              "1" = "not_all",
+                              "2" = "little",
+                              "3" = "nolitlot",
+                              "4" = "quite",
+                              "5" = "very",
+  ) 
+  )
+
+table(data$interest_rec)
+
+#interest - dicotomica
+data = data |>
+  mutate(interest_dummy = recode(interest,
+                               "1" = "no_interest",
+                               "2" = "no_interest",
+                               "3" = "no_interest",
+                               "4" = "yes_interest",
+                               "5" = "yes_interest",
+  ) 
+  )
+##
+
+#exposure - recode
+table(data$exposure)
+
+data = data |>
+  mutate(exposure_rec = recode(exposure,
+                               "1" = "never",
+                               "2" = "rarely",
+                               "3" = "less10min",
+                               "4" = "10_30min",
+                               "5" = "30min_1hr",
+                               "6" = "1_2hr",
+                               "7" = "more2hr")
+
+  )
+
+table(data$exposure_rec)
+
+#exposure - dicotomica
+data = data |>
+  mutate(exposure_dummy = recode(exposure,
+                               "1" = "less10min",
+                               "2" = "less10min",
+                               "3" = "less10min",
+                               "4" = "more10min",
+                               "5" = "more10min",
+                               "6" = "more10min",
+                               "7" = "more10min")
+         
+  )
+##
 
 
 #ricodificare le variabili del classic conjoint design
@@ -552,6 +637,10 @@ data <- data %>%
   rename_with(~ change, starts_with("populism_") & !ends_with("REC"))
 
 names(data)[which(grepl("populism",names(data)))]
+
+
+
+
 
 export(data, "data_recoded.RDS")
 export(data, "data_recoded.dta")
