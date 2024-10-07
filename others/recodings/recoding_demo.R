@@ -2,6 +2,7 @@ library(rio)
 library(dplyr)
 
 data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
+data = import("/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/GitHub/VIPOP_Survey/demo_data.sav")
 
 
 #View(data)
