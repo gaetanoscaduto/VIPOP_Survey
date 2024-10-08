@@ -146,6 +146,72 @@ draw_plot_effects_bycountry = function(effects_pooled,
   return(v)
 }
 
+draw_interaction_effects_bycountry = function(effects){
+  
+  effects_IT= effects |> filter(country=="IT")
+  effects_FR= effects |> filter(country=="FR")
+  effects_SW= effects |> filter(country=="SW")
+  effects_CZ= effects |> filter(country=="CZ")
+  effects_POOL= effects |> filter(country=="POOL")
+  
+
+    
+  p=ggplot()+
+    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_pointrange(data=effects_IT, aes(x=estimate, xmin=lower, xmax=upper,
+                        y=level, col="IT", shape="IT"),
+                    alpha = 1,
+                    position = position_nudge(y = 1/5),
+                    show.legend = T)+
+    geom_pointrange(data=effects_FR, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="FR", shape="FR"),
+                    alpha = 1,
+                    position = position_nudge(y = 1/10),
+                    show.legend = T)+
+    geom_pointrange(data=effects_SW, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="SW", shape="SW"),
+                    alpha = 1,
+                    position = position_nudge(y =0),
+                    show.legend = T)+
+    geom_pointrange(data=effects_CZ, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="CZ", shape="CZ"),
+                    alpha = 1,
+                    position = position_nudge(y = -1/10),
+                    show.legend = T)+
+    geom_pointrange(data=effects_POOL, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="POOL", shape="POOL"),
+                    alpha = 1,
+                    position = position_nudge(y = -1/5),
+                    show.legend = T)+
+    labs(y="",x="Marginal Mean")+
+    xlim(-0.1,1.1)+
+    scale_color_manual(
+      values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                 "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                 "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                 "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                 "POOL" = 'black'),
+      name = "Country",
+      limits = c("IT", "FR", "SW", "CZ", "POOL")
+    ) +
+    scale_shape_manual(
+      values = c("IT" = 19, 
+                 "FR" = 17, 
+                 "SW" = 15, 
+                 "CZ" = 18, 
+                 "POOL" = 1),
+      name = "Country",
+      limits = c("IT", "FR", "SW", "CZ", "POOL")
+    ) +
+    theme(
+      legend.position = "right",  # You can change this to "top", "bottom", etc.
+      axis.text.y = element_text(size = 10),
+      axis.title.y = element_text(size = 12)
+    )
+  
+  return(p)
+}
+
 
 
 
@@ -295,3 +361,111 @@ for(attribute in unique(attributes))
          width = 6)
   
 }
+
+
+
+
+#######################
+##### ACIES
+#####################
+
+subdir = "Interactions/"
+
+##### ACIE of Sociodemos
+
+data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep =" ")
+
+formula_interaction_rw = vcd_chosen_rw ~ interacted_sociodemos
+
+
+effects <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm",
+     by=~country)
+
+effects_pooled <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm")
+
+effects_pooled$country = "POOL"
+effects_pooled$BY = "POOL"
+
+effects=rbind(effects, effects_pooled)
+p = draw_interaction_effects_bycountry(effects)
+
+p
+
+ggsave(paste0(output_wd,"estimations/", subdir,"interacted_sociodemos_bycountry.png"), 
+       p, 
+       height = 12, 
+       width = 8)
+
+
+
+##### ACIE of the cultural dimensions
+
+
+data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
+
+formula_interaction_rw = vcd_chosen_rw ~ interacted_cultural
+
+effects <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm",
+     by=~country)
+
+effects_pooled <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm")
+
+effects_pooled$country = "POOL"
+effects_pooled$BY = "POOL"
+
+effects=rbind(effects, effects_pooled)
+p = draw_interaction_effects_bycountry(effects)
+
+p
+
+ggsave(paste0(output_wd,"estimations/", subdir,"interacted_cultural_bycountry.png"), 
+       p, 
+       height = 12, 
+       width = 8)
+
+
+#####  ACIE of the political dimensions
+
+
+data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep =" ")
+
+formula_interaction_rw = vcd_chosen_rw ~ interacted_political
+
+effects <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm",
+     by=~country)
+
+effects_pooled <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm")
+
+effects_pooled$country = "POOL"
+effects_pooled$BY = "POOL"
+
+effects=rbind(effects, effects_pooled)
+p = draw_interaction_effects_bycountry(effects)
+
+p
+
+ggsave(paste0(output_wd,"estimations/", subdir,"interacted_political_bycountry.png"), 
+       p, 
+       height = 12, 
+       width = 8)
+
+
+

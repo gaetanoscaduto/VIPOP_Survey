@@ -89,6 +89,24 @@ v=list()
 
 
 
+
+draw_interaction_effects = function(effects){
+  
+  p=ggplot(effects)+
+    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                        y=level, col=feature))+
+    labs(y="",x="Marginal Mean")+
+    xlim(-0.1,1.1)+
+    theme(legend.position = "none",
+          axis.text.y = element_text(size=10),
+          axis.title.y = element_text(size=12))
+  
+  return(p)
+}
+
+
+
 full_analysis = function(data,
                          formula, #the conjoint formula
                          estimator=c("mm","amce"), #marginal means and amces
@@ -208,3 +226,76 @@ full_analysis(data,
               formula_rw,
               "amce",
               subdir)
+
+##### ACIE of Sociodemos
+
+
+data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep =" ")
+
+formula_interaction_rw = vcd_chosen_rw ~ interacted_sociodemos
+
+subdir = "Interactions/"
+
+effects <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm")
+
+p = draw_interaction_effects(effects)
+
+p
+
+ggsave(paste0(output_wd,"estimations/", subdir,"interacted_sociodemos_singlecountry.png"), 
+       p, 
+       height = 10, 
+       width = 10)
+
+
+
+##### ACIE of the cultural dimensions
+
+
+data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
+
+formula_interaction_rw = vcd_chosen_rw ~ interacted_cultural
+
+subdir = "Interactions/"
+
+effects <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm")
+
+p = draw_interaction_effects(effects)
+
+p
+
+ggsave(paste0(output_wd,"estimations/", subdir,"interacted_cultural_singlecountry.png"), 
+       p, 
+       height = 10, 
+       width = 10)
+
+
+
+#####  ACIE of the political dimensions
+
+
+data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep =" ")
+
+formula_interaction_rw = vcd_chosen_rw ~ interacted_political
+
+subdir = "Interactions/"
+
+effects <- data |>
+  cj(formula_interaction_rw, 
+     id = ~respid,
+     estimate = "mm")
+
+p = draw_interaction_effects(effects)
+
+p
+
+ggsave(paste0(output_wd,"estimations/", subdir,"interacted_political_singlecountry.png"), 
+       p, 
+       height = 10, 
+       width = 10)
