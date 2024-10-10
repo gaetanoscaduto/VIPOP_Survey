@@ -13,7 +13,8 @@ pacman::p_load(
   MASS, cjoint, corrplot, dplyr, 
   forcats, ggplot2, gt, gtools, 
   gtsummary, margins, openxlsx, 
-  patchwork, rio, texreg, tools
+  patchwork, rio, texreg, tools, 
+  lme4, ggeffects
 )
 
 #############################################################
@@ -274,20 +275,21 @@ full_analysis_bycountry = function(data,
 
 full_match_effects_bycountry = function(data, 
                               formula, 
-                              exparm = c("natural", "mediated")){
+                              exparm){
   
   
   # exparm="natural"
   # formula=formula_natural_nmatches
   # country="IT"
-  
-  exparm=match.arg(exparm)
+
+  # exparm=match.arg(exparm)
   
   full_df = data.frame()
   for(country in c("IT", "FR","SW","CZ", "POOL"))
   {
     if(country != "POOL")
     {
+       
       filtered_data = data |>
         filter(country == country & cpd_exparm == exparm)
     }
@@ -308,16 +310,14 @@ full_match_effects_bycountry = function(data,
                    family = binomial)
     
     
-    effect = effect("cpd_n_matches", 
-                    model,
-                    xlevels = 1+lengths(gregexpr("\\+", as.character(formula)[3])))
+    predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
     
     # Convert effect object to a data frame
     effect_df <- data.frame(
-      x = effect$x[[1]],  # The levels of the predictor
-      fit = effect$fit,   # Fitted values (predicted)
-      lower = effect$lower, # Lower bound of confidence intervals
-      upper = effect$upper  # Upper bound of confidence intervals
+      x = predictions$x,  # The levels of the predictor
+      fit = predictions$predicted,   # Fitted values (predicted)
+      lower = predictions$conf.low, # Lower bound of confidence intervals
+      upper = predictions$conf.high  # Upper bound of confidence intervals
     )
     
     effect_df$country = country

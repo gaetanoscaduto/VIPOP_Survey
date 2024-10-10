@@ -14,7 +14,7 @@ pacman::p_load(
   forcats, ggplot2, gt, gtools, 
   gtsummary, margins, openxlsx, 
   patchwork, rio, texreg, tools,
-  lme4, effects
+  lme4, ggeffects
 )
 
 #############################################################
@@ -199,10 +199,6 @@ full_match_effects = function(data,
   
   filtered_data = data[data$cpd_exparm == exparm, ]
   
-  if(!"respid" %in% colnames(filtered_data)) {
-    stop("Error: 'respid' column not found in the filtered dataset.")
-  }
-  
   filtered_data$respid = as.factor(filtered_data$respid)
 
   
@@ -215,17 +211,15 @@ full_match_effects = function(data,
                  data = filtered_data,
                  family = binomial)
   
-  
-  effect = effect("cpd_n_matches", 
-                      model,
-                      xlevels = 1+lengths(gregexpr("\\+", as.character(formula)[3])))
+  predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
+
   
   # Convert effect object to a data frame
   effect_df <- data.frame(
-    x = effect$x[[1]],  # The levels of the predictor
-    fit = effect$fit,   # Fitted values (predicted)
-    lower = effect$lower, # Lower bound of confidence intervals
-    upper = effect$upper  # Upper bound of confidence intervals
+    x = predictions$x,  # The levels of the predictor
+    fit = predictions$predicted,   # Fitted values (predicted)
+    lower = predictions$conf.low, # Lower bound of confidence intervals
+    upper = predictions$conf.high  # Upper bound of confidence intervals
   )
   
   # Create caterpillar plot
@@ -570,10 +564,12 @@ subdir = "MatchesEffects/"
 #now i call the function to draw the effects in the model with the actual controls
 
 full_match_effects(data,
-                   formula_natural_nmatches, 
+                   formula_natural_nmatches,
                    exparm="natural")
 
-full_match_effects(data, 
-                   formula_mediated_nmatches, 
+
+
+full_match_effects(data,
+                   formula_mediated_nmatches,
                    "mediated")
 
