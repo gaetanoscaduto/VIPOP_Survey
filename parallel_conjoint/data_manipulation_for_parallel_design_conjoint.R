@@ -240,6 +240,16 @@ for(i in 1:ncol(cjdata))
 }
 
 
+# creation of the variable expressing the number of matches in terms of attribute levels
+
+cjdata$cpd_n_matches = NA
+for(i in 1:nrow(cjdata))
+{
+  cjdata$cpd_n_matches[i] = sum(grepl("_match", unlist(cjdata[i, grepl("cpd_match", names(cjdata))]))) 
+}
+
+
+
 #very rough visual randomization check
 # 
 # for (i in 4:ncol(data)) {

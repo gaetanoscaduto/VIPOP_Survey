@@ -13,7 +13,8 @@ pacman::p_load(
   MASS, cjoint, corrplot, dplyr, 
   forcats, ggplot2, gt, gtools, 
   gtsummary, margins, openxlsx, 
-  patchwork, rio, texreg, tools
+  patchwork, rio, texreg, tools,
+  lme4, effects
 )
 
 #############################################################
@@ -182,6 +183,70 @@ full_analysis = function(data,
 
 
 
+#function to draw and save the plots related to the effect of the number of matches
+# (regardless of the actual attribute displayed) into the probaility of 
+#selecting someone as their conversation partners (with and without politics,
+#depending on the experimental arm selected)
+full_match_effects = function(data, 
+                              formula, 
+                              exparm = c("natural", "mediated")){
+  
+  exparm=match.arg(exparm)
+  
+   # exparm="natural"
+   # formula=formula_natural_nmatches
+   # 
+  
+  filtered_data = data[data$cpd_exparm == exparm, ]
+  
+  if(!"respid" %in% colnames(filtered_data)) {
+    stop("Error: 'respid' column not found in the filtered dataset.")
+  }
+  
+  filtered_data$respid = as.factor(filtered_data$respid)
+
+  
+  
+  model =  glmer(cpd_chosen ~ cpd_n_matches +
+                   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+                   cpd_consc + cpd_ope +
+                   cpd_diet + cpd_animal + cpd_holiday + 
+                   (1 | respid),  # Random intercept for each respondent
+                 data = filtered_data,
+                 family = binomial)
+  
+  
+  effect = effect("cpd_n_matches", 
+                      model,
+                      xlevels = 1+lengths(gregexpr("\\+", as.character(formula)[3])))
+  
+  # Convert effect object to a data frame
+  effect_df <- data.frame(
+    x = effect$x[[1]],  # The levels of the predictor
+    fit = effect$fit,   # Fitted values (predicted)
+    lower = effect$lower, # Lower bound of confidence intervals
+    upper = effect$upper  # Upper bound of confidence intervals
+  )
+  
+  # Create caterpillar plot
+  p = ggplot(effect_df, aes(x = x, y = fit)) +
+    geom_point() +  # Add points for the fitted values
+    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +  # Add error bars
+    labs(
+      x = "Number of attribute matches",
+      y = "Marginal effect on the probability of choosing the profile",
+      title = ""
+    )
+  
+  ggsave(paste0(output_wd,"estimations/", 
+                subdir,"singlecountry_", exparm, ".png"), 
+         p, 
+         height = 10, 
+         width = 10)
+}
+
+
+
 
 
 #Our categories of apolitical traits
@@ -251,6 +316,18 @@ formula_nominal = cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel
   cpd_consc + cpd_ope +
   cpd_diet + cpd_animal + cpd_holiday
 
+
+
+formula_natural_nmatches = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday
+
+formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday+
+  cpd_ideology
 
 #############################################################
 
@@ -483,5 +560,20 @@ full_analysis(data,
 
 
 
-### Analises on the effects of multiple matches
+### Analyses on the effects of multiple matches
+
+subdir = "MatchesEffects/"
+#model with just the number of matches predicting the probability of being chosen
+# summary(glm(data$cpd_chosen~data$cpd_n_matches, family = 
+#               "binomial"))
+
+#now i call the function to draw the effects in the model with the actual controls
+
+full_match_effects(data,
+                   formula_natural_nmatches, 
+                   exparm="natural")
+
+full_match_effects(data, 
+                   formula_mediated_nmatches, 
+                   "mediated")
 
