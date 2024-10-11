@@ -84,7 +84,7 @@ ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomat
        p, height = 12, width = 8)
 
 
-#### Checking whether there is a preference for the profile shone to the right
+#### Checking whether there is a preference for the profile shown to the right
 
 data$vcd_profile_number = as.factor(data$vcd_profile_number)
 

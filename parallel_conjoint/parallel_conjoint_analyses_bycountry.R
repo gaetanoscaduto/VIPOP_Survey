@@ -289,17 +289,22 @@ full_match_effects_bycountry = function(data,
   {
     if(country != "POOL")
     {
-       
+      #filter the data by country and experimental arm 
       filtered_data = data |>
         filter(country == country & cpd_exparm == exparm)
+      
     }
     else
     {
+      #filter the data by experimental arm (I want the pooled data)
       filtered_data = data |>
         filter(cpd_exparm == exparm)
     }
     
+    #make sure respid is a factor
     filtered_data$respid = as.factor(filtered_data$respid)
+    
+    #I fit a multilevel model (random effects with respID)
     
     model =  glmer(cpd_chosen ~ cpd_n_matches +
                      cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
@@ -309,10 +314,11 @@ full_match_effects_bycountry = function(data,
                    data = filtered_data,
                    family = binomial)
     
-    
+    #using the library ggeffects I make the prediction for the different
+    #values of cpd_n_matches when the other variables are in the reference category
     predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
     
-    # Convert effect object to a data frame
+    # Convert predictions object to a data frame
     effect_df <- data.frame(
       x = predictions$x,  # The levels of the predictor
       fit = predictions$predicted,   # Fitted values (predicted)
@@ -320,8 +326,11 @@ full_match_effects_bycountry = function(data,
       upper = predictions$conf.high  # Upper bound of confidence intervals
     )
     
+    #I add the country variable because then I row bind all the datasets created
+    #by the loop toghether
     effect_df$country = country
     
+    #I bind the datasets
     full_df=rbind(full_df, effect_df)
     
   }
@@ -378,6 +387,7 @@ full_match_effects_bycountry = function(data,
         axis.title.y = element_text(size = 12)
       ) 
   
+    #saving the plots
   
   ggsave(paste0(output_wd,"estimations/", 
                 subdir,"bycountry_", exparm, ".png"), 

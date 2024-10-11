@@ -88,7 +88,7 @@ ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomat
 data$ccd_profile_number = as.factor(data$ccd_profile_number)
 
 plot(cj(data, 
-        cccd_chosen_rw ~ ccd_gender+
+        ccd_chosen_rw ~ ccd_gender+
           ccd_age+ccd_religion+ccd_citysize+ccd_job+
           ccd_consc+ccd_ope+ ccd_neu+
           ccd_restaurant+ccd_transport+ccd_animal,

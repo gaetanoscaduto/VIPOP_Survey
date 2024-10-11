@@ -4,7 +4,7 @@ author:  |
   Gaetano Scaduto\inst{1}, Fedra Negri\inst{1}, and Silvia Decadri\inst{1}
 institute: |
   \inst{1}University of Milan Bicocca,
-date: "MethodsNET Conference, Louvain, October 2024"
+date: "October 2024"
 output: 
   beamer_presentation:
     theme: "default" #" PaloAlto"
@@ -32,29 +32,31 @@ knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Mi
 
 # Theory 1/2
 
--   Recent research has focused on the content and consequences of "Political inferences from apolitical cues" (Carlson & Settle, 2022; Lee, 2021; Scaduto & Negri, 2024). These studies focused on what led people to form certain partisan or ideological expectations based on information that is not explicitly political. 
+-   Recent research focused on content and consequences of "Political inferences from apolitical cues" (Carlson & Settle, 2022; Lee, 2021; Scaduto & Negri, 2024). These studies focused on what led people to form certain partisan or ideological expectations based on information that is **not explicitly political**.
 
--   Yet, these studies have focused on political inferences performed
-    -   On everyday partisans (but many studies also focused on politicians:, e.g.: Clifford 2020)
-    -   In absence of explicitly political information
-    -   In an unrealistic setting (survey experiments based on exclusively textual information)
-    
+-   Yet, these studies have often focused on political inferences performed:
+
+    -   On **everyday partisans**
+        -   But many studies also focused on politicians:, e.g.: Clifford 2020;
+    -   In **absence of explicitly political information;**
+    -   In an **unrealistic setting**
+        -   Survey experiments based on exclusively textual information, i.e. conjoint
+
 # Theory 2/2
 
 -   In this work we test whether there is a role of political inferences from apolitical cues:
-    -   Performed on politicians 
-    -   In presence of explicitly political information 
-    -   In a realistic setting 
-    
-# Research Questions
+    -   Performed on politicians
+    -   In the presence of explicitly political information
+    -   In a realistic setting
 
-- RQ 1: Are political inferences from apolitical cues still relevant for inferring politicians’ ideology when explicit political information, such as issue positions, is available?
+This leads us to the following research questions:
 
-- RQ 2: Are certain sociodemographic (gender, age, ethnicity, number of children, and occupation) or lifestyle (food and pet preferences) traits attributed to a politician perceived as associated with them being populists?
+-   **RQ1**: Are political inferences from apolitical cues still relevant for inferring politicians’ ideology when explicit political information, such as issue positions, is available?
+-   **RQ2**: Are certain sociodemographic (gender, age, ethnicity, number of children, and occupation) or lifestyle (food and pet preferences) traits attributed to a politician perceived as associated with them being populists?
 
 # Hypotheses
 
-```{r, out.width="90%"}
+```{r, out.width="100%"}
 knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/visual_conjoint_experiment/Presentation/images/hyp.png")
 ```
 
@@ -63,52 +65,50 @@ knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Mi
 ## The data collection
 
 -   Survey fielded in Italy, France, Czech Republic, and Sweden in October 2024 (Tot N=6000).
--   The data collection was conducted for the research project titled “The Visual Politics of Populism” (VIPOP).
 -   In total, N=1500 individuals per country completed a CAWI questionnaire (representative sample in terms of age, gender, region and education).
 
 # Methods: the visual conjoint experiment
 
 ## A visual conjoint approach
 
--   The technique we employ is an evolution of the classical conjoint approach.
--   The only difference is in how the stimulus is presented.
--   Participants see two pictures made from randomly extracted “visual blocks”
+-   The technique we employ is an **evolution** of the classical conjoint approach.
+-   The main difference is in **how the stimulus is presented**.
+-   Participants see **two pictures** (forced choice design) composed by randomly extracted “visual blocks”.
 -   The pictures are created to resemble realistic Instagram profiles of politicians.
 -   We chose Instagram for a series of reasons.
     -   It is one of the main platforms for online political communication (Larsson, 2021).
 
     -   Political actors behave as “influencer politicians” (Starita & Trillò, 2022), displaying aspects of their private lives, their lifestyle choices, and their “human side” (Farkas & Bene, 2021).
 
-    -   The visual-centered nature of the platform made it a natural choice to exploit the potential of this design.
+    -   The visual-centered nature of the platform: natural choice to exploit this design.
 
 # The empty template
-
 
 ```{r, out.width= '50%', fig.align='center'}
 knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/visual_conjoint_experiment/Presentation/images/template.png")
 ```
 
-
 # Conjoint experiment procedure
 
--   The profiles are generated through an R script employing the R package “magick” (Ooms, 2024).
--   Through this script, we generated 15.000 images.
--   For every conjoint task, two of these images were selected at random and shown to the respondents, keeping track of the specific features of every image to perform traditional conjoint analyses.
--   Every attribute is randomized uniformly,
-    -   Except for ethnicity, where the attribute level "White" has a probability of 0.95, "Black" of 0.05.
--   Every respondent performs 5 tasks.
-    -   For each task, the respondents are first asked:
-        -   Which of the two politicians they consider more right-wing
-        -   Which one they consider more populist.
+-   The profiles are generated through an R script employing the R package “magick” (Ooms, 2024) for image manipulation.
+-   Through this script, we generated **15.000 images per country**.
+    -   Computational time needed: around **4 seconds** per image
+-   For every conjoint task, **two of these images** were selected at random and shown to the respondents, keeping track of the specific features of every image to perform traditional conjoint analyses.
+    -   The only constraint is that the two images **should not have the same profile pictures**, for realism.
+-   Every attribute is **uniformly randomized**.
+    -   Exception: ethnicity. "White" 95%, "Black" 5%.
+-   Every respondent performs **5 tasks**.
+    -   For each task, the respondents are first asked which of the two politicians they consider **more right-wing**.
 
 # The visual attributes 1
 
 ```{r, fig.show='hold', out.width='95%'}
 knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/visual_conjoint_experiment/Presentation/images/attributes1.png")
 ```
+
 # The profile pics
 
-```{r, out.width='95%'}
+```{r, out.width='90%'}
 knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/visual_conjoint_experiment/Presentation/images/attributes2.png")
 ```
 
@@ -154,7 +154,6 @@ knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Mi
 knitr::include_graphics(c("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/visual_conjoint_experiment/Presentation/images/IT/ex1.png", "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/visual_conjoint_experiment/Presentation/images/IT/ex2.png"))
 ```
 
-
 # The filled templates: examples 2
 
 ```{r, fig.show='hold', out.width='49%'}
@@ -163,6 +162,6 @@ knitr::include_graphics(c("C:/Users/gasca/OneDrive - Università degli Studi di 
 
 # Analyses
 
-We are interested in showing how much each attribute level leads to inferring that someone is ideologically right-(or left-)wing or populist.
+We are interested in showing how much each attribute level leads to inferring that someone is ideologically right-(or left-)wing.
 
-In light of recent criticisms of the AMCE as an estimator for certain type of conjoint outcomes (Leeper et al., 2020; Ganter 2021), we will present the results relating to the dichotomous outcome with MMs and ACPs, but not with AMCEs.
+Unfortunately, our data collection has been delayed a bit, so that led us to only have very partial results for the moment, based on the pilot interviews (N=100 per country, that we pooled here).

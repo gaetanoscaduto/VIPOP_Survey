@@ -197,10 +197,10 @@ setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dotto
 output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/"
 data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd.RDS")
 
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+#data=rbind(data, data, data, data)
 
-context = "IT"
+# context = "IT"
 # context = "FR"
 # context = "SW"
 # context = "CZ"
@@ -241,3 +241,4 @@ full_analysis(data,
               "mm",
               subdir,
               continuous = T)
+

@@ -60,8 +60,10 @@ draw_plot_effects = function(effects,
     
     leftlim=ifelse(estimator!="mm", -1, 0)
     rightlim=1
+  }
+  if(x_intercept==999)
+  {
     intercept = ifelse(estimator!="mm", 0, 0.5)
-    
   }
   
 v=list()
@@ -110,7 +112,9 @@ draw_interaction_effects = function(effects){
 full_analysis = function(data,
                          formula, #the conjoint formula
                          estimator=c("mm","amce"), #marginal means and amces
-                         subdir #the subdirectory where the plots will be saved
+                         subdir,
+                         leftlim=999, 
+                         rightlim=999#the subdirectory where the plots will be saved
 ){
   
   
@@ -134,7 +138,9 @@ full_analysis = function(data,
   
   p = draw_plot_effects(effects_pooled,
                         estimator=estimator,
-                        y_labels=y_labels_plots)
+                        y_labels=y_labels_plots,
+                        leftlim,
+                        rightlim)
   
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment"),
                                  caption= toupper(estimator))
@@ -192,10 +198,10 @@ setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dotto
 output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/"
 data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_vcd.RDS")
 
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
 
-context = "IT"
+#context = "IT"
 # context = "FR"
 # context = "SW"
 # context = "CZ"
@@ -215,7 +221,9 @@ subdir = "MMs/"
 full_analysis(data,
               formula_rw,
               "mm",
-              subdir)
+              subdir,
+              leftlim = 0.3,
+              rightlim=0.7)
 
 
 ### Same as before, but with AMCes (for appendix)
@@ -299,3 +307,4 @@ ggsave(paste0(output_wd,"estimations/", subdir,"interacted_political_singlecount
        p, 
        height = 10, 
        width = 10)
+

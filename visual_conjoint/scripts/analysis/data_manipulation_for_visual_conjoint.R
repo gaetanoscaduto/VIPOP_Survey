@@ -238,7 +238,7 @@ for(i in 1:nrow(data)) #for every row in data
   }
 }
 
-table(cjdata$vcd_chosen)
+table(cjdata$vcd_chosen_rw)
 
 
 # I want to adjust the content of some cells to a more readable/correct format

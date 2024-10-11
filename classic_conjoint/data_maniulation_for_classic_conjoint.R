@@ -149,7 +149,7 @@ for(i in 1:ncol(cjdata))
 
 cjdata[, "ccd_chosen_rw"] = as.numeric(cjdata[, "ccd_chosen_rw"])-1
 cjdata[, "ccd_populism"] = as.numeric(cjdata[, "ccd_populism"])-1
-cjdata[, "ccd_continuous"] = as.numeric(cjdata[, "ccd_continuous"])
+cjdata[, "ccd_continuous"] = as.numeric(cjdata[, "ccd_continuous"])-1
 #check if everything is okay with making them all factors but the outcomes
 for(i in 1:ncol(cjdata))
 {
