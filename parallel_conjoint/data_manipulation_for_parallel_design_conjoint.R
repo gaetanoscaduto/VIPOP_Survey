@@ -134,9 +134,9 @@ for(i in 1:nrow(data)) #for every row in data
     #we set the value for the variable indicating whether the profile was chosen or not 
     #it is a dummy variable: 0 = not chosen, 1=chosen
     cjdata[this_row, "cpd_chosen"] = ifelse(cjdata[this_row, "cpd_exparm"]=="natural", 
-                                                 data[i, paste0("nat_med_", (j*k+1)%/%2)],
+                                                 data[i, paste0("nat_med_", k)],
                                                  ifelse(cjdata[this_row, "cpd_exparm"]=="mediated", 
-                                                        data[i, paste0("mat_med_", (j*k+1)%/%2)],
+                                                        data[i, paste0("mat_med_", k)],
                                                         "ERROR - missing"))
       
     # if the profile that has been chosen is the one that in this moment is in the

@@ -74,8 +74,11 @@ draw_plot_effects = function(effects,
                              y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
-                             x_intercept=999 #the vertical line to signal the difference from the insignificance
-                           ){
+                             x_intercept=999,#the vertical line to signal the difference from the insignificance
+                             for_comparison=F #If =T then the function returns the list with the plots separated 
+                             #for category. If =F it returns the already assembld plot
+                             
+                             ){
   
   estimator=match.arg(estimator)
   type=match.arg(type)
@@ -85,12 +88,18 @@ draw_plot_effects = function(effects,
   if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
     #with [-1; 1] for amces and [0, 1] for mm
   {
-    
   leftlim=ifelse(estimator!="mm", -1, 0)
   rightlim=1
-  intercept = ifelse(estimator!="mm", 0, 0.5)
-  
   }
+  if(x_intercept==999)
+  {
+    intercept = ifelse(estimator!="mm", 0, 0.5)
+  }
+  else
+  {
+    intercept = x_intercept
+  }
+  
   
   for(category in categories[1:3])
   {
@@ -103,12 +112,30 @@ draw_plot_effects = function(effects,
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
       theme(legend.position = "none")
     
+    if(for_comparison == T)
+    {
+      p= p+ 
+        theme(legend.position = "none",
+              axis.text.y = element_text(angle = 90, hjust = 1))
+    }
+    if(for_comparison==F)
+    {
+      p= p+ 
+        theme(legend.position = "none")
+    }
+    
     v[[category]] = p
     
   }
   
+  if(for_comparison == F)
+  {
   p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1)
-    
+  }
+  if(for_comparison == T)
+  {
+    p=v
+  }
   return(p)
 }
 
@@ -122,7 +149,9 @@ full_analysis = function(data,
                          estimator=c("mm","amce"), #marginal means and amces
                          arm=c("natural", "ideology_match", "ideology_mismatch"), #natural mediation arm, or manipulated mediation arm with ideological match, 
                          #or manipulated mediation arm with ideological mismatch
-                         subdir #the subdirectory where the plots will be saved
+                         subdir,
+                         leftlim=999,
+                         rightlim=999#the subdirectory where the plots will be saved
 ){
   
   
@@ -169,10 +198,12 @@ full_analysis = function(data,
                         type = type,
                         categories=categories,
                         estimator=estimator,
-                        y_labels=y_labels_plots)
+                        y_labels=y_labels_plots,
+                        leftlim=leftlim,
+                        rightlim=rightlim)
   
-  p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", type),
-                                                           caption= paste0(toupper(estimator), " s of the", arm, " mediation arm"))
+  p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
+                                                           caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
     
     ggsave(paste0(output_wd,"estimations/", subdir,"singlecountry.png"), 
            p, 
@@ -193,23 +224,30 @@ full_match_effects = function(data,
   
   exparm=match.arg(exparm)
   
-   # exparm="natural"
-   # formula=formula_natural_nmatches
-   # 
-  
-  filtered_data = data[data$cpd_exparm == exparm, ]
-  
-  filtered_data$respid = as.factor(filtered_data$respid)
+   exparm="natural"
+   formula=formula_natural_nmatches
 
   
+  filtered_data = data |>
+    filter(cpd_exparm == exparm)|> 
+    select(cpd_chosen, cpd_n_matches,
+           cpd_match_gender, cpd_match_age, cpd_match_educ, cpd_match_regionfeel, 
+           cpd_match_consc, cpd_match_ope,
+           cpd_match_diet, cpd_match_animal, cpd_match_holiday,
+           respid)
+  
+  
+  filtered_data$respid = as.factor(filtered_data$respid)
+  typeof(data$cpd_chosen)
+  typeof(filtered_data$respid)
   
   model =  glmer(cpd_chosen ~ cpd_n_matches +
-                   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-                   cpd_consc + cpd_ope +
-                   cpd_diet + cpd_animal + cpd_holiday + 
-                   (1 | respid),  # Random intercept for each respondent
+                  cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
+                  cpd_match_consc + cpd_match_ope +
+                  cpd_match_diet + cpd_match_animal + cpd_match_holiday +
+                  (cpd_n_matches | respid),  # Random intercept for each respondent
                  data = filtered_data,
-                 family = binomial)
+                 family = binomial(link="logit"))
   
   predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
 
@@ -237,6 +275,133 @@ full_match_effects = function(data,
          p, 
          height = 10, 
          width = 10)
+}
+
+
+compare_effects = function(data,
+                           formula, 
+                           type=c("match", "nominal"), #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                           estimator=c("mm","amce"), #marginal means and amces
+                           arm=c("ideology_match", "ideology_mismatch"), #manipulated mediation arm with ideological match, 
+                           #or manipulated mediation arm with ideological mismatch
+                           subdir,
+                           leftlim=999,
+                           rightlim=999,
+                           x_intercept=999#the subdirectory where the plots will be saved
+){
+  
+  
+  ###### This function ends up drawing the graphs with the three effects compared like
+  #Acharya et al
+
+  
+  type=match.arg(type)
+  estimator=match.arg(estimator)
+  arm=match.arg(arm)
+  
+  ### Compute the ATEs
+  ates <- data |>
+      filter(cpd_exparm2 == "natural") |>
+      cj(formula, id = ~respid,
+         estimate = estimator)
+  
+  ###Compute the ACDEs
+  acdes <- data |>
+    filter(cpd_exparm2 == arm) |>
+    cj(formula, id = ~respid,
+       estimate = estimator)
+  
+  ### Compute the EEs
+  estimator= paste0(estimator, "_differences")
+  
+  ees = data |>
+    filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
+    cj(formula_match,
+       id = ~respid,
+       estimate = estimator,
+       by = ~cpd_exparm)
+  
+  ##Set the categories and levels for the three datasets
+ 
+  ates = set_categories_and_levels(ates,
+                                   type,
+                                   nominal_attributes=nominal_attributes)
+  
+  acdes = set_categories_and_levels(acdes,
+                                   type,
+                                   nominal_attributes=nominal_attributes)
+  
+  ees = set_categories_and_levels(ees,
+                                   type,
+                                   nominal_attributes=nominal_attributes)
+  
+  #Call draw effects with the for_comparison argument ==T, which means that it will return
+  #the vector separately, not the already assembled immage
+
+  #browser()
+  
+  x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
+  
+  
+  pates = draw_plot_effects(ates,
+                        type = type,
+                        categories=categories,
+                        estimator=estimator,
+                        y_labels=y_labels_plots,
+                        leftlim=leftlim,
+                        rightlim=rightlim,
+                        x_intercept = x_intercept,
+                        for_comparison = T)
+  
+  pacdes = draw_plot_effects(acdes,
+                            type = type,
+                            categories=categories,
+                            estimator=estimator,
+                            y_labels=y_labels_plots,
+                            leftlim=leftlim,
+                            rightlim=rightlim,
+                            x_intercept = x_intercept,
+                            for_comparison = T)
+  
+  pees = draw_plot_effects(ees,
+                            type = type,
+                            categories=categories,
+                            estimator=estimator,
+                            y_labels=y_labels_plots,
+                            leftlim=-0.25,
+                            rightlim=0.25,
+                            x_intercept = 0,
+                            for_comparison = T)
+  
+  #Now I assemble three plots (for each category) so that they are easy to compare
+  
+  p_socio = pates[["Sociodemographics"]]+pacdes[["Sociodemographics"]]+pees[["Sociodemographics"]]
+  
+  p_psycho = pates[["Psychological"]]+pacdes[["Psychological"]]+pees[["Psychological"]]
+  
+  p_lifestyle = pates[["Lifestyle"]]+pacdes[["Lifestyle"]]+pees[["Lifestyle"]]
+  
+  
+  #I save the three plots
+  
+  # p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
+  #                                caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
+  # 
+  ggsave(paste0(output_wd,"estimations/", subdir,"socio_singlecountry.png"), 
+         p_socio, 
+         height = 10, 
+         width = 10)
+  
+  ggsave(paste0(output_wd,"estimations/", subdir,"psycho_singlecountry.png"), 
+         p_psycho, 
+         height = 10, 
+         width = 10)
+  
+  ggsave(paste0(output_wd,"estimations/", subdir,"lifestyle_singlecountry.png"), 
+         p_lifestyle, 
+         height = 10, 
+         width = 10)
+  
 }
 
 
@@ -331,8 +496,8 @@ setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dotto
 output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/conjoint_parallel_design/"
 data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd.RDS")
 
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
 
 context = "IT"
 # context = "FR"
@@ -356,7 +521,6 @@ context = "IT"
 #information is given to the respondent, whether through political inferences or not.
 
 subdir = "ATEs/match/MMs/"
-
 # formula=formula_match
 # effect = "ATEs"
 # type="match"
@@ -369,7 +533,9 @@ full_analysis(data,
               "match",
               "mm",
               "natural",
-              subdir)
+              subdir,
+              leftlim=0.35,
+              rightlim=0.65)
 
 
 ### Same as before, but with AMCes (for appendix)
@@ -394,7 +560,9 @@ full_analysis(data,
               "nominal",
               "mm",
               "natural",
-              subdir)
+              subdir,
+              leftlim=0.35,
+              rightlim=0.65)
 
 
 #same but with amce
@@ -569,7 +737,48 @@ full_match_effects(data,
 
 
 
+#export(filtered_data, "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/upload.csv")
+
+
+
 full_match_effects(data,
                    formula_mediated_nmatches,
                    "mediated")
 
+
+
+#########################################
+### Now I want to have the three effects close to each other. How do I do that?
+
+subdir="CompareEffects/Ideology_match/"
+
+
+
+compare_effects(data,formula_match,
+                type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                estimator="mm", #marginal means and amces
+                arm="ideology_match", #manipulated mediation arm with ideological match, 
+                #or manipulated mediation arm with ideological mismatch
+                subdir,#the subdirectory where the plots will be saved
+                leftlim=0.3,
+                rightlim=0.7#,
+                #x_intercept=0.5
+                )
+
+
+
+subdir="CompareEffects/Ideology_mismatch/"
+
+
+
+compare_effects(data,formula_match,
+                type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                estimator="mm", #marginal means and amces
+                arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
+                #or manipulated mediation arm with ideological mismatch
+                subdir,#the subdirectory where the plots will be saved
+                leftlim=0.3,
+                rightlim=0.7#,
+                #x_intercept=0.5
+)
+  
