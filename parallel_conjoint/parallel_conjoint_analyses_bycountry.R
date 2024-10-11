@@ -88,8 +88,10 @@ draw_plot_effects_bycountry = function(effects_pooled, effects_bycountry,
     
     leftlim=ifelse(estimator!="mm", -1, 0)
     rightlim=1
+  }
+  if(x_intercet==999)
+  {
     intercept = ifelse(estimator!="mm", 0, 0.5)
-    
   }
   
   effects_IT= effects_bycountry |> filter(country=="IT")
@@ -176,7 +178,9 @@ full_analysis_bycountry = function(data,
                          estimator=c("mm","amce"), #marginal means and amces
                          arm=c("natural", "ideology_match", "ideology_mismatch"), #natural mediation arm, or manipulated mediation arm with ideological match, 
                          #or manipulated mediation arm with ideological mismatch
-                         subdir #the subdirectory where the plots will be saved
+                         subdir,
+                         leftlim=999,
+                         rightlim=999#the subdirectory where the plots will be saved
                          ){
   
   
@@ -250,7 +254,9 @@ full_analysis_bycountry = function(data,
                                   type = type, 
                                   categories=categories, 
                                   estimator=estimator, 
-                                  y_labels=y_labels_plots)
+                                  y_labels=y_labels_plots,
+                                  leftlim = leftlim,
+                                  rightlim= rightlim)
   
   for(category in categories[1:3])
   {
@@ -558,7 +564,9 @@ full_analysis_bycountry(data,
               "nominal",
               "amce",
               "natural",
-              subdir)
+              subdir,
+              leftlim=0.3,
+              rightlim=0.7)
 
 
 ########################################

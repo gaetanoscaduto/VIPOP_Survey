@@ -66,6 +66,9 @@ draw_plot_effects_bycountry = function(effects_pooled,
     
     leftlim=ifelse(estimator!="mm", -1, 0)
     rightlim=1
+  }
+  if(x_intercept==999)
+  {
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
   
@@ -218,7 +221,9 @@ draw_interaction_effects_bycountry = function(effects){
 full_analysis_bycountry = function(data,
                          formula, #the conjoint formula
                          estimator=c("mm","amce"), #marginal means and amces
-                         subdir #the subdirectory where the plots will be saved
+                         subdir,
+                         leftlim=999,
+                         rightlim=999#the subdirectory where the plots will be saved
 ){
   
   
@@ -257,7 +262,9 @@ full_analysis_bycountry = function(data,
   v = draw_plot_effects_bycountry(effects_pooled,
                                   effects_bycountry,
                                   estimator=estimator,
-                                  y_labels=y_labels_plots)
+                                  y_labels=y_labels_plots,
+                                  leftlim=leftlim,
+                                  rightlim=rightlim)
   
   
   return(v)
@@ -326,7 +333,9 @@ subdir = "MMs/"
 v = full_analysis_bycountry(data,
               formula_rw,
               "mm",
-              subdir)
+              subdir,
+              leftlim=0.3,
+              rightlim=0.7)
 
 
 for(attribute in unique(attributes))
