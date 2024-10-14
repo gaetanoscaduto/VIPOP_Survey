@@ -116,7 +116,7 @@ draw_plot_effects = function(effects,
     {
       p= p+ 
         theme(legend.position = "none",
-              axis.text.y = element_text(angle = 90, hjust = 1))
+              axis.text.y = element_text(angle = 90, hjust = 0.5, vjust=0.5))
     }
     if(for_comparison==F)
     {
@@ -754,7 +754,8 @@ subdir="CompareEffects/Ideology_match/"
 
 
 
-compare_effects(data,formula_match,
+compare_effects(data,
+                formula_match,
                 type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
                 estimator="mm", #marginal means and amces
                 arm="ideology_match", #manipulated mediation arm with ideological match, 
@@ -771,7 +772,8 @@ subdir="CompareEffects/Ideology_mismatch/"
 
 
 
-compare_effects(data,formula_match,
+compare_effects(data,
+                formula_match,
                 type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
                 estimator="mm", #marginal means and amces
                 arm="ideology_mismatch", #manipulated mediation arm with ideological match, 

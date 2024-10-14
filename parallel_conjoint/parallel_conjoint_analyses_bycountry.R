@@ -274,6 +274,269 @@ full_analysis_bycountry = function(data,
 
 
 
+############
+### Function to draw lots comparing the effects of ATEs, ACDEs, and EEs.
+# It funtion similarly to draw_plot_effects_bycountry
+# in the single country script it doesnt exist since there it's only a variation 
+#of the draw_plot_effects function with the argument for_comparison = T. 
+#Here it is a function in its own right
+
+
+draw_compared_effects_bycountry = function(ates, #the dataset with the ates
+                                           #already disentangled by country+pooled
+                                           acdes, #the dataset with the acdes
+                                           #already disentangled by country+pooled
+                                           ees, #the dataset with the ees
+                                           #already disentangled by country+pooled
+                                       type=c("match", "nominal"), #"match" or "nominal" 
+                                       categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
+                                       #("sociodemo", "psycho", "lifestyle")
+                                       estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
+                                       y_labels=y_labels_plots,
+                                       leftlim=999, #the left limit of the plot
+                                       rightlim=999,#the right limit of the plot
+                                       x_intercept=999 #the vertical line to signal the difference from the insignificance
+){
+  
+  estimator=match.arg(estimator)
+  type=match.arg(type)
+  
+  x_intercept = ifelse(estimator=="mm", 0.5, 0)
+  
+  ates_list = list()
+  acdes_list = list()
+  ees_list = list()
+  
+  #draw the ATEs plots
+  for(category in categories[1:3])
+  {
+    these_labels = y_labels[[type]][[category]]
+    ates_plot = ggplot()+
+      geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+      geom_pointrange(data=ates[ates$category == category & ates$country == "IT", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/5),
+                      show.legend = T)+
+      geom_pointrange(data=ates[ates$category == category & ates$country == "FR", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/10),
+                      show.legend = T)+
+      geom_pointrange(data=ates[ates$category == category & ates$country == "SW", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
+                      alpha = 1,
+                      #size=1.3,
+                      show.legend = T)+
+      geom_pointrange(data=ates[ates$category == category & ates$country == "CZ", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = -1/10),
+                      show.legend = T)+
+      geom_pointrange(data=ates[ates$category == category & ates$country == "POOL", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+                      alpha = 1,
+                      position = position_nudge(y = -1/5),
+                      #size=1.3,
+                      show.legend = T)+
+      ylab("")+
+      xlab(category)+
+      xlim(leftlim,rightlim)+
+      scale_y_discrete(limits = rev(these_labels))+
+      scale_color_manual(
+        values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                   "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                   "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                   "POOL" = 'black'),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      scale_shape_manual(
+        values = c("IT" = 19, 
+                   "FR" = 17, 
+                   "SW" = 15, 
+                   "CZ" = 18, 
+                   "POOL" = 1),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      theme(
+        legend.position = "none",  # You can change this to "top", "bottom", etc.
+        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.title.y = element_text(size = 12)
+      )
+    
+    
+    
+    ates_list[[category]] = p
+    
+  }
+  
+  
+  #draw the acdes plots
+  for(category in categories[1:3])
+  {
+    these_labels = y_labels[[type]][[category]]
+    acdes_plot = ggplot()+
+      geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "IT", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/5),
+                      show.legend = T)+
+      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "FR", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/10),
+                      show.legend = T)+
+      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "SW", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
+                      alpha = 1,
+                      #size=1.3,
+                      show.legend = T)+
+      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "CZ", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = -1/10),
+                      show.legend = T)+
+      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "POOL", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+                      alpha = 1,
+                      position = position_nudge(y = -1/5),
+                      #size=1.3,
+                      show.legend = T)+
+      ylab("")+
+      xlab(category)+
+      xlim(leftlim,rightlim)+
+      scale_y_discrete(limits = rev(these_labels))+
+      scale_color_manual(
+        values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                   "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                   "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                   "POOL" = 'black'),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      scale_shape_manual(
+        values = c("IT" = 19, 
+                   "FR" = 17, 
+                   "SW" = 15, 
+                   "CZ" = 18, 
+                   "POOL" = 1),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      theme(
+        legend.position = "none",  # You can change this to "top", "bottom", etc.
+        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.title.y = element_text(size = 12)
+      )
+    
+    
+    
+    acdes_list[[category]] = p
+    
+  }
+  
+  
+  
+  #draw the ees plots
+  for(category in categories[1:3])
+  {
+    these_labels = y_labels[[type]][[category]]
+    ees_plot = ggplot()+
+      geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+      geom_pointrange(data=ees[ees$category == category & ees$country == "IT", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/5),
+                      show.legend = T)+
+      geom_pointrange(data=ees[ees$category == category & ees$country == "FR", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = 1/10),
+                      show.legend = T)+
+      geom_pointrange(data=ees[ees$category == category & ees$country == "SW", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
+                      alpha = 1,
+                      #size=1.3,
+                      show.legend = T)+
+      geom_pointrange(data=ees[ees$category == category & ees$country == "CZ", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
+                      alpha = 1,
+                      #size=1.3,
+                      position = position_nudge(y = -1/10),
+                      show.legend = T)+
+      geom_pointrange(data=ees[ees$category == category & ees$country == "POOL", ],
+                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+                      alpha = 1,
+                      position = position_nudge(y = -1/5),
+                      #size=1.3,
+                      show.legend = T)+
+      ylab("")+
+      xlab(category)+
+      xlim(leftlim,rightlim)+
+      scale_y_discrete(limits = rev(these_labels))+
+      scale_color_manual(
+        values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                   "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                   "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                   "POOL" = 'black'),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      scale_shape_manual(
+        values = c("IT" = 19, 
+                   "FR" = 17, 
+                   "SW" = 15, 
+                   "CZ" = 18, 
+                   "POOL" = 1),
+        name = "Country",
+        limits = c("IT", "FR", "SW", "CZ", "POOL")
+      ) +
+      theme(
+        legend.position = "none",  # You can change this to "top", "bottom", etc.
+        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.title.y = element_text(size = 12)
+      )
+    
+    
+    
+    ees_list[[category]] = p
+    
+  }
+  
+  
+  
+  #Now I make a list containing for each kind of effect the (three) plots
+  #related to that effect (the different attribute category)
+  #This list is the argument that then gets returned to the compare_effects_bycountry
+  #function 
+  
+  full_plot_list = list(ates_plots = ates_list,
+                        acdes_plots=acdes_list,
+                        ees_plots=ees_list
+                        )
+  
+  return(full_plot_list)
+}
+
+
+
+
+
+
 #function to draw and save the plots related to the effect of the number of matches
 # (regardless of the actual attribute displayed) into the probaility of 
 #selecting someone as their conversation partners (with and without politics,
@@ -401,6 +664,166 @@ full_match_effects_bycountry = function(data,
          height = 10, 
          width = 10)
 }
+
+
+
+
+
+
+
+
+
+
+
+compare_effects_bycountry = function(data,
+                           formula, 
+                           type=c("match", "nominal"), #whether we are considering 
+                           #the nominal attributes or the recoding match vs mismatch with the respondent
+                           estimator=c("mm","amce"), #marginal means and amces
+                           arm=c("ideology_match", "ideology_mismatch"), #manipulated mediation arm with ideological match, 
+                           #or manipulated mediation arm with ideological mismatch
+                           subdir,
+                           leftlim=999,
+                           rightlim=999,
+                           x_intercept=999#the subdirectory where the plots will be saved
+){
+  
+  
+  ###### This function ends up drawing the graphs with the three effects compared like
+  #Acharya et al
+  
+  
+  type=match.arg(type)
+  estimator=match.arg(estimator)
+  arm=match.arg(arm)
+  
+  ### Compute the ATEs
+  ates <- data |>
+    filter(cpd_exparm2 == "natural") |>
+    cj(formula, id = ~respid,
+       estimate = estimator,
+       by= ~country)
+  
+  ates_pooled = data |>
+    filter(cpd_exparm2 == "natural") |>
+    cj(formula, id = ~respid,
+       estimate = estimator)
+  
+  ates_pooled$country = "POOL"
+  ates_pooled$BY = "POOL"
+  
+  ates=rbind(ates, ates_pooled)
+  
+  ###Compute the ACDEs
+  acdes <- data |>
+    filter(cpd_exparm2 == arm) |>
+    cj(formula, id = ~respid,
+       estimate = estimator,
+       by = ~country)
+  
+  acdes_pooled <- data |>
+    filter(cpd_exparm2 == arm) |>
+    cj(formula, id = ~respid,
+       estimate = estimator)
+  
+  
+  acdes_pooled$country = "POOL"
+  acdes_pooled$BY = "POOL"
+  
+  
+  ### Compute the EEs
+  estimator= paste0(estimator, "_differences")
+  
+  ees = data.frame()
+  for(country in c("IT","FR","SW","CZ"))
+  {
+    ees_country = data |>
+      filter(country == country & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
+      cj(formula_match,
+         id = ~respid,
+         estimate = estimator,
+         by = ~cpd_exparm)
+    
+    ees=rbind(ees, ees_country)
+  }
+  ees_pooled = data |>
+    filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
+    cj(formula_match,
+       id = ~respid,
+       estimate = estimator,
+       by = ~cpd_exparm)
+  
+  ees_pooled$country = "POOL"
+  
+  ees = rbind(ees, ees_pooled)
+  
+  ##Set the categories and levels for the three datasets
+  
+  ates = set_categories_and_levels_bycountry(ates,
+                                   type,
+                                   nominal_attributes=nominal_attributes)
+  
+  acdes = set_categories_and_levels_bycountry(acdes,
+                                    type,
+                                    nominal_attributes=nominal_attributes)
+  
+  ees = set_categories_and_levels_bycountry(ees,
+                                  type,
+                                  nominal_attributes=nominal_attributes)
+  
+  #Call draw effects with the for_comparison argument ==T, which means that it will return
+  #the vector separately, not the already assembled immage
+  
+  #browser()
+  
+  x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
+  
+  
+  plots = draw_compared_effects_bycountry(ates,
+                                          acdes,
+                                          ees,
+                                          type = type,
+                                          categories=categories,
+                                          estimator=estimator,
+                                          y_labels=y_labels_plots,
+                                          leftlim=leftlim,
+                                          rightlim=rightlim,
+                                          x_intercept = x_intercept
+                                          )
+  pates=plots$ates_plots
+  
+  pacdes=plots$acdes_plots
+  pees=plots$ees_plots
+  #Now I assemble three plots (for each category) so that they are easy to compare
+  
+  p_socio = pates[["Sociodemographics"]]+pacdes[["Sociodemographics"]]+pees[["Sociodemographics"]]
+  
+  p_psycho = pates[["Psychological"]]+pacdes[["Psychological"]]+pees[["Psychological"]]
+  
+  p_lifestyle = pates[["Lifestyle"]]+pacdes[["Lifestyle"]]+pees[["Lifestyle"]]
+  
+  
+  #I save the three plots
+  
+
+  ggsave(paste0(output_wd,"estimations/", subdir,"socio_bycountry.png"), 
+         p_socio, 
+         height = 10, 
+         width = 10)
+  
+  ggsave(paste0(output_wd,"estimations/", subdir,"psycho_bycountry.png"), 
+         p_psycho, 
+         height = 10, 
+         width = 10)
+  
+  ggsave(paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.png"), 
+         p_lifestyle, 
+         height = 10, 
+         width = 10)
+  
+}
+
+
 
 
 
@@ -730,3 +1153,40 @@ full_match_effects_bycountry(data,
 
 
 
+
+#########################################
+### Now I want to have the three effects close to each other. How do I do that?
+
+subdir="CompareEffects/Ideology_match/"
+
+
+
+compare_effects_bycountry(data,
+                          formula_match,
+                type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                estimator="mm", #marginal means and amces
+                arm="ideology_match", #manipulated mediation arm with ideological match, 
+                #or manipulated mediation arm with ideological mismatch
+                subdir,#the subdirectory where the plots will be saved
+                leftlim=0.3,
+                rightlim=0.7#,
+                #x_intercept=0.5
+)
+
+
+
+subdir="CompareEffects/Ideology_mismatch/"
+
+
+browser()
+compare_effects_bycountry(data,
+                          formula_match,
+                type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                estimator="mm", #marginal means and amces
+                arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
+                #or manipulated mediation arm with ideological mismatch
+                subdir,#the subdirectory where the plots will be saved
+                leftlim=0.3,
+                rightlim=0.7#,
+                #x_intercept=0.5
+)
