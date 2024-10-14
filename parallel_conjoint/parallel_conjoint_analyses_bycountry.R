@@ -221,16 +221,16 @@ full_analysis_bycountry = function(data,
          by = ~cpd_exparm)
     
     effects_bycountry =data.frame()
-    for(country in c("IT", "FR", "SW", "CZ"))
+    for(context in c("IT", "FR", "SW", "CZ"))
     {
       temp_effects_bycountry <- data |>
-        filter((cpd_exparm2 == "natural" | cpd_exparm2 == arm) & country == country) |>
+        filter((cpd_exparm2 == "natural" | cpd_exparm2 == arm) & country == context) |>
         cj(formula_match,
            id = ~respid,
            estimate = estimator,
            by = ~cpd_exparm)
       
-      temp_effects_bycountry$country = country
+      temp_effects_bycountry$country = context
       
       effects_bycountry=rbind(effects_bycountry, temp_effects_bycountry)
     }
@@ -298,10 +298,12 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
   
+  ###browser()
+  
   estimator=match.arg(estimator)
   type=match.arg(type)
   
-  x_intercept = ifelse(estimator=="mm", 0.5, 0)
+  intercept = ifelse(estimator=="mm", 0.5, 0)
   
   ates_list = list()
   acdes_list = list()
@@ -372,7 +374,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     
     
     
-    ates_list[[category]] = p
+    ates_list[[category]] = ates_plot
     
   }
   
@@ -442,18 +444,18 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     
     
     
-    acdes_list[[category]] = p
+    acdes_list[[category]] = acdes_plot
     
   }
   
-  
+  #browser()
   
   #draw the ees plots
   for(category in categories[1:3])
   {
     these_labels = y_labels[[type]][[category]]
     ees_plot = ggplot()+
-      geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+      geom_vline(aes(xintercept=0), col="black", alpha=1/4)+
       geom_pointrange(data=ees[ees$category == category & ees$country == "IT", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
@@ -485,7 +487,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                       show.legend = T)+
       ylab("")+
       xlab(category)+
-      xlim(leftlim,rightlim)+
+      xlim(-0.3,0.3)+
       scale_y_discrete(limits = rev(these_labels))+
       scale_color_manual(
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
@@ -513,7 +515,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     
     
     
-    ees_list[[category]] = p
+    ees_list[[category]] = ees_plot
     
   }
   
@@ -732,17 +734,18 @@ compare_effects_bycountry = function(data,
   
   
   ### Compute the EEs
-  estimator= paste0(estimator, "_differences")
-  
+  ##browser()
   ees = data.frame()
-  for(country in c("IT","FR","SW","CZ"))
+  for(context in c("IT","FR","SW","CZ"))
   {
     ees_country = data |>
-      filter(country == country & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
+      filter(country == context & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
       cj(formula_match,
          id = ~respid,
-         estimate = estimator,
+         estimate = paste0(estimator, "_differences"),
          by = ~cpd_exparm)
+    
+    ees_country$country = context
     
     ees=rbind(ees, ees_country)
   }
@@ -750,12 +753,15 @@ compare_effects_bycountry = function(data,
     filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
     cj(formula_match,
        id = ~respid,
-       estimate = estimator,
+       estimate = paste0(estimator, "_differences"),
        by = ~cpd_exparm)
   
   ees_pooled$country = "POOL"
+
+  ####browser()
   
   ees = rbind(ees, ees_pooled)
+  
   
   ##Set the categories and levels for the three datasets
   
@@ -774,10 +780,12 @@ compare_effects_bycountry = function(data,
   #Call draw effects with the for_comparison argument ==T, which means that it will return
   #the vector separately, not the already assembled immage
   
-  #browser()
+  ####browser()
   
   x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
   
+  
+  ###browser()
   
   plots = draw_compared_effects_bycountry(ates,
                                           acdes,
@@ -1160,33 +1168,32 @@ full_match_effects_bycountry(data,
 subdir="CompareEffects/Ideology_match/"
 
 
-
 compare_effects_bycountry(data,
                           formula_match,
-                type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                estimator="mm", #marginal means and amces
-                arm="ideology_match", #manipulated mediation arm with ideological match, 
-                #or manipulated mediation arm with ideological mismatch
-                subdir,#the subdirectory where the plots will be saved
-                leftlim=0.3,
-                rightlim=0.7#,
-                #x_intercept=0.5
-)
+                          type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                          estimator="mm", #marginal means and amces
+                          arm="ideology_match", #manipulated mediation arm with ideological match, 
+                          #or manipulated mediation arm with ideological mismatch
+                          subdir,#the subdirectory where the plots will be saved
+                          leftlim=0,
+                          rightlim=1#,
+                          #x_intercept=0.5
+                          )
 
 
 
 subdir="CompareEffects/Ideology_mismatch/"
 
 
-browser()
+###browser()
 compare_effects_bycountry(data,
                           formula_match,
-                type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                estimator="mm", #marginal means and amces
-                arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
-                #or manipulated mediation arm with ideological mismatch
-                subdir,#the subdirectory where the plots will be saved
-                leftlim=0.3,
-                rightlim=0.7#,
-                #x_intercept=0.5
-)
+                          type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                          estimator="mm", #marginal means and amces
+                          arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
+                          #or manipulated mediation arm with ideological mismatch
+                          subdir,#the subdirectory where the plots will be saved
+                          leftlim=0.3,
+                          rightlim=0.7#,
+                          #x_intercept=0.5
+                          )

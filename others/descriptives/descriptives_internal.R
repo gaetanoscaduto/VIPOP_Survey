@@ -140,7 +140,9 @@ ggplot(data, aes(x=socialposition))+
 
 ggsave(paste0(output_dir, country, "/", "socialposition.png"), width=10, height=10)
 
+ "default","1","2","3", "4","5","6","7","8","9","10","notplaced"   
 
+ data$ideology = factor(data$ideology, levels = c("default","1","2","3", "4","5","6","7","8","9","10","notplaced"))
 ggplot(data, aes(x=ideology))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+

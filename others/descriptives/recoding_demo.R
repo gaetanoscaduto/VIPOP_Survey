@@ -302,17 +302,17 @@ for(var in cpd_ope_names)
 table(data$ideology)
 data = data |>
   mutate(ideology = recode(ideology,
-                                 "0" = "0",
-                                 "1" = "1",
-                                 "2" = "2",
-                                 "3" = "3",
-                                 "4" = "4",
-                                 "5" = "5",
-                                 "6" = "6",
-                                 "7" = "7",
-                                 "8" = "8",
-                                 "9" = "9",
-                                 "10" = "10",
+                                 "1" = "0",
+                                 "2" = "1",
+                                 "3" = "2",
+                                 "4" = "3",
+                                 "5" = "4",
+                                 "6" = "5",
+                                 "7" = "6",
+                                 "8" = "7",
+                                 "9" = "8",
+                                 "10" = "9",
+                                 "11" = "10",
                                  "13" = "notplaced",
                                  .missing = "NA",
                                  .default = "default"
@@ -413,7 +413,7 @@ change
 which(grepl("tipi_",names(data)))
 
 data <- data %>%
-  rename_with(~ change, starts_with("tipi_") & !ends_with("REC"))
+  rename_with(~change, starts_with("tipi_") & !ends_with("REC"))
 
 names(data)[15:24]
 
@@ -467,7 +467,7 @@ change
 which(grepl("populism",names(data)))
 
 data <- data %>%
-  rename_with(~ change, starts_with("populism_") & !ends_with("REC"))
+  rename_with(~ change, starts_with("populism_") & !ends_with("open"))
 
 names(data)[which(grepl("populism",names(data)))]
 
