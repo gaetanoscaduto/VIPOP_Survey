@@ -177,13 +177,12 @@ full_analysis = function(data,
   }
   if(effect== "EEs")
   {
-    estimator= paste0(estimator, "_differences")
-    
+
     effects_pooled <- data |>
       filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
       cj(formula_match,
          id = ~respid,
-         estimate = estimator,
+         estimate =  paste0(estimator, "_differences"),
          by = ~cpd_exparm)
     
   }
@@ -312,13 +311,12 @@ compare_effects = function(data,
        estimate = estimator)
   
   ### Compute the EEs
-  estimator= paste0(estimator, "_differences")
   
   ees = data |>
     filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
     cj(formula_match,
        id = ~respid,
-       estimate = estimator,
+       estimate = paste0(estimator, "_differences"),
        by = ~cpd_exparm)
   
   ##Set the categories and levels for the three datasets

@@ -89,7 +89,7 @@ draw_plot_effects_bycountry = function(effects_pooled, effects_bycountry,
     leftlim=ifelse(estimator!="mm", -1, 0)
     rightlim=1
   }
-  if(x_intercet==999)
+  if(x_intercept==999)
   {
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
@@ -298,7 +298,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
   
-  ###browser()
+  ####browser()
   
   estimator=match.arg(estimator)
   type=match.arg(type)
@@ -448,7 +448,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     
   }
   
-  #browser()
+  ##browser()
   
   #draw the ees plots
   for(category in categories[1:3])
@@ -719,22 +719,28 @@ compare_effects_bycountry = function(data,
   ###Compute the ACDEs
   acdes <- data |>
     filter(cpd_exparm2 == arm) |>
-    cj(formula, id = ~respid,
+    cj(formula, 
+       id = ~respid,
        estimate = estimator,
        by = ~country)
   
+  ##browser()
+  
   acdes_pooled <- data |>
     filter(cpd_exparm2 == arm) |>
-    cj(formula, id = ~respid,
+    cj(formula, 
+       id = ~respid,
        estimate = estimator)
   
   
   acdes_pooled$country = "POOL"
   acdes_pooled$BY = "POOL"
   
+  acdes=rbind(acdes, acdes_pooled)
+  
   
   ### Compute the EEs
-  ##browser()
+  ###browser()
   ees = data.frame()
   for(context in c("IT","FR","SW","CZ"))
   {
@@ -758,7 +764,7 @@ compare_effects_bycountry = function(data,
   
   ees_pooled$country = "POOL"
 
-  ####browser()
+  #####browser()
   
   ees = rbind(ees, ees_pooled)
   
@@ -780,12 +786,12 @@ compare_effects_bycountry = function(data,
   #Call draw effects with the for_comparison argument ==T, which means that it will return
   #the vector separately, not the already assembled immage
   
-  ####browser()
+  #####browser()
   
   x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
   
   
-  ###browser()
+  ####browser()
   
   plots = draw_compared_effects_bycountry(ates,
                                           acdes,
@@ -1185,7 +1191,7 @@ compare_effects_bycountry(data,
 subdir="CompareEffects/Ideology_mismatch/"
 
 
-###browser()
+####browser()
 compare_effects_bycountry(data,
                           formula_match,
                           type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
