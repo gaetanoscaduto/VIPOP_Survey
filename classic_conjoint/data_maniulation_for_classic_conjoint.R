@@ -131,21 +131,7 @@ for(i in 1:nrow(data)) #for every row in data
 }
 
 
-########################################################
-#DA QUA IN POI TUTTO DA RIADATTARE
-# cerca di capire perché CI SONO DEGLI STRANI NA NEL CJDATA$CCD_CONTINUOUS
-# quando arriva il pilota devi vedere se quella variabile ha dei missing
-########################################################
 
-
-
-#make them all factors so that they work with cj functions
-
-for(i in 1:ncol(cjdata))
-{
-  cjdata[, i] = factor(cjdata[, i]) 
-  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
-}
 
 cjdata[, "ccd_chosen_rw"] = as.numeric(cjdata[, "ccd_chosen_rw"])-1
 cjdata[, "ccd_populism"] = as.numeric(cjdata[, "ccd_populism"])-1
@@ -158,12 +144,24 @@ for(i in 1:ncol(cjdata))
 
 #merge
 
-cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__")
+cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__", sort=F)
 
+cjdata1=cjdata1 |>
+  arrange(as.numeric(respid), ccd_task_number, ccd_profile_number)
+
+cjdata_prev = cjdata
 cjdata=cjdata1
 
 rm(cjdata1)
 
+
+#make them all factors so that they work with cj functions
+
+for(i in 1:ncol(cjdata))
+{
+  cjdata[, i] = factor(cjdata[, i]) 
+  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
+}
 
 
 export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_ccd.RDS"))

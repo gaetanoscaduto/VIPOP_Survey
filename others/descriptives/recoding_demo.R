@@ -3,8 +3,7 @@ library(dplyr)
 
 data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
 
-
- View(data)
+#View(data)
  
 # - gender (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 
@@ -34,6 +33,11 @@ data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicoc
    
  } 
  
+ 
+ #Recode age. In the dataset, in the column age we have the difference betwen the year of birth and 1924. I want
+ #to convert this into the proper age
+ 
+ data$age = 2024-(as.numeric(data$age)+1924)
  
  # age group
  

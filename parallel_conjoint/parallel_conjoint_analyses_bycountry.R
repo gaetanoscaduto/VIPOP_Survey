@@ -66,7 +66,7 @@ set_categories_and_levels_bycountry = function(effects,
 
 ##Function to draw plots for the effects
 
-draw_plot_effects_bycountry = function(effects_pooled, effects_bycountry, 
+draw_plot_effects_bycountry = function(effects, 
                              type=c("match", "nominal"), #"match" or "nominal" 
                              categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
                              #("sociodemo", "psycho", "lifestyle")
@@ -94,40 +94,37 @@ draw_plot_effects_bycountry = function(effects_pooled, effects_bycountry,
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
   
-  effects_IT= effects_bycountry |> filter(country=="IT")
-  effects_FR= effects_bycountry |> filter(country=="FR")
-  effects_SW= effects_bycountry |> filter(country=="SW")
-  effects_CZ= effects_bycountry |> filter(country=="CZ")
+ 
   for(category in categories[1:3])
   {
     
     these_labels = y_labels[[type]][[category]]
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-      geom_pointrange(data=effects_IT[effects_IT$category == category, ],
+      geom_pointrange(data=effects[effects$category == category & effects$country == "IT", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/5),
                       show.legend = T)+
-      geom_pointrange(data=effects_FR[effects_FR$category == category, ],
+      geom_pointrange(data=effects[effects$category == category & effects$country == "FR", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/10),
                       show.legend = T)+
-      geom_pointrange(data=effects_SW[effects_SW$category == category, ],
+      geom_pointrange(data=effects[effects$category == category & effects$country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
                       show.legend = T)+
-      geom_pointrange(data=effects_CZ[effects_CZ$category == category, ],
+      geom_pointrange(data=effects[effects$category == category & effects$country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = -1/10),
                       show.legend = T)+
-      geom_pointrange(data=effects_pooled[effects_pooled$category == category, ],
+      geom_pointrange(data=effects[effects$category == category & effects$country == "POOL", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
                       alpha = 1,
                       position = position_nudge(y = -1/5),
@@ -197,16 +194,24 @@ full_analysis_bycountry = function(data,
   estimator=match.arg(estimator)
   arm=match.arg(arm)
   
+  
+  
   if(effect!= "EEs")
   {
     effects_pooled <- data |>
       filter(cpd_exparm2 == arm) |>
-      cj(formula, id = ~respid,
+      cj(formula, 
+         id = ~respid,
          estimate = estimator)
+    
+    effects_pooled$country = "POOL"
+    effects_pooled$BY = "POOL"
     
     effects_bycountry <- data |>
       filter(cpd_exparm2 == arm) |>
-      cj(formula, id = ~respid, by= ~country,
+      cj(formula, 
+         id = ~respid, 
+         by= ~country,
          estimate = estimator)
   }
   if(effect== "EEs")
@@ -220,7 +225,10 @@ full_analysis_bycountry = function(data,
          estimate = estimator,
          by = ~cpd_exparm)
     
+    effects_pooled$country = "POOL"
+    
     effects_bycountry =data.frame()
+    
     for(context in c("IT", "FR", "SW", "CZ"))
     {
       temp_effects_bycountry <- data |>
@@ -237,20 +245,17 @@ full_analysis_bycountry = function(data,
     
   }
   
+  ##browser()
+  effects = rbind(effects_bycountry, effects_pooled)
   
   
-  effects_pooled=set_categories_and_levels_bycountry(effects_pooled,
-                                                     type,
-                                                     nominal_attributes=nominal_attributes)
-  
-  effects_bycountry=set_categories_and_levels_bycountry(effects_bycountry,
-                                                        type,
-                                                        nominal_attributes=nominal_attributes)
+  effects=set_categories_and_levels_bycountry(effects,
+                                              type,
+                                              nominal_attributes=nominal_attributes)
   
   
-  
-  v = draw_plot_effects_bycountry(effects_pooled,
-                                  effects_bycountry, 
+  #browser()
+  v = draw_plot_effects_bycountry(effects, 
                                   type = type, 
                                   categories=categories, 
                                   estimator=estimator, 
@@ -298,7 +303,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
   
-  ####browser()
+  #####browser()
   
   estimator=match.arg(estimator)
   type=match.arg(type)
@@ -448,7 +453,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     
   }
   
-  ##browser()
+  ###browser()
   
   #draw the ees plots
   for(category in categories[1:3])
@@ -724,7 +729,7 @@ compare_effects_bycountry = function(data,
        estimate = estimator,
        by = ~country)
   
-  ##browser()
+  ###browser()
   
   acdes_pooled <- data |>
     filter(cpd_exparm2 == arm) |>
@@ -740,7 +745,7 @@ compare_effects_bycountry = function(data,
   
   
   ### Compute the EEs
-  ###browser()
+  ####browser()
   ees = data.frame()
   for(context in c("IT","FR","SW","CZ"))
   {
@@ -764,7 +769,7 @@ compare_effects_bycountry = function(data,
   
   ees_pooled$country = "POOL"
 
-  #####browser()
+  ######browser()
   
   ees = rbind(ees, ees_pooled)
   
@@ -786,12 +791,12 @@ compare_effects_bycountry = function(data,
   #Call draw effects with the for_comparison argument ==T, which means that it will return
   #the vector separately, not the already assembled immage
   
-  #####browser()
+  ######browser()
   
   x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
   
   
-  ####browser()
+  #####browser()
   
   plots = draw_compared_effects_bycountry(ates,
                                           acdes,
@@ -835,6 +840,7 @@ compare_effects_bycountry = function(data,
          height = 10, 
          width = 10)
   
+  return(plots)
 }
 
 
@@ -848,18 +854,18 @@ compare_effects_bycountry = function(data,
 categories= c("Sociodemographics", "Psychological", "Lifestyle", "Political")
 
 #Our levels regarding match and mismatches (for labeling)
-y_labels_match = list(Sociodemographics=c("Gender Match", "Gender Mismatch",
-                                          "Age Match", "Age Mismatch",
-                                          "Educ Match", "Educ Mismatch",
-                                          "Regionfeel Match", "Regionfeel Mismatch"),
-                      Psychological = c("Consc Match", "Consc Mismatch", 
-                                        "Ope Match", "Ope Mismatch"),
-                      Lifestyle =c("Diet Match", "Diet Mismatch",
-                                   "Animal Match", "Animal Mismatch",
-                                   "Holiday Match", "Holiday Mismatch"
+y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
+                                          "Age Mismatch", "Age Match",
+                                          "Educ Mismatch", "Educ Match",
+                                          "Regionfeel Mismatch", "Regionfeel Match"),
+                      Psychological = c("Consc Mismatch", "Consc Match", 
+                                        "Ope Mismatch", "Ope Match"),
+                      Lifestyle =c("Diet Mismatch", "Diet Match",
+                                   "Animal Mismatch", "Animal Match",
+                                   "Holiday Mismatch", "Holiday Match"
                       ),
-                      Political = c("Ideology Match",
-                                    "Ideology Mismatch"))
+                      Political = c("Ideology Mismatch",
+                                    "Ideology Match"))
 
 y_labels_nominal = list(Sociodemographics = c("Female", "Male",
                                               "Under 30", "Between 30 and 59","Over 60",
@@ -935,6 +941,7 @@ data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIP
 #genero fake dataset per provare, cancella quando arrivano dati definitivi
 data=rbind(data, data, data, data)
 data=rbind(data, data, data, data)
+data=rbind(data, data, data, data)
 
 data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
@@ -961,6 +968,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "natural",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -973,6 +982,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "natural",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -988,6 +999,8 @@ full_analysis_bycountry(data,
               "nominal",
               "mm",
               "natural",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -1035,6 +1048,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_match",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -1052,6 +1067,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_mismatch",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 ######################################
@@ -1066,6 +1083,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_match",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 ############################################################################
@@ -1080,6 +1099,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_mismatch",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -1106,6 +1127,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_match",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -1119,6 +1142,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_mismatch",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -1132,6 +1157,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_match",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MISMATCH
@@ -1144,6 +1171,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_mismatch",
+              leftlim=0.3,
+              rightlim=0.7,
               subdir)
 
 
@@ -1156,15 +1185,15 @@ subdir = "MatchesEffects/"
 #               "binomial"))
 
 #now i call the function to draw the effects in the model with the actual controls
-
-full_match_effects_bycountry(data=data,
-                   formula=formula_natural_nmatches, 
-                   exparm="natural")
-
-full_match_effects_bycountry(data, 
-                   formula_mediated_nmatches, 
-                   "mediated")
-
+# 
+# full_match_effects_bycountry(data=data,
+#                    formula=formula_natural_nmatches, 
+#                    exparm="natural")
+# 
+# full_match_effects_bycountry(data, 
+#                    formula_mediated_nmatches, 
+#                    "mediated")
+# 
 
 
 
@@ -1174,7 +1203,7 @@ full_match_effects_bycountry(data,
 subdir="CompareEffects/Ideology_match/"
 
 
-compare_effects_bycountry(data,
+plots_match = compare_effects_bycountry(data,
                           formula_match,
                           type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
                           estimator="mm", #marginal means and amces
@@ -1191,15 +1220,65 @@ compare_effects_bycountry(data,
 subdir="CompareEffects/Ideology_mismatch/"
 
 
-####browser()
-compare_effects_bycountry(data,
+#####browser()
+plots_mismatch = compare_effects_bycountry(data,
                           formula_match,
                           type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
                           estimator="mm", #marginal means and amces
                           arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                           #or manipulated mediation arm with ideological mismatch
                           subdir,#the subdirectory where the plots will be saved
-                          leftlim=0.3,
-                          rightlim=0.7#,
+                          leftlim=0,
+                          rightlim=1#,
                           #x_intercept=0.5
                           )
+
+
+#Now I also draw the plots like Achara et al figure 1, namely by comparing EEs on the
+#two manipulated mediation arms
+subdir="CompareEffects/ATES_vs_EEs/"
+
+plots_match$ates_plots$Sociodemographics = plots_match$ates_plots$Sociodemographics + labs(title = "ATEs (natural mediation arm)")
+                  
+plots_match$ees_plots$Sociodemographics  = (plots_match$ees_plots$Sociodemographics + labs(title = "EEs (ideological similarity)"))
+
+plots_mismatch$ees_plots$Sociodemographics = (plots_mismatch$ees_plots$Sociodemographics  + labs(title = "EEs (ideological dissimilarity)"))
+
+p = plots_match$ates_plots$Sociodemographics | plots_match$ees_plots$Sociodemographics  | plots_mismatch$ees_plots$Sociodemographics                   
+
+
+ggsave(paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.png"), 
+       p, 
+       height = 10, 
+       width = 10)
+
+
+plots_match$ates_plots$Psychological = (plots_match$ates_plots$Psychological + labs(title = "ATEs (natural mediation arm)"))
+
+plots_match$ees_plots$Psychological  = (plots_match$ees_plots$Psychological + labs(title = "EEs (ideological similarity)"))
+
+plots_mismatch$ees_plots$Psychological = (plots_mismatch$ees_plots$Psychological  + labs(title = "EEs (ideological dissimilarity)"))
+
+p = plots_match$ates_plots$Psychological | plots_match$ees_plots$Psychological  | plots_mismatch$ees_plots$Psychological                   
+
+
+ggsave(paste0(output_wd,"estimations/", subdir, "psychological_bycountry.png"), 
+       p, 
+       height = 10, 
+       width = 10)
+
+
+
+plots_match$ates_plots$Lifestyle = (plots_match$ates_plots$Lifestyle + labs(title = "ATEs (natural mediation arm)"))
+
+plots_match$ees_plots$Lifestyle  = (plots_match$ees_plots$Lifestyle + labs(title = "EEs (ideological similarity)"))
+
+plots_mismatch$ees_plots$Lifestyle = (plots_mismatch$ees_plots$Lifestyle  + labs(title = "EEs (ideological dissimilarity)"))
+
+p = plots_match$ates_plots$Lifestyle | plots_match$ees_plots$Lifestyle  | plots_mismatch$ees_plots$Lifestyle                   
+
+
+ggsave(paste0(output_wd,"estimations/", subdir, "Lifestyle_bycountry.png"), 
+       p, 
+       height = 10, 
+       width = 10)

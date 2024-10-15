@@ -159,7 +159,10 @@ table(cjdata$cpd_chosen)
 ### CREATION OF THE "MATCH" VARIABLES
 ###################
 
-cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__")
+cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__", sort = F)
+
+cjdata1=cjdata1 |>
+  arrange(as.numeric(respid), cpd_task_number, cpd_profile_number)
 
 cjdata=cjdata1
 
@@ -170,7 +173,8 @@ variables_to_set=c("gender","age","educ","regionfeel",
                    "diet", "animal","holiday",
                    "ideology")
 
-#creation of mock variables to make names uniform
+#creation of mock variables to make names uniform. These variables contain the respondent's
+#attributes
 
 cjdata$match_gender = cjdata$gender
 cjdata$match_age = cjdata$AGE_GROUP
@@ -193,7 +197,8 @@ cjdata$match_ideology = cjdata$IDEOLOGY_REC #PROBABILMENTE DA RICODIFICARE ANCOR
 # but are initialized as "mistakes" so we know if everything went well
 for(variable in variables_to_set)
 {
-  cjdata[, paste0("cpd_match_", variable)] = ifelse(cjdata[, paste0("cpd_", variable)] == cjdata[, paste0("match_", variable)],
+  for(i in 1:nrow(cjdata))
+  cjdata[i, paste0("cpd_match_", variable)] = ifelse(cjdata[i, paste0("cpd_", variable)] == cjdata[i, paste0("match_", variable)],
                                                   paste0(variable, "_match"),
                                                   paste0(variable, "_mismatch"))
 }
@@ -231,7 +236,12 @@ cjdata[, "cpd_age"] = factor(cjdata[, "cpd_age"], levels = c("under30",
 
 cjdata[, "cpd_chosen"] = as.numeric(cjdata[, "cpd_chosen"])-1
 
-
+#I want all the match variables to have mismatch as reference category, therefore
+#I reorder the levels. They are all reversed, so I just use rev
+for(variable in names(cjdata)[grepl("cpd_match_", names(cjdata))])
+{
+  cjdata[, variable] = factor(cjdata[, variable], levels = rev(levels(cjdata[, variable])))
+}
 
 #check if everything is okay with making them all factors
 for(i in 1:ncol(cjdata))

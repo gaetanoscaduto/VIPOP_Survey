@@ -99,7 +99,9 @@ for(i in 1:ntask)
                                                     "food",
                                                     "animal",
                                                     "crowd",
-                                                    "identifier")))
+                                                    "identifier")
+                                                  )
+                         )
     
   }
 }
@@ -155,7 +157,7 @@ for(i in 1:ntask) #for each task
 
 ############ NOW WE HAVE PARSED THE DATA AS THE CLASSIC DATASET WE
 #WOULD RECEIVE FROM A SURVEY COMPANY AFTER RUNNING A CONJOINT. 
-#WE NEED TO TRANSFOR THIS IN A PROPER CONJOINT DATASET
+#WE NEED TO TRANSFORM THIS IN A PROPER CONJOINT DATASET
 
 #create the empty dataframe with placeholders
 
@@ -256,14 +258,30 @@ cjdata = cjdata |>
 
 
 
+
+### merge with the original dataset
+
+cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__", sort = F)
+
+cjdata1=cjdata1 |>
+  arrange(as.numeric(respid), vcd_task_number, vcd_profile_number)
+
+cjdata_prev = cjdata
+cjdata=cjdata1
+
+rm(cjdata1)
+
+
+
+
 ## everything becomes now a factor
-for(i in 1:ncol(cjdata))
+for(i in 1:ncol(cjdata_prev))
 {
   cjdata[, i] = factor(toTitleCase(as.character(cjdata[, i]))) 
   #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
 
-#quelli che non voglio factor sono i chosen!
+#quelli che non voglio factor sono i chosen oltre alle prime (per ora)!
 
 cjdata[, "vcd_chosen_rw"] = as.numeric(cjdata[, "vcd_chosen_rw"])-1
 cjdata[, "vcd_chosen_trust"] = as.numeric(cjdata[, "vcd_chosen_trust"])-1
@@ -277,13 +295,6 @@ for(i in 1:ncol(cjdata))
   print(is.factor(cjdata[, i]))
 }
 
-### merge with the original dataset
-
-cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__")
-
-cjdata=cjdata1
-
-rm(cjdata1)
 #very rough visual randomization check
 # 
 # for (i in 4:ncol(data)) {
