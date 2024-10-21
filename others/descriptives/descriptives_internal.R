@@ -8,8 +8,8 @@ data = readRDS("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bico
 output_dir = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot/"
 #output_dir_s = "/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot" 
 
-country="IT"
-# country="FR"
+#country="IT"
+ country="FR"
 # country="SW"
 # country="CZ"
 #Silvia's Variables
@@ -21,9 +21,7 @@ ggplot(data, aes(x=gender))+
 ggsave(paste0(output_dir, country, "/", "gender.png"), width=10, height=10)
 
 
-#nb: qui la domanda nella descrizione variabile è "indica anno di nascita"
-#Gaetano: l'ho ricodificata qui per età
-ggplot(data, aes(x=(2024-age)))+
+ggplot(data, aes(x=age))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
@@ -140,7 +138,6 @@ ggplot(data, aes(x=socialposition))+
 
 ggsave(paste0(output_dir, country, "/", "socialposition.png"), width=10, height=10)
 
- "default","1","2","3", "4","5","6","7","8","9","10","notplaced"   
 
  data$ideology = factor(data$ideology, levels = c("default","1","2","3", "4","5","6","7","8","9","10","notplaced"))
 ggplot(data, aes(x=ideology))+
