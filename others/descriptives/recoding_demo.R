@@ -1,7 +1,12 @@
 library(rio)
 library(dplyr)
 
-data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data_CZ.sav")
+#context = "IT"
+#context = "FR"
+context = "CZ"
+#context = "SW"
+
+data = import(paste0("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data_", context, ".sav"))
 
 #View(data)
  
@@ -475,5 +480,4 @@ data <- data %>%
 
 names(data)[which(grepl("populism",names(data)))]
 
-export(data, "data_recoded.RDS")
-export(data, "data_recoded.dta")
+export(data, paste0("data_recoded_", context, ".RDS"))

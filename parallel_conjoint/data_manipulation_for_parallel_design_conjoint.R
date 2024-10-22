@@ -20,10 +20,15 @@ pacman::p_load(
   patchwork, rio, texreg, tools
 )
 
+#context = "IT"
+#context = "FR"
+context = "CZ"
+#context = "SW"
+
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey")
 # import the dataset with row=respondent
 
-data = readRDS("data_recoded.RDS")
+data = readRDS(paste0("data_recoded_", context, ".RDS"))
 
 N=1500  #number of respondents
 
@@ -293,6 +298,7 @@ for(i in 1:nrow(cjdata))
 
 #at this point we can export the dataset for further analyses in other scripts 
 
-export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_cpd.RDS"))
+export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_cpd_", context, ".RDS"))
 
 #end
+

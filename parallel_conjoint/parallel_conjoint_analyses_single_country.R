@@ -223,7 +223,7 @@ full_analysis = function(data,
     ggsave(paste0(output_wd,"estimations/", subdir, national_context, "singlecountry.png"), 
            p, 
            height = 10, 
-           width = 10)
+           width = 10, create.dir = T)
   
 }
 
@@ -289,7 +289,7 @@ full_match_effects = function(data,
                 subdir, national_context, "singlecountry_", exparm, ".png"), 
          p, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
 }
 
 
@@ -427,17 +427,17 @@ compare_effects = function(data,
   ggsave(paste0(output_wd,"estimations/", subdir, national_context, "socio_singlecountry.png"), 
          p_socio, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   ggsave(paste0(output_wd,"estimations/", subdir, national_context, "psycho_singlecountry.png"), 
          p_psycho, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   ggsave(paste0(output_wd,"estimations/", subdir, national_context, "lifestyle_singlecountry.png"), 
          p_lifestyle, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   
   #I create the more flexible list to return
@@ -472,7 +472,7 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
   ggsave(paste0(output_wd,"estimations/", subdir, national_context,  "sociodemographics_singlecountry.png"), 
          p, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   
   plots_match$ates_plots$Psychological = (plots_match$ates_plots$Psychological + labs(title = "ATEs (natural mediation arm)"))
@@ -487,7 +487,7 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
   ggsave(paste0(output_wd,"estimations/", subdir, national_context,  "psychological_singlecountry.png"), 
          p, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   
   
@@ -503,7 +503,7 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
   ggsave(paste0(output_wd,"estimations/", subdir, national_context,  "Lifestyle_singlecountry.png"), 
          p, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   
 }
@@ -595,18 +595,24 @@ formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
 #############################################################
 
 
+#context = "IT"
+#context = "FR"
+context = "CZ"
+#context = "SW"
+
+
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/parallel_conjoint/")
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/conjoint_parallel_design/"
-data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd.RDS")
+output_wd = paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/conjoint_parallel_design/", context, "/")
+data = readRDS(paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd_", context, ".RDS"))
 
 # data=rbind(data, data, data, data)
 # data=rbind(data, data, data, data)
 
-national_context = "IT/"
+#national_context = "IT/"
 # national_context = "FR/"
 # national_context = "SW/"
-# national_context = "CZ/"
+ national_context = "CZ/"
  
 # data = data |>
 #   filter(country == "IT")

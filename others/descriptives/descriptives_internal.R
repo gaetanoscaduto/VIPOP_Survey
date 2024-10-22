@@ -3,22 +3,22 @@ library(dplyr)
 library(ggplot2)
 
 
-data = readRDS("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/data_recoded.RDS")
+data = readRDS(paste0("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/data_recoded_", context, ".RDS"))
 
 output_dir = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot/"
 #output_dir_s = "/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot" 
 
-#country="IT"
- country="FR"
-# country="SW"
-# country="CZ"
+#context="IT"
+#context="FR"
+# context="SW"
+#context="CZ"
 #Silvia's Variables
 ggplot(data, aes(x=gender))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "gender.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "gender.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=age))+
@@ -26,7 +26,7 @@ ggplot(data, aes(x=age))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "age.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "age.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=AGE_GROUP))+
@@ -34,7 +34,7 @@ ggplot(data, aes(x=AGE_GROUP))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "agegroup.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "agegroup.png"), width=10, height=10)
 
 #nb: not recoded
 ggplot(data, aes(x=education))+
@@ -42,7 +42,7 @@ ggplot(data, aes(x=education))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "education.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "education.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=EDU_LEVEL))+
@@ -50,7 +50,7 @@ ggplot(data, aes(x=EDU_LEVEL))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "education_level.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "education_level.png"), width=10, height=10)
 
 
 #nb: not recoded
@@ -59,7 +59,7 @@ ggplot(data, aes(x=region))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "region.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "region.png"), width=10, height=10)
 
 
 #nb: not recoded
@@ -68,7 +68,7 @@ ggplot(data, aes(x=region_feel))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "region_feel.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "region_feel.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=citysize))+
@@ -76,7 +76,7 @@ ggplot(data, aes(x=citysize))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "citysize.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "citysize.png"), width=10, height=10)
 
 
 #nb: not recoded
@@ -88,7 +88,7 @@ for(i in tipi_variables)
     scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
     ylab("")
   print(p)
-  ggsave(paste0(output_dir, country, "/",  i, ".png"), width=10, height=10)
+  ggsave(paste0(output_dir, context, "/",  i, ".png"), width=10, height=10)
 }
 
 
@@ -97,7 +97,7 @@ ggplot(data, aes(x=TIPI_CON_REC))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "tipiconrec.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "tipiconrec.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=TIPI_OPE_REC))+
@@ -105,14 +105,14 @@ ggplot(data, aes(x=TIPI_OPE_REC))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "tipioperec.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "tipioperec.png"), width=10, height=10)
 
 ggplot(data, aes(x=diet))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "diet.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "diet.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=animal))+
@@ -120,7 +120,7 @@ ggplot(data, aes(x=animal))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "animal.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "animal.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=holiday))+
@@ -128,7 +128,7 @@ ggplot(data, aes(x=holiday))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "holiday.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "holiday.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=socialposition))+
@@ -136,7 +136,7 @@ ggplot(data, aes(x=socialposition))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "socialposition.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "socialposition.png"), width=10, height=10)
 
 
  data$ideology = factor(data$ideology, levels = c("default","1","2","3", "4","5","6","7","8","9","10","notplaced"))
@@ -145,7 +145,7 @@ ggplot(data, aes(x=ideology))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "ideology.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "ideology.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=IDEOLOGY_REC))+
@@ -153,7 +153,7 @@ ggplot(data, aes(x=IDEOLOGY_REC))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "ideologyrec.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "ideologyrec.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=nat_med_1))+
@@ -161,7 +161,7 @@ ggplot(data, aes(x=nat_med_1))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "natmed1.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "natmed1.png"), width=10, height=10)
 
 # #!non esiste man_med! # da Gaetano: si chiama MAT med
 # ggplot(data, aes(x=mat_med))+
@@ -169,7 +169,7 @@ ggsave(paste0(output_dir, country, "/", "natmed1.png"), width=10, height=10)
 #   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
 # #   ylab("")
 # 
-# ggsave(paste0(output_dir, country, "/", "mat_med.png"), width=10, height=10)
+# ggsave(paste0(output_dir, context, "/", "mat_med.png"), width=10, height=10)
 # 
 
 #nb: not recoded
@@ -178,7 +178,7 @@ ggplot(data, aes(x=sns_use))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "sns_use.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "sns_use.png"), width=10, height=10)
 
 
 #Gaetano's Variables
@@ -187,7 +187,7 @@ ggplot(data, aes(x=interest))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "interest.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "interest.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=attention_check1))+
@@ -195,7 +195,7 @@ ggplot(data, aes(x=attention_check1))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "attention_check1.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "attention_check1.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=exposure))+
@@ -203,7 +203,7 @@ ggplot(data, aes(x=exposure))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "exposure.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "exposure.png"), width=10, height=10)
 
 
 ggplot(data, aes(x=votechoice))+
@@ -211,7 +211,7 @@ ggplot(data, aes(x=votechoice))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, country, "/", "votechoice.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "votechoice.png"), width=10, height=10)
 
 
 nethet_variables = names(data)[grepl("nethet_", names(data))]
@@ -223,7 +223,7 @@ for(i in nethet_variables)
     scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
     ylab("")
 
-  ggsave(paste0(output_dir, country, "/",  i, ".png"), width=10, height=10)
+  ggsave(paste0(output_dir, context, "/",  i, ".png"), width=10, height=10)
   
 }
 
@@ -237,7 +237,7 @@ for(i in ft_variables)
     scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
     ylab("")
 
-  ggsave(paste0(output_dir, country, "/",  i, ".png"), width=10, height=10)
+  ggsave(paste0(output_dir, context, "/",  i, ".png"), width=10, height=10)
   
 }
 
@@ -251,7 +251,7 @@ for(i in trust_variables)
     scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
     ylab("")
   
-  ggsave(paste0(output_dir, country, "/",  i, ".png"), width=10, height=10)
+  ggsave(paste0(output_dir, context, "/",  i, ".png"), width=10, height=10)
   
   
 }
@@ -266,7 +266,7 @@ for(i in populism_variables)
     scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
     ylab("")
 
-  ggsave(paste0(output_dir, country, "/",  i, ".png"), width=10, height=10)
+  ggsave(paste0(output_dir, context, "/",  i, ".png"), width=10, height=10)
 }
 
 View(data[, c("start_", "end_")])
@@ -290,4 +290,5 @@ ggplot(data[data$time_diff_mins<=35, ], aes(x=time_diff_mins))+
   ylab("")
 
 
-ggsave(paste0(output_dir, country, "/", "time_to_complete.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "time_to_complete.png"), width=10, height=10)
+

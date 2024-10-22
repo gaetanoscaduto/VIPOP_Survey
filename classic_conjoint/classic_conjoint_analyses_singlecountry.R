@@ -139,7 +139,7 @@ full_analysis = function(data,
   ggsave(paste0(output_wd,"estimations/", subdir,"singlecountry.png"), 
          p, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   return(p)
   
@@ -192,10 +192,16 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 #############################################################
 
 
+#context = "IT"
+#context = "FR"
+context = "CZ"
+#context = "SW"
+
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/classic_conjoint/")
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/"
-data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd.RDS")
+
+output_wd = paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/", context, "/")
+data = readRDS(paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_", context, ".RDS"))
 
 # data=rbind(data, data, data, data)
 #data=rbind(data, data, data, data)

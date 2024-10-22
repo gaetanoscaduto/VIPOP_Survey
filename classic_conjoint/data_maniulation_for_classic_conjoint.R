@@ -20,10 +20,16 @@ pacman::p_load(
   patchwork, rio, texreg, tools
 )
 
+
+#context = "IT"
+#context = "FR"
+#context = "CZ"
+#context = "SW"
+
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey")
 # import the dataset with row=respondent
 
-data = readRDS("data_recoded.RDS")
+data = readRDS(paste0("data_recoded_", context, ".RDS"))
 
 N=1500  #number of respondents
 
@@ -131,11 +137,13 @@ for(i in 1:nrow(data)) #for every row in data
 }
 
 
+## everything becomes now a factor
+for(i in 1:ncol(cjdata))
+{
+  cjdata[, i] = factor(toTitleCase(as.character(cjdata[, i]))) 
+  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
+}
 
-
-cjdata[, "ccd_chosen_rw"] = as.numeric(cjdata[, "ccd_chosen_rw"])-1
-cjdata[, "ccd_populism"] = as.numeric(cjdata[, "ccd_populism"])-1
-cjdata[, "ccd_continuous"] = as.numeric(cjdata[, "ccd_continuous"])-1
 #check if everything is okay with making them all factors but the outcomes
 for(i in 1:ncol(cjdata))
 {
@@ -157,13 +165,17 @@ rm(cjdata1)
 
 #make them all factors so that they work with cj functions
 
-for(i in 1:ncol(cjdata))
+for(i in 1:ncol(cjdata_prev))
 {
   cjdata[, i] = factor(cjdata[, i]) 
   #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
 
 
-export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_ccd.RDS"))
+cjdata[, "ccd_chosen_rw"] = as.numeric(cjdata[, "ccd_chosen_rw"])-1
+cjdata[, "ccd_populism"] = as.numeric(cjdata[, "ccd_populism"])-1
+cjdata[, "ccd_continuous"] = as.numeric(cjdata[, "ccd_continuous"])-1
+
+export(cjdata, paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/","cjdata_ccd_", context, ".RDS"))
 
 #end

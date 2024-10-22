@@ -10,10 +10,16 @@ pacman::p_load(
   patchwork, rio, texreg, tools
 )
 
+
+#context = "IT"
+#context = "FR"
+context = "CZ"
+#context = "SW"
+
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/classic_conjoint/")
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/"
-data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd.RDS")
+output_wd = paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/", context, "/")
+data = readRDS(paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_", context, ".RDS"))
 
 names(data)
 
@@ -86,16 +92,17 @@ ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomat
 #### Checking whether there is a preference for the profile shone to the right
 
 data$ccd_profile_number = as.factor(data$ccd_profile_number)
+data$ccd_profile_number = as.factor(data$ccd_gender)
 
 plot(cj(data, 
-        ccd_chosen_rw ~ ccd_gender+
-          ccd_age+ccd_religion+ccd_citysize+ccd_job+
-          ccd_consc+ccd_ope+ ccd_neu+
-          ccd_restaurant+ccd_transport+ccd_animal,
+        ccd_chosen_rw ~ ccd_gender,
+          #ccd_age+ccd_religion+ccd_citysize+ccd_job+
+         # ccd_consc+ccd_ope+ ccd_neu+
+          #ccd_restaurant+ccd_transport+ccd_animal,
         id = ~respid,
-        by = ~ccd_profile_number,
+        #by = ~ccd_profile_number,
         estimate = "mm"),
-     group = "ccd_profile_number",
+     #group = "ccd_profile_number",
      vline = 0.5)
 
 ### checking it with a different approach: if the effect is significant, 
