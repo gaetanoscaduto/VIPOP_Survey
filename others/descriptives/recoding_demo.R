@@ -1,7 +1,7 @@
 library(rio)
 library(dplyr)
 
-data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data.sav")
+data = import("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data_CZ.sav")
 
 #View(data)
  
