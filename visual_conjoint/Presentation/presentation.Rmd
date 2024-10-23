@@ -4,7 +4,7 @@ author:  |
   Gaetano Scaduto\inst{1}, Fedra Negri\inst{1}, and Silvia Decadri\inst{1}
 institute: |
   \inst{1}University of Milan Bicocca,
-date: "2024 Workshop Survey Experiments in the Social Sciences. Amsterdam Center for Inequality Studies (AMCIS). Amsterdam. 24 October 2024."
+date: "MethodsNet Conference, October 2024."
 output: 
   beamer_presentation:
     theme: "default" #" PaloAlto"
@@ -208,7 +208,7 @@ knitr::include_graphics(c("C:/Users/gasca/OneDrive - Università degli Studi di 
 
 -   Overall, the visual conjoint design promises to be an important euristic tool for future research endeavors.
 
-# Thank you! 
+# Thank you!
 
 ```{r, out.width="100%"}
 knitr::include_graphics("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/Papers and Chapters/ViPop2024/EUTextVis1/report/images/thankyou.jpg")

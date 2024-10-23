@@ -2,16 +2,23 @@ library(rio)
 library(dplyr)
 library(ggplot2)
 
+#If you launch this script from the master script, make sure to have the context fixed
+#otherwise, uncomment desired context
+#context = "IT"
+#context = "FR"
+#context = "CZ"
+#context = "SW"
+#context = "POOL"
 
-data = readRDS(paste0("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/data_recoded_", context, ".RDS"))
+#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 
-output_dir = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot/"
+data = readRDS(paste0(dataset_rep, "data_recoded_", context, ".RDS"))
+
+output_dir = paste0(gdrive_code, "VIPOP_SURVEY/risultati_pilot/")
 #output_dir_s = "/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot" 
 
-#context="IT"
-#context="FR"
-# context="SW"
-#context="CZ"
+
+
 #Silvia's Variables
 ggplot(data, aes(x=gender))+
   geom_bar(aes(y = after_stat(count)/sum(after_stat(count))))+
@@ -269,7 +276,7 @@ for(i in populism_variables)
   ggsave(paste0(output_dir, context, "/",  i, ".png"), width=10, height=10)
 }
 
-View(data[, c("start_", "end_")])
+#View(data[, c("start_", "end_")])
 
 data$start_r <- as.POSIXct(data$start_, format = "%Y-%m-%d %H:%M:%S")
 data$end_r <- as.POSIXct(data$end_, format = "%Y-%m-%d %H:%M:%S")

@@ -1,12 +1,19 @@
 library(rio)
 library(dplyr)
 
-
+#If you launch this script from the master script, make sure to have the context fixed
+#otherwise, uncomment desired context
 #context = "IT"
 #context = "FR"
 #context = "CZ"
 #context = "SW"
-data = import(paste0("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/demo_data_", context, ".sav"))
+#context = "POOL"
+
+#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+
+
+data = import(paste0(dataset_rep, "demo_data_", context, ".sav"))
 
 
 #View(data)
@@ -644,4 +651,4 @@ names(data)[which(grepl("populism",names(data)))]
 
 
 
-export(data, paste0("data_recoded_", context, ".RDS"))
+export(data, paste0(dataset_rep, "data_recoded_", context, ".RDS"))
