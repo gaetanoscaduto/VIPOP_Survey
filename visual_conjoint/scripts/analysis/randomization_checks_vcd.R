@@ -40,13 +40,25 @@ names(data)
 
 
 #### Randomization check with levels not recoded (probability assigned based on similarity!)
-
-plot(cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
-                vcd_gender + vcd_age + vcd_photo +
-                vcd_name + vcd_surname +
-                vcd_job + vcd_issue + vcd_nostalgia+
-                vcd_animal + vcd_food + vcd_crowd,
-              id = ~respid), col="grey")
+if(context != "POOL") #When context==POOL, there is a name which is the same of one surname!
+{
+  plot(cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
+                  vcd_gender + vcd_age + vcd_photo +
+                  vcd_name + vcd_surname +
+                  vcd_job + vcd_issue + vcd_nostalgia+
+                  vcd_animal + vcd_food + vcd_crowd,
+                id = ~respid), col="grey")
+}
+if(context=="POOL")
+{
+  plot(cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
+                  vcd_gender + vcd_age + vcd_photo +
+                  #vcd_name + vcd_surname +
+                  vcd_job + vcd_issue + vcd_nostalgia+
+                  vcd_animal + vcd_food + vcd_crowd,
+                id = ~respid), col="grey")
+  
+}
 
 
 ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_cj.png"), 
@@ -54,12 +66,28 @@ ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomat
 
 
 # With ggplot
-aus = cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
-                 vcd_gender + vcd_age + vcd_photo +
-                 vcd_name + vcd_surname + vcd_job + 
-                 vcd_issue + vcd_nostalgia + vcd_valence+
-                 vcd_animal + vcd_food + vcd_crowd,
-               id = ~respid)
+if(context != "POOL")
+{
+  aus = cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
+                   vcd_gender + vcd_age + vcd_photo +
+                   vcd_name + vcd_surname + vcd_job + 
+                   vcd_issue + vcd_nostalgia + vcd_valence+
+                   vcd_animal + vcd_food + vcd_crowd,
+                 id = ~respid)
+  
+}
+
+if(context == "POOL")
+{
+  aus = cj_freqs(data, vcd_chosen_rw ~ vcd_ethnicity + 
+                   vcd_gender + vcd_age + vcd_photo +
+                   #vcd_name + vcd_surname + 
+                   vcd_job + 
+                   vcd_issue + vcd_nostalgia + vcd_valence+
+                   vcd_animal + vcd_food + vcd_crowd,
+                 id = ~respid)
+  
+}
 
 v = list()
 
@@ -87,7 +115,14 @@ p
 ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_ggplot1.png"),
        p, height = 12, width = 8, create.dir = T)
 
-p= v[[7]]/v[[8]]/v[[9]]/v[[10]]/v[[11]]/v[[12]]
+if(context != "POOL")
+{
+  p= v[[7]]/v[[8]]/v[[9]]/v[[10]]/v[[11]]/v[[12]]  
+}
+if(context == "POOL")
+{
+  p= v[[7]]/v[[8]]/v[[9]]/v[[10]]#/v[[11]]/v[[12]]  
+}
 
 
 p

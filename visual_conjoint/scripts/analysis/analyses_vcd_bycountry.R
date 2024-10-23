@@ -29,7 +29,7 @@ pacman::p_load(
 #functio
 
 set_categories_and_levels_visual_bycountry = function(effects, 
-                                            attributes=attributes){
+                                                      attributes=attributes){
   # effects=effects_pooled
   # attributes=attributes
   effects$feature = factor(attributes, levels = unique(attributes))
@@ -145,7 +145,7 @@ draw_plot_effects_bycountry = function(effects_pooled,
     v[[attribute]] = p
   }
   
- 
+  
   return(v)
 }
 
@@ -157,12 +157,12 @@ draw_interaction_effects_bycountry = function(effects){
   effects_CZ= effects |> filter(country=="CZ")
   effects_POOL= effects |> filter(country=="POOL")
   
-
-    
+  
+  
   p=ggplot()+
     geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
     geom_pointrange(data=effects_IT, aes(x=estimate, xmin=lower, xmax=upper,
-                        y=level, col="IT", shape="IT"),
+                                         y=level, col="IT", shape="IT"),
                     alpha = 1,
                     position = position_nudge(y = 1/5),
                     show.legend = T)+
@@ -182,7 +182,7 @@ draw_interaction_effects_bycountry = function(effects){
                     position = position_nudge(y = -1/10),
                     show.legend = T)+
     geom_pointrange(data=effects_POOL, aes(x=estimate, xmin=lower, xmax=upper,
-                                         y=level, col="POOL", shape="POOL"),
+                                           y=level, col="POOL", shape="POOL"),
                     alpha = 1,
                     position = position_nudge(y = -1/5),
                     show.legend = T)+

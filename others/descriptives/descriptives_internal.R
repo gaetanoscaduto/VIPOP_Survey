@@ -25,7 +25,8 @@ ggplot(data, aes(x=gender))+
   scale_y_continuous(labels = scales::percent_format(), n.breaks=10)+
   ylab("")
 
-ggsave(paste0(output_dir, context, "/", "gender.png"), width=10, height=10)
+ggsave(paste0(output_dir, context, "/", "gender.png"),
+       width=10, height=10,create.dir = T)
 
 
 ggplot(data, aes(x=age))+

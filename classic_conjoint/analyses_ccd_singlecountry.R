@@ -159,7 +159,7 @@ y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
                       restaurant=c("Traditional", "Vegan","Asian","Steakhouse"),
                       transport=c("Bycicle","Public Transport","SUV"),
                       animal=c("Large dog","Small dog","Cat", "No pets")
-                      )
+)
 
 
 levels_vector= unlist(y_labels_plots, use.names = F)
@@ -175,7 +175,7 @@ attributes= c("Gender", "Gender", "Gender",
               "Restaurant","Restaurant","Restaurant","Restaurant",
               "Transport","Transport","Transport",
               "Animal","Animal","Animal","Animal"
-              )
+)
 
 
 formula_rw = ccd_chosen_rw ~ ccd_gender+

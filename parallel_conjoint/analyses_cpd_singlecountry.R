@@ -69,7 +69,7 @@ set_categories_and_levels = function(effects,
 draw_plot_effects = function(effects, 
                              type=c("match", "nominal"), #"match" or "nominal" 
                              categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
-                             #("sociodemo", "psycho", "lifestyle")
+                             effect = "Indifferent", #the possible effects
                              estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
                              y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
@@ -88,12 +88,12 @@ draw_plot_effects = function(effects,
   if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
     #with [-1; 1] for amces and [0, 1] for mm
   {
-  leftlim=ifelse(estimator!="mm", -1, 0)
+  leftlim=ifelse(estimator!="mm" | effect == "EEs", -1, 0)
   rightlim=1
   }
   if(x_intercept==999)
   {
-    intercept = ifelse(estimator!="mm", 0, 0.5)
+    intercept = ifelse(estimator!="mm" | effect == "EEs", 0, 0.5)
   }
   else
   {
@@ -190,18 +190,23 @@ full_analysis = function(data,
     #I need the dataset with the reference to plot, I create it artificially
     #through this stupid trick because I'm lazy
     
-    temp <- data |>
-      filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-      cj(formula_match,
-         id = ~respid,
-         estimate =  "amce")
+    if(estimator == "amce")
+    {
+      
+      temp <- data |>
+        filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
+        cj(formula_match,
+           id = ~respid,
+           estimate =  "amce")
+      
+      temp = temp[is.na(temp$std.error), ]
+      
+      temp$BY="natural-mediated"
+      temp$cpd_exparm = "natural"
+      
+      effects_pooled = rbind(effects_pooled, temp)
+    }
     
-    temp = temp[is.na(temp$std.error), ]
-    
-    temp$BY="natural-mediated"
-    temp$cpd_exparm = "natural"
-    
-    effects_pooled = rbind(effects_pooled, temp)
   }
   
   
@@ -211,6 +216,7 @@ full_analysis = function(data,
   
   p = draw_plot_effects(effects_pooled,
                         type = type,
+                        effect = effect,
                         categories=categories,
                         estimator=estimator,
                         y_labels=y_labels_plots,

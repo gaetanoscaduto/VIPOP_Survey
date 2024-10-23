@@ -5,7 +5,12 @@ setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dotto
 dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-for(context in c("IT", "FR", "CZ", "SW", "POOL"))
+#generate pooled dataset
+source("rbind_country_datasets.R")
+
+for(context in c(#"IT", "FR", "CZ", 
+                 #"SW", 
+                 "POOL"))
 {
   ## recoding script
   source("others/recodings/recoding_demo.R")

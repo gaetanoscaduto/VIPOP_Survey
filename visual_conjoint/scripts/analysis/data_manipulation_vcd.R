@@ -274,8 +274,17 @@ cjdata = cjdata |>
 
 cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__", sort = F)
 
-cjdata1=cjdata1 |>
-  arrange(as.numeric(respid), vcd_task_number, vcd_profile_number)
+if(context != "POOL") #then respid is the same of numeric variable
+{
+  cjdata1=cjdata1 |>
+    arrange(as.numeric(respid), cpd_task_number, cpd_profile_number)
+}
+
+if(context == "POOL")
+{
+  cjdata1=cjdata1 |>
+    arrange(respid, cpd_task_number, cpd_profile_number)
+}
 
 cjdata_prev = cjdata
 cjdata=cjdata1

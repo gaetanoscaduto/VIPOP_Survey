@@ -77,7 +77,7 @@ draw_plot_effects_bycountry = function(effects_pooled,
     intercept = 5
     x_annotate_symbol=9.3
     x_annotate_label=9.5  
-    }
+  }
   
   effects_IT= effects_bycountry |> filter(country=="IT")
   effects_FR= effects_bycountry |> filter(country=="FR")
@@ -87,7 +87,7 @@ draw_plot_effects_bycountry = function(effects_pooled,
   v=list()
   for(attribute in unique(attributes))
   {
-   
+    
     these_labels = rev(y_labels_plots[[tolower(attribute)]])
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -148,8 +148,8 @@ draw_plot_effects_bycountry = function(effects_pooled,
         legend.position = "right",  # You can change this to "top", "bottom", etc.
         axis.text.y = element_text(size = 10),
         axis.title.y = element_text(size = 12)
-       )
-      
+      )
+    
     
     v[[attribute]] = p
   }
@@ -235,7 +235,7 @@ y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
                       restaurant=c("Traditional", "Vegan","Asian","Steakhouse"),
                       transport=c("Bycicle","Public Transport","SUV"),
                       animal=c("Large dog","Small dog","Cat", "No pets")
-                      )
+)
 
 levels_vector= unlist(y_labels_plots, use.names = F)
 
@@ -269,15 +269,16 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 #############################################################
 
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/classic_conjoint/")
+output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/bycountry"
+gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/"
-data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd.RDS")
+data = readRDS(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_POOL.RDS")
 
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
-
-data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
+# 
+# data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+# 
+# data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 #############################################################
 
@@ -302,7 +303,8 @@ for(attribute in unique(attributes))
   ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
-         width = 6)
+         width = 6, 
+         create.dir = T)
   
 }
 
@@ -323,7 +325,8 @@ for(attribute in unique(attributes))
   ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
          p, 
          height = 8, 
-         width = 8)
+         width = 8, 
+         create.dir = T)
   
 }
 
@@ -346,6 +349,7 @@ for(attribute in unique(attributes))
   ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
          p, 
          height = 8, 
-         width = 8)
+         width = 8, 
+         create.dir = T)
   
 }
