@@ -94,7 +94,7 @@ draw_plot_effects_bycountry = function(effects,
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
   
- 
+  
   for(category in categories[1:3])
   {
     
@@ -169,16 +169,16 @@ draw_plot_effects_bycountry = function(effects,
 
 
 full_analysis_bycountry = function(data,
-                         formula, #the conjoint formula
-                         effect=c("ATEs", "ACDEs", "EEs"), #the three possible effects to compute
-                         type=c("match", "nominal"), #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                         estimator=c("mm","amce"), #marginal means and amces
-                         arm=c("natural", "ideology_match", "ideology_mismatch"), #natural mediation arm, or manipulated mediation arm with ideological match, 
-                         #or manipulated mediation arm with ideological mismatch
-                         subdir,
-                         leftlim=999,
-                         rightlim=999#the subdirectory where the plots will be saved
-                         ){
+                                   formula, #the conjoint formula
+                                   effect=c("ATEs", "ACDEs", "EEs"), #the three possible effects to compute
+                                   type=c("match", "nominal"), #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                                   estimator=c("mm","amce"), #marginal means and amces
+                                   arm=c("natural", "ideology_match", "ideology_mismatch"), #natural mediation arm, or manipulated mediation arm with ideological match, 
+                                   #or manipulated mediation arm with ideological mismatch
+                                   subdir,
+                                   leftlim=999,
+                                   rightlim=999#the subdirectory where the plots will be saved
+){
   
   
   ###### This function performs the whole analysis, draws the graphs and saves
@@ -211,7 +211,7 @@ full_analysis_bycountry = function(data,
       filter(cpd_exparm2 == arm) |>
       cj(formula, 
          id = ~respid, 
-         by= ~country,
+         by= ~cpd_country,
          estimate = estimator)
   }
   if(effect== "EEs")
@@ -534,7 +534,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
   full_plot_list = list(ates_plots = ates_list,
                         acdes_plots=acdes_list,
                         ees_plots=ees_list
-                        )
+  )
   
   return(full_plot_list)
 }
@@ -550,14 +550,14 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
 #depending on the experimental arm selected)
 
 full_match_effects_bycountry = function(data, 
-                              formula, 
-                              exparm){
+                                        formula, 
+                                        exparm){
   
   
   # exparm="natural"
   # formula=formula_natural_nmatches
   # country="IT"
-
+  
   # exparm=match.arg(exparm)
   
   full_df = data.frame()
@@ -610,60 +610,60 @@ full_match_effects_bycountry = function(data,
     full_df=rbind(full_df, effect_df)
     
   }
-    
-    # Create caterpillar plot
-    p = ggplot() +
-      geom_pointrange(data = full_df[full_df$country == "IT", ], 
-                   aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                       col="IT", shape="IT"),
-                   position = position_nudge(x = -1/5)) +
-      geom_pointrange(data = full_df[full_df$country == "FR", ], 
-                 aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                     col="FR", shape="FR"),
-                 position = position_nudge(x = -1/10)) + 
-      geom_pointrange(data = full_df[full_df$country == "SW", ], 
-                 aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                     col="SW", shape="SW"),
-                 position = position_nudge(x = 0)) + 
-      geom_pointrange(data = full_df[full_df$country == "CZ", ], 
-                 aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                     col="CZ", shape="CZ"),
-                 position = position_nudge(x = 1/10)) + 
-      geom_pointrange(data = full_df[full_df$country == "POOL", ], 
-                 aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                     col="POOL", shape="POOL"),
-                 position = position_nudge(x = 1/5)) + 
-      labs(
-        x = "Number of attribute matches",
-        y = "Marginal effect on the probability of choosing the profile",
-        title = ""
-      )+
-      scale_x_continuous(seq(1, 1+lengths(gregexpr("\\+", as.character(formula)[3])),by=1))+
-      scale_color_manual(
-        values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
-                   "FR" = wesanderson::wes_palettes$Darjeeling1[2],
-                   "SW" = wesanderson::wes_palettes$Darjeeling1[3],
-                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
-                   "POOL" = 'black'),
-        name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
-      ) +
-      scale_shape_manual(
-        values = c("IT" = 19, 
-                   "FR" = 17, 
-                   "SW" = 15, 
-                   "CZ" = 18, 
-                   "POOL" = 1),
-        name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
-      ) +
-      theme(
-        legend.position = "right",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10),
-        axis.title.y = element_text(size = 12)
-      ) 
   
-    #saving the plots
+  # Create caterpillar plot
+  p = ggplot() +
+    geom_pointrange(data = full_df[full_df$country == "IT", ], 
+                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
+                        col="IT", shape="IT"),
+                    position = position_nudge(x = -1/5)) +
+    geom_pointrange(data = full_df[full_df$country == "FR", ], 
+                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
+                        col="FR", shape="FR"),
+                    position = position_nudge(x = -1/10)) + 
+    geom_pointrange(data = full_df[full_df$country == "SW", ], 
+                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
+                        col="SW", shape="SW"),
+                    position = position_nudge(x = 0)) + 
+    geom_pointrange(data = full_df[full_df$country == "CZ", ], 
+                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
+                        col="CZ", shape="CZ"),
+                    position = position_nudge(x = 1/10)) + 
+    geom_pointrange(data = full_df[full_df$country == "POOL", ], 
+                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
+                        col="POOL", shape="POOL"),
+                    position = position_nudge(x = 1/5)) + 
+    labs(
+      x = "Number of attribute matches",
+      y = "Marginal effect on the probability of choosing the profile",
+      title = ""
+    )+
+    scale_x_continuous(seq(1, 1+lengths(gregexpr("\\+", as.character(formula)[3])),by=1))+
+    scale_color_manual(
+      values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                 "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                 "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                 "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                 "POOL" = 'black'),
+      name = "Country",
+      limits = c("IT", "FR", "SW", "CZ", "POOL")
+    ) +
+    scale_shape_manual(
+      values = c("IT" = 19, 
+                 "FR" = 17, 
+                 "SW" = 15, 
+                 "CZ" = 18, 
+                 "POOL" = 1),
+      name = "Country",
+      limits = c("IT", "FR", "SW", "CZ", "POOL")
+    ) +
+    theme(
+      legend.position = "right",  # You can change this to "top", "bottom", etc.
+      axis.text.y = element_text(size = 10),
+      axis.title.y = element_text(size = 12)
+    ) 
+  
+  #saving the plots
   
   ggsave(paste0(output_wd,"estimations/", 
                 subdir,"bycountry_", exparm, ".png"), 
@@ -683,16 +683,16 @@ full_match_effects_bycountry = function(data,
 
 
 compare_effects_bycountry = function(data,
-                           formula, 
-                           type=c("match", "nominal"), #whether we are considering 
-                           #the nominal attributes or the recoding match vs mismatch with the respondent
-                           estimator=c("mm","amce"), #marginal means and amces
-                           arm=c("ideology_match", "ideology_mismatch"), #manipulated mediation arm with ideological match, 
-                           #or manipulated mediation arm with ideological mismatch
-                           subdir,
-                           leftlim=999,
-                           rightlim=999,
-                           x_intercept=999#the subdirectory where the plots will be saved
+                                     formula, 
+                                     type=c("match", "nominal"), #whether we are considering 
+                                     #the nominal attributes or the recoding match vs mismatch with the respondent
+                                     estimator=c("mm","amce"), #marginal means and amces
+                                     arm=c("ideology_match", "ideology_mismatch"), #manipulated mediation arm with ideological match, 
+                                     #or manipulated mediation arm with ideological mismatch
+                                     subdir,
+                                     leftlim=999,
+                                     rightlim=999,
+                                     x_intercept=999#the subdirectory where the plots will be saved
 ){
   
   
@@ -709,7 +709,7 @@ compare_effects_bycountry = function(data,
     filter(cpd_exparm2 == "natural") |>
     cj(formula, id = ~respid,
        estimate = estimator,
-       by= ~country)
+       by= ~cpd_country)
   
   ates_pooled = data |>
     filter(cpd_exparm2 == "natural") |>
@@ -727,7 +727,7 @@ compare_effects_bycountry = function(data,
     cj(formula, 
        id = ~respid,
        estimate = estimator,
-       by = ~country)
+       by = ~cpd_country)
   
   ###browser()
   
@@ -768,7 +768,7 @@ compare_effects_bycountry = function(data,
        by = ~cpd_exparm)
   
   ees_pooled$country = "POOL"
-
+  
   ######browser()
   
   ees = rbind(ees, ees_pooled)
@@ -777,16 +777,16 @@ compare_effects_bycountry = function(data,
   ##Set the categories and levels for the three datasets
   
   ates = set_categories_and_levels_bycountry(ates,
-                                   type,
-                                   nominal_attributes=nominal_attributes)
+                                             type,
+                                             nominal_attributes=nominal_attributes)
   
   acdes = set_categories_and_levels_bycountry(acdes,
-                                    type,
-                                    nominal_attributes=nominal_attributes)
+                                              type,
+                                              nominal_attributes=nominal_attributes)
   
   ees = set_categories_and_levels_bycountry(ees,
-                                  type,
-                                  nominal_attributes=nominal_attributes)
+                                            type,
+                                            nominal_attributes=nominal_attributes)
   
   #Call draw effects with the for_comparison argument ==T, which means that it will return
   #the vector separately, not the already assembled immage
@@ -808,7 +808,7 @@ compare_effects_bycountry = function(data,
                                           leftlim=leftlim,
                                           rightlim=rightlim,
                                           x_intercept = x_intercept
-                                          )
+  )
   pates=plots$ates_plots
   
   pacdes=plots$acdes_plots
@@ -824,7 +824,7 @@ compare_effects_bycountry = function(data,
   
   #I save the three plots
   
-
+  
   ggsave(paste0(output_wd,"estimations/", subdir,"socio_bycountry.png"), 
          p_socio, 
          height = 10, 
@@ -932,18 +932,19 @@ formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
 #############################################################
 
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/parallel_conjoint/")
+#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/conjoint_parallel_design/"
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/")
 
-data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd.RDS")
+data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd_POOL.RDS"))
 
 #genero fake dataset per provare, cancella quando arrivano dati definitivi
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
-
-data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
+# data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+# 
+# data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 
 #############################################################

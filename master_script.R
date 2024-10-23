@@ -22,7 +22,7 @@ for(context in c(#"IT", "FR", "CZ",
   source("classic_conjoint/data_manipulation_ccd.R")
   source("classic_conjoint/randomization_checks_ccd.R")
   source("classic_conjoint/analyses_ccd_singlecountry.R")
-
+  
   #visual conjoint scripts
   source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
   source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")

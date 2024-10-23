@@ -78,7 +78,7 @@ draw_plot_effects = function(effects,
                              for_comparison=F #If =T then the function returns the list with the plots separated 
                              #for category. If =F it returns the already assembld plot
                              
-                             ){
+){
   
   estimator=match.arg(estimator)
   type=match.arg(type)
@@ -88,8 +88,8 @@ draw_plot_effects = function(effects,
   if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
     #with [-1; 1] for amces and [0, 1] for mm
   {
-  leftlim=ifelse(estimator!="mm" | effect == "EEs", -1, 0)
-  rightlim=1
+    leftlim=ifelse(estimator!="mm" | effect == "EEs", -1, 0)
+    rightlim=1
   }
   if(x_intercept==999)
   {
@@ -130,7 +130,7 @@ draw_plot_effects = function(effects,
   
   if(for_comparison == F)
   {
-  p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1)
+    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1)
   }
   if(for_comparison == T)
   {
@@ -177,7 +177,7 @@ full_analysis = function(data,
   }
   if(effect== "EEs")
   {
-
+    
     effects_pooled <- data |>
       filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
       cj(formula_match,
@@ -211,8 +211,8 @@ full_analysis = function(data,
   
   
   effects_pooled = set_categories_and_levels(effects_pooled,
-                                                     type,
-                                                     nominal_attributes=nominal_attributes)
+                                             type,
+                                             nominal_attributes=nominal_attributes)
   
   p = draw_plot_effects(effects_pooled,
                         type = type,
@@ -224,12 +224,12 @@ full_analysis = function(data,
                         rightlim=rightlim)
   
   p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
-                                                           caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
-    
-    ggsave(paste0(output_wd,"estimations/", subdir, "/singlecountry.png"), 
-           p, 
-           height = 10, 
-           width = 10, create.dir = T)
+                                 caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
+  
+  ggsave(paste0(output_wd,"estimations/", subdir, "/singlecountry.png"), 
+         p, 
+         height = 10, 
+         width = 10, create.dir = T)
   
 }
 
@@ -245,9 +245,9 @@ full_match_effects = function(data,
   
   exparm=match.arg(exparm)
   
-   exparm="natural"
-   formula=formula_natural_nmatches
-
+  exparm="natural"
+  formula=formula_natural_nmatches
+  
   
   filtered_data = data |>
     filter(cpd_exparm == exparm)|> 
@@ -263,15 +263,15 @@ full_match_effects = function(data,
   typeof(filtered_data$respid)
   
   model =  glmer(cpd_chosen ~ cpd_n_matches +
-                  cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
-                  cpd_match_consc + cpd_match_ope +
-                  cpd_match_diet + cpd_match_animal + cpd_match_holiday +
-                  (cpd_n_matches | respid),  # Random intercept for each respondent
+                   cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
+                   cpd_match_consc + cpd_match_ope +
+                   cpd_match_diet + cpd_match_animal + cpd_match_holiday +
+                   (cpd_n_matches | respid),  # Random intercept for each respondent
                  data = filtered_data,
                  family = binomial(link="logit"))
   
   predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
-
+  
   
   # Convert effect object to a data frame
   effect_df <- data.frame(
@@ -314,7 +314,7 @@ compare_effects = function(data,
   
   ###### This function ends up drawing the graphs with the three effects compared like
   #Acharya et al
-
+  
   
   type=match.arg(type)
   estimator=match.arg(estimator)
@@ -322,9 +322,9 @@ compare_effects = function(data,
   
   ### Compute the ATEs
   ates <- data |>
-      filter(cpd_exparm2 == "natural") |>
-      cj(formula, id = ~respid,
-         estimate = estimator)
+    filter(cpd_exparm2 == "natural") |>
+    cj(formula, id = ~respid,
+       estimate = estimator)
   
   ###Compute the ACDEs
   acdes <- data |>
@@ -341,7 +341,7 @@ compare_effects = function(data,
        estimate = paste0(estimator, "_differences"),
        by = ~cpd_exparm)
   
-
+  
   
   if(estimator == "amce")
   {
@@ -353,32 +353,32 @@ compare_effects = function(data,
       cj(formula_match,
          id = ~respid,
          estimate =  "amce")
-  
+    
     temp = temp[is.na(temp$std.error), ]
-  
+    
     temp$BY="natural-mediated"
     temp$cpd_exparm = "natural"
-  
+    
     ees = rbind(ees, temp)
   }
   
   ##Set the categories and levels for the three datasets
- 
+  
   ates = set_categories_and_levels(ates,
                                    type,
                                    nominal_attributes=nominal_attributes)
   
   acdes = set_categories_and_levels(acdes,
-                                   type,
-                                   nominal_attributes=nominal_attributes)
+                                    type,
+                                    nominal_attributes=nominal_attributes)
   
   ees = set_categories_and_levels(ees,
-                                   type,
-                                   nominal_attributes=nominal_attributes)
+                                  type,
+                                  nominal_attributes=nominal_attributes)
   
   #Call draw effects with the for_comparison argument ==T, which means that it will return
   #the vector separately, not the already assembled immage
-
+  
   ##browser()
   
   x_intercept = ifelse(estimator=="mm_differences" | estimator=="amce_differences" | estimator=="amce",
@@ -387,16 +387,6 @@ compare_effects = function(data,
   
   
   pates = draw_plot_effects(ates,
-                        type = type,
-                        categories=categories,
-                        estimator=estimator,
-                        y_labels=y_labels_plots,
-                        leftlim=leftlim,
-                        rightlim=rightlim,
-                        x_intercept = x_intercept,
-                        for_comparison = T)
-  
-  pacdes = draw_plot_effects(acdes,
                             type = type,
                             categories=categories,
                             estimator=estimator,
@@ -406,15 +396,25 @@ compare_effects = function(data,
                             x_intercept = x_intercept,
                             for_comparison = T)
   
+  pacdes = draw_plot_effects(acdes,
+                             type = type,
+                             categories=categories,
+                             estimator=estimator,
+                             y_labels=y_labels_plots,
+                             leftlim=leftlim,
+                             rightlim=rightlim,
+                             x_intercept = x_intercept,
+                             for_comparison = T)
+  
   pees = draw_plot_effects(ees,
-                            type = type,
-                            categories=categories,
-                            estimator=estimator,
-                            y_labels=y_labels_plots,
-                            leftlim=-0.35,
-                            rightlim=0.35,
-                            x_intercept = 0,
-                            for_comparison = T)
+                           type = type,
+                           categories=categories,
+                           estimator=estimator,
+                           y_labels=y_labels_plots,
+                           leftlim=-0.35,
+                           rightlim=0.35,
+                           x_intercept = 0,
+                           for_comparison = T)
   
   #Now I assemble three plots (for each category) so that they are easy to compare
   
@@ -529,31 +529,31 @@ categories= c("Sociodemographics", "Psychological", "Lifestyle", "Political")
 
 #Our levels regarding match and mismatches (for labeling)
 y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
-                                         "Age Mismatch", "Age Match",
-                                         "Educ Mismatch", "Educ Match",
-                                         "Regionfeel Mismatch", "Regionfeel Match"),
-                     Psychological = c("Consc Mismatch", "Consc Match", 
-                                       "Ope Mismatch", "Ope Match"),
-                     Lifestyle =c("Diet Mismatch", "Diet Match",
-                                  "Animal Mismatch", "Animal Match",
-                                  "Holiday Mismatch", "Holiday Match"
-                     ),
-                     Political = c("Ideology Mismatch",
-                                   "Ideology Match"))
+                                          "Age Mismatch", "Age Match",
+                                          "Educ Mismatch", "Educ Match",
+                                          "Regionfeel Mismatch", "Regionfeel Match"),
+                      Psychological = c("Consc Mismatch", "Consc Match", 
+                                        "Ope Mismatch", "Ope Match"),
+                      Lifestyle =c("Diet Mismatch", "Diet Match",
+                                   "Animal Mismatch", "Animal Match",
+                                   "Holiday Mismatch", "Holiday Match"
+                      ),
+                      Political = c("Ideology Mismatch",
+                                    "Ideology Match"))
 
 y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                         "Under 30", "Between 30 and 59","Over 60",
-                                         "Degree","No degree",
-                                         "Regionfeel1","Regionfeel2","Regionfeel3"),
-                   Psychological = c("High Consc.","Med. Consc.","Low Consc.",
-                                     "High Ope.","Med. Ope.","Low Ope."),
-                   Lifestyle = c("Omnivore","Vegetarian","Vegan",
-                                 "Cat","Dog","No pet",
-                                 "City","Outdoor","Relax"),
-                   Political = c("Right-wing",
-                                 "Left-wing",
-                                 "Center",
-                                 "Not collocated"))
+                                              "Under 30", "Between 30 and 59","Over 60",
+                                              "Degree","No degree",
+                                              "Regionfeel1","Regionfeel2","Regionfeel3"),
+                        Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                          "High Ope.","Med. Ope.","Low Ope."),
+                        Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                      "Cat","Dog","No pet",
+                                      "City","Outdoor","Relax"),
+                        Political = c("Right-wing",
+                                      "Left-wing",
+                                      "Center",
+                                      "Not collocated"))
 
 y_labels_plots=list(match=y_labels_match, 
                     nominal=y_labels_nominal)
@@ -606,9 +606,9 @@ if(context=="FR")
                    "Omnivore","Vegetarian","Vegan",
                    "Cat","Dog","No pet",
                    "City","Outdoor","Relax")
-
+  
 }
-            
+
 
 #Levels (as a vector)
 
@@ -652,7 +652,7 @@ data = readRDS(paste0(dataset_rep, "cjdata_cpd_", context, ".RDS"))
 # data=rbind(data, data, data, data)
 
 
- 
+
 # data = data |>
 #   filter(country == "IT")
 

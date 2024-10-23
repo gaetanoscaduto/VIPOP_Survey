@@ -79,10 +79,10 @@ draw_plot_effects_bycountry = function(effects_pooled,
     x_annotate_label=9.5  
   }
   
-  effects_IT= effects_bycountry |> filter(country=="IT")
-  effects_FR= effects_bycountry |> filter(country=="FR")
-  effects_SW= effects_bycountry |> filter(country=="SW")
-  effects_CZ= effects_bycountry |> filter(country=="CZ")
+  effects_IT= effects_bycountry |> filter(ccd_country=="IT")
+  effects_FR= effects_bycountry |> filter(ccd_country=="FR")
+  effects_SW= effects_bycountry |> filter(ccd_country=="SW")
+  effects_CZ= effects_bycountry |> filter(ccd_country=="CZ")
   
   v=list()
   for(attribute in unique(attributes))
@@ -188,7 +188,7 @@ full_analysis_bycountry = function(data,
   effects_bycountry <- data |>
     cj(formula, 
        id = ~respid, 
-       by = ~country,
+       by = ~ccd_country,
        estimate = estimator
     )
   
@@ -269,10 +269,11 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 #############################################################
 
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/classic_conjoint_design/bycountry"
-gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-data = readRDS(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_POOL.RDS")
+#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/bycountry/")
+
+data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_POOL.RDS"))
 
 # 
 # data=rbind(data, data, data, data)

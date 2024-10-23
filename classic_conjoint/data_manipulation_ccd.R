@@ -48,6 +48,7 @@ profiles_per_resp = ntask*nprofiles #total number of profiles each respondent se
 
 cjdata = data.frame("respid" = rep(NA, N*ntask*nprofiles)) #respondent's id (for merging and clustering)
 
+cjdata$ccd_country = NA
 cjdata$ccd_task_number = NA#"task_number" #sequential number of the task
 cjdata$ccd_profile_number = NA#"profile_number" #sequential number of the profile
 
@@ -102,6 +103,8 @@ for(i in 1:nrow(data)) #for every row in data
       
       this_row = profiles_per_resp*(i-1)+(k-1)*2+j # the row of the cjdata that we are going to change the values of
       
+      cjdata[this_row, "ccd_country"] = data[i, "country"]
+      
       cjdata[this_row, "respid"] = data[i, "id__"] #the respondent id
       
       cjdata[this_row, "ccd_task_number"] = k #the task number
@@ -142,20 +145,6 @@ for(i in 1:nrow(data)) #for every row in data
 }
 
 
-## everything becomes now a factor
-for(i in 1:ncol(cjdata))
-{
-  cjdata[, i] = factor(toTitleCase(as.character(cjdata[, i]))) 
-  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
-}
-
-#check if everything is okay with making them all factors but the outcomes
-for(i in 1:ncol(cjdata))
-{
-  print(is.factor(cjdata[, i]))
-}
-
-#merge
 
 cjdata1= merge(cjdata, data, by.x = "respid", by.y = "id__", sort=F)
 
@@ -180,11 +169,20 @@ rm(cjdata1)
 
 #make them all factors so that they work with cj functions
 
+## everything becomes now a factor
 for(i in 1:ncol(cjdata_prev))
 {
-  cjdata[, i] = factor(cjdata[, i]) 
+  cjdata[, i] = factor(toTitleCase(as.character(cjdata[, i]))) 
   #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
+
+#check if everything is okay with making them all factors but the outcomes
+for(i in 1:ncol(cjdata))
+{
+  print(is.factor(cjdata[, i]))
+}
+
+#merge
 
 
 cjdata[, "ccd_chosen_rw"] = as.numeric(cjdata[, "ccd_chosen_rw"])-1

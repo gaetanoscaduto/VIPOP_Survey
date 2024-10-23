@@ -49,6 +49,7 @@ profiles_per_resp = ntask*nprofiles #total number of profiles each respondent se
 
 cjdata = data.frame("respid" = rep(NA, N*ntask*nprofiles)) #respondent's id (for merging and clustering)
 
+cjdata$cpd_country = NA
 cjdata$cpd_task_number = NA#"task_number" #sequential number of the task
 cjdata$cpd_profile_number = NA#"profile_number" #sequential number of the profile
 
@@ -104,6 +105,8 @@ for(i in 1:nrow(data)) #for every row in data
     {
       
       this_row = profiles_per_resp*(i-1)+(k-1)*2+j # the row of the cjdata that we are going to change the values of
+      
+      cjdata[this_row, "cpd_country"] = data[i, "country"]
       
       cjdata[this_row, "respid"] = data[i, "id__"] #the respondent id
       

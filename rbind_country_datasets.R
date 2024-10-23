@@ -7,12 +7,16 @@ require(rio, dplyr)
 
 data_IT = import(paste0(dataset_rep, "demo_data_", "IT", ".sav"))
 
+data_IT$country = "IT"
+
 data_IT$id__2 = data_IT$id__
 
 data_IT$id__ = paste0("IT_", data_IT$id__2)  
 
 
 data_FR = import(paste0(dataset_rep, "demo_data_", "FR", ".sav"))
+
+data_FR$country = "FR"
 
 data_FR$id__2 = data_FR$id__
 
@@ -21,12 +25,16 @@ data_FR$id__ = paste0("FR_", data_FR$id__2)
 
 data_CZ = import(paste0(dataset_rep, "demo_data_", "CZ", ".sav"))
 
+data_CZ$country = "CZ"
+
 data_CZ$id__2 = data_CZ$id__
 
 data_CZ$id__ = paste0("CZ_", data_CZ$id__2)  
 
 
 data_SW = import(paste0(dataset_rep, "demo_data_", "SW", ".sav"))
+
+data_SW$country = "SW"
 
 data_SW$id__2 = data_SW$id__
 

@@ -72,10 +72,10 @@ draw_plot_effects_bycountry = function(effects_pooled,
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
   
-  effects_IT= effects_bycountry |> filter(country=="IT")
-  effects_FR= effects_bycountry |> filter(country=="FR")
-  effects_SW= effects_bycountry |> filter(country=="SW")
-  effects_CZ= effects_bycountry |> filter(country=="CZ")
+  effects_IT= effects_bycountry |> filter(vcd_country=="IT")
+  effects_FR= effects_bycountry |> filter(vcd_country=="FR")
+  effects_SW= effects_bycountry |> filter(vcd_country=="SW")
+  effects_CZ= effects_bycountry |> filter(vcd_country=="CZ")
   
   v=list()
   for(attribute in unique(attributes))
@@ -246,7 +246,7 @@ full_analysis_bycountry = function(data,
   effects_bycountry <- data |>
     cj(formula, 
        id = ~respid, 
-       by = ~country,
+       by = ~vcd_country,
        estimate = estimator
        )
   
@@ -311,15 +311,16 @@ formula_rw = vcd_chosen_rw ~  vcd_ethnicity +
 #############################################################
 
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/parallel_conjoint/")
+#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/"
-data = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_vcd.RDS")
+output_wd = paste0(gdrive_code, "/VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/")
+data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_vcd_POOL.RDS"))
 
-data=rbind(data, data, data, data)
-data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
+# data=rbind(data, data, data, data)
 
-data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
+#data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 #############################################################
 
@@ -391,7 +392,7 @@ effects <- data |>
   cj(formula_interaction_rw, 
      id = ~respid,
      estimate = "mm",
-     by=~country)
+     by=~vcd_country)
 
 effects_pooled <- data |>
   cj(formula_interaction_rw, 
@@ -424,7 +425,7 @@ effects <- data |>
   cj(formula_interaction_rw, 
      id = ~respid,
      estimate = "mm",
-     by=~country)
+     by=~vcd_country)
 
 effects_pooled <- data |>
   cj(formula_interaction_rw, 
@@ -456,7 +457,7 @@ effects <- data |>
   cj(formula_interaction_rw, 
      id = ~respid,
      estimate = "mm",
-     by=~country)
+     by=~vcd_country)
 
 effects_pooled <- data |>
   cj(formula_interaction_rw, 

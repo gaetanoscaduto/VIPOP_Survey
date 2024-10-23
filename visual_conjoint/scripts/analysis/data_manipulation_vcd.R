@@ -111,8 +111,8 @@ for(i in 1:ntask)
                                                     "animal",
                                                     "crowd",
                                                     "identifier")
-                                                  )
-                         )
+    )
+    )
     
   }
 }
@@ -174,6 +174,7 @@ for(i in 1:ntask) #for each task
 
 cjdata = data.frame("respid" = rep(NA, N*ntask*nprofiles)) #respondent's id (for merging and clustering)
 
+cjdata$vcd_country = NA
 cjdata$vcd_task_number = NA#"task_number" #sequential number of the task
 cjdata$vcd_profile_number = NA#"profile_number" #sequential number of the profile
 
@@ -207,6 +208,8 @@ for(i in 1:nrow(data)) #for every row in data
       
       this_row = profiles_per_resp*(i-1)+(k-1)*2+j # the row of the cjdata that we are going to change the values of
       
+      cjdata[this_row, "vcd_country"] = data[i, "country"]
+      
       cjdata[this_row, "respid"] = data[i, "id__"] #the respondent id
       
       cjdata[this_row, "vcd_task_number"] = k #the task number
@@ -239,13 +242,13 @@ for(i in 1:nrow(data)) #for every row in data
       # if the profile that has been chosen is the one that in this moment is in the
       #cell we set it at 1, else we set it at 0
       cjdata[this_row, "vcd_chosen_rw"] = ifelse(cjdata[this_row, "vcd_chosen_rw"] == j,
-                                              1, 0)
+                                                 1, 0)
       
       cjdata[this_row, "vcd_chosen_trust"] = ifelse(cjdata[this_row, "vcd_chosen_trust"] == j,
-                                              1, 0)
+                                                    1, 0)
       
       cjdata[this_row, "vcd_chosen_pop"] = ifelse(cjdata[this_row, "vcd_chosen_pop"] == j,
-                                              1, 0)
+                                                  1, 0)
     }
     
   }

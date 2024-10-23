@@ -15,7 +15,10 @@ library(dplyr)
 
 data = import(paste0(dataset_rep, "demo_data_", context, ".sav"))
 
-
+if(context !="POOL")
+{
+  data$country = context
+}
 #View(data)
 
 # - gender (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
