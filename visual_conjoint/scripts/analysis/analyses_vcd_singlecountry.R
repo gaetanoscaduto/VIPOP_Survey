@@ -123,7 +123,7 @@ full_analysis = function(data,
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
 
-  # formula=formula_rw
+  # formula=formula_outcome
   # estimator="mm"
   
    estimator=match.arg(estimator)
@@ -180,14 +180,34 @@ attributes= c("Ethnicity", "Ethnicity",
                       "Animal","Animal","Animal","Animal",
                       "Crowd","Crowd","Crowd","Crowd")
 
+##################
 
+# outcome = "ideology"
+# outcome = "trust"
+# outcome = "populism"
 
+if(outcome == "ideology")
+{
+  formula_outcome = vcd_chosen_rw ~  vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_nostalgia + vcd_valence +
+    vcd_animal + vcd_food + vcd_crowd
+}
 
-
-formula_rw = vcd_chosen_rw ~  vcd_ethnicity + 
-  vcd_gender + vcd_age + vcd_job + 
-  vcd_issue + vcd_nostalgia + vcd_valence +
-  vcd_animal + vcd_food + vcd_crowd
+if(outcome == "trust")
+{
+  formula_outcome = vcd_chosen_trust ~ vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_nostalgia + vcd_valence +
+    vcd_animal + vcd_food + vcd_crowd
+}
+if(outcome == "ideology")
+{
+  formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_nostalgia + vcd_valence +
+    vcd_animal + vcd_food + vcd_crowd
+}
 
 
 #############################################################
@@ -205,21 +225,10 @@ formula_rw = vcd_chosen_rw ~  vcd_ethnicity +
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/", context, "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/", outcome, "/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
-# data=rbind(data, data, data, data)
-# data=rbind(data, data, data, data)
 
-#context = "IT"
-# context = "FR"
-# context = "SW"
-# context = "CZ"
-# 
-# data = data |>
-#   filter(country == "IT")
-
-#############################################################
 
 ######################################
 ############ EFFECTS ################# 
@@ -229,7 +238,7 @@ data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 subdir = "MMs/"
 
 full_analysis(data,
-              formula_rw,
+              formula_outcome,
               "mm",
               subdir,
               leftlim = 0.3,
@@ -241,7 +250,7 @@ full_analysis(data,
 subdir = "AMCEs/"
 
 full_analysis(data,
-              formula_rw,
+              formula_outcome,
               "amce",
               subdir)
 
@@ -250,12 +259,44 @@ full_analysis(data,
 
 data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep =" ")
 
-formula_interaction_rw = vcd_chosen_rw ~ interacted_sociodemos
+data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
+
+data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep =" ")
+
+
+
+
+if(outcome=="ideology")
+{
+  formula_interaction_sociodemos = vcd_chosen_rw ~ interacted_sociodemos
+  formula_interaction_cultural = vcd_chosen_rw ~ interacted_cultural
+  formula_interaction_political = vcd_chosen_rw ~ interacted_political
+  
+  
+}
+
+if(outcome=="trust")
+{
+  formula_interaction_sociodemos = vcd_chosen_trust ~ interacted_sociodemos  
+  formula_interaction_cultural = vcd_chosen_trust ~ interacted_cultural
+  formula_interaction_political = vcd_chosen_trust ~ interacted_political
+  
+  
+}
+
+if(outcome=="populism")
+{
+  formula_interaction_sociodemos = vcd_chosen_pop ~ interacted_sociodemos
+  formula_interaction_cultural = vcd_chosen_pop ~ interacted_cultural
+  formula_interaction_political = vcd_chosen_pop ~ interacted_political
+  
+}
+
 
 subdir = "Interactions/"
 
 effects <- data |>
-  cj(formula_interaction_rw, 
+  cj(formula_interaction_sociodemos, 
      id = ~respid,
      estimate = "mm")
 
@@ -273,14 +314,10 @@ ggsave(paste0(output_wd,"estimations/", subdir,"interacted_sociodemos_singlecoun
 ##### ACIE of the cultural dimensions
 
 
-data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
-
-formula_interaction_rw = vcd_chosen_rw ~ interacted_cultural
-
 subdir = "Interactions/"
 
 effects <- data |>
-  cj(formula_interaction_rw, 
+  cj(formula_interaction_cultural, 
      id = ~respid,
      estimate = "mm")
 
@@ -294,18 +331,13 @@ ggsave(paste0(output_wd,"estimations/", subdir,"interacted_cultural_singlecountr
        width = 10, create.dir = T)
 
 
-
 #####  ACIE of the political dimensions
 
-
-data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep =" ")
-
-formula_interaction_rw = vcd_chosen_rw ~ interacted_political
 
 subdir = "Interactions/"
 
 effects <- data |>
-  cj(formula_interaction_rw, 
+  cj(formula_interaction_political, 
      id = ~respid,
      estimate = "mm")
 

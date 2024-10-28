@@ -109,21 +109,130 @@ for(var in cpd_educ_names)
 
 # - region (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
-# todo
+if(context == "IT")
+{
+  data <- data |>
+    mutate(region = case_when(
+      region == "1" ~ "Abruzzo",
+      region == "2" ~ "Basilicata",
+      region == "3" ~ "Calabria",
+      region == "4" ~ "Campania",
+      region == "5" ~ "Emilia-Romagna",
+      region == "6" ~ "Friuli Venezia Giulia",
+      region == "7" ~ "Lazio",
+      region == "8" ~ "Liguria",
+      region == "9" ~ "Lombardia",
+      region == "10" ~ "Marche",
+      region == "11" ~ "Molise",
+      region == "12" ~ "Piemonte",
+      region == "13" ~ "Puglia",
+      region == "14" ~ "Sardegna",
+      region == "15" ~ "Sicilia",
+      region == "16" ~ "Toscana",
+      region == "17" ~ "Trentino-Alto Adige",
+      region == "18" ~ "Umbria",
+      region == "19" ~ "Valle d'Aosta",
+      region == "20" ~ "Veneto",
+      TRUE ~ region  # Keeps any values not in the list as they are
+    ))
+  
+}
+
+if(context == "FR")
+{
+  data <- data |>
+    mutate(region = case_when(
+      region == "1" ~ "Auvergne-Rhône-Alpes",
+      region == "2" ~ "Bourgogne-Franche-Comté",
+      region == "3" ~ "Bretagne",
+      region == "4" ~ "Centre-Val de Loire",
+      region == "5" ~ "Corse",
+      region == "6" ~ "Grand Est",
+      region == "7" ~ "Hauts-de-France",
+      region == "8" ~ "Île-de-France",
+      region == "9" ~ "Normandie",
+      region == "10" ~ "Nouvelle-Aquitaine",
+      region == "11" ~ "Occitanie",
+      region == "12" ~ "Pays de la Loire",
+      region == "13" ~ "Provence-Alpes-Côte d'Azur",
+      TRUE ~ region  # Keeps any values not in the list as they are
+    ))
+  
+}
+
+if(context == "CZ")
+{
+  data <- data |>
+    mutate(region = case_when(
+      region == "1" ~ "Středočeský kraj",
+      region == "2" ~ "Královéhradecký kraj",
+      region == "3" ~ "Karlovarský kraj",
+      region == "4" ~ "Liberecký kraj",
+      region == "5" ~ "Moravskoslezský kraj",
+      region == "6" ~ "Olomoucký kraj",
+      region == "7" ~ "Pardubický kraj",
+      region == "8" ~ "Plzeňský kraj",
+      region == "9" ~ "Praha",
+      region == "10" ~ "Jihočeský kraj",
+      region == "11" ~ "Jihomoravský kraj",
+      region == "12" ~ "Ústecký kraj",
+      region == "13" ~ "Kraj Vysočina",
+      region == "14" ~ "Zlínský kraj",
+      TRUE ~ region  # Keeps any values not in the list as they are
+    ))
+  
+}
+
+if(context == "SW")
+{
+  data <- data |>
+    mutate(region = case_when(
+      region == "1" ~ "Stockholms",
+      region == "2" ~ "Uppsala",
+      region == "3" ~ "Södermanlands",
+      region == "4" ~ "Östergötlands",
+      region == "5" ~ "Jönköpings",
+      region == "6" ~ "Kronobergs",
+      region == "7" ~ "Kalmar",
+      region == "8" ~ "Gotlands",
+      region == "9" ~ "Blekinge",
+      region == "10" ~ "Skåne",
+      region == "11" ~ "Hallands",
+      region == "12" ~ "Västra Götalands",
+      region == "13" ~ "Värmlands",
+      region == "14" ~ "Örebro",
+      region == "15" ~ "Västmanlands",
+      region == "16" ~ "Dalarnas",
+      region == "17" ~ "Gävleborgs",
+      region == "18" ~ "Västernorrlands",
+      region == "19" ~ "Jämtlands",
+      region == "20" ~ "Västerbottens",
+      region == "21" ~ "Norrbottens",
+      TRUE ~ region  # Keeps any values not in the list as they are
+    ))
+  
+}
 
 
-data = data |>
-  mutate(region, 
-         macroregion = case_when(
-           region %in% c("Lombardia", "Piemonte", "Val d'Aosta", "Liguria") ~ "North-West",
-           region %in% c("Veneto", "Trentino-Alto Adige", "Emilia-Romagna", "Friuli-Venezia Giulia") ~ "North-East",
-           region %in% c("Lazio", "Marche", "Toscana", "Umbria") ~ "Center",
-           region %in% c("Abruzzo", "Basilicata", "Molise", "Calabria", "Campania", "Puglia", "Sardegna", "Sicilia") ~ "South",
-           is.na(region) ~ NA
-         ) 
-  )
 
-table(data$macroregion)
+# 
+# 
+# if(context == "IT")
+# {
+# data = data |>
+#   mutate(region, 
+#          macroregion = case_when(
+#            region %in% c("Lombardia", "Piemonte", "Val d'Aosta", "Liguria") ~ "North-West",
+#            region %in% c("Veneto", "Trentino-Alto Adige", "Emilia-Romagna", "Friuli-Venezia Giulia") ~ "North-East",
+#            region %in% c("Lazio", "Marche", "Toscana", "Umbria") ~ "Center",
+#            region %in% c("Abruzzo", "Basilicata", "Molise", "Calabria", "Campania", "Puglia", "Sardegna", "Sicilia") ~ "South",
+#            is.na(region) ~ NA
+#          ) 
+#   )
+# 
+# }
+
+#table(data$macroregion)
 # - region_feel (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
 #todo
@@ -376,10 +485,10 @@ table(data$sns_use)
 data = data |>
   mutate(sns_use_rec = recode(sns_use,
                               "1" = "nev_hardev",
-                              "2" = "monthly",
-                              "3" = "weekly",
-                              "4" = "daily",
-                              "5" = "sev_aday",
+                              "2" = "lessthan10",
+                              "3" = "between10and30",
+                              "4" = "between30and60",
+                              "5" = "morethan60",
   ) 
   )
 
@@ -556,8 +665,79 @@ data = data |>
 table(data$attention_check1)
 
 # - votechoice (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
-# 
-#todo
+
+if(context=="IT")
+{
+  data <- data |>
+    mutate(votechoice = case_when(
+      votechoice == 1 ~ "Fratelli d'Italia",
+      votechoice == 2 ~ "Partito Democratico",
+      votechoice == 3 ~ "Movimento 5 Stelle",
+      votechoice == 4 ~ "Lega",
+      votechoice == 5 ~ "Forza Italia - Noi Moderati",
+      votechoice == 6 ~ "Azione - Siamo europei",
+      votechoice == 7 ~ "Stati Uniti d'Europa (Italia Viva - +Europa, altre liste)",
+      votechoice == 8 ~ "Alleanza Verde-Sinistra",
+      votechoice == 9 ~ "Altra lista",
+      votechoice == 10 ~ "Non ho votato/Mi sono astenuto",
+      votechoice == 11 ~ "Scheda bianca/nulla",
+      votechoice == 12 ~ "Preferisco non rispondere",
+      TRUE ~ votechoice  # Keeps any values not in the list as they are
+    ))
+  
+}
+if(context=="FR")
+{
+  data <- data |>
+    mutate(votechoice = case_when(
+      votechoice == 1 ~ "RN - Rassemblement national",
+      votechoice == 2 ~ "Coalition Besoin d'Europe (Renaissance, Modem, Horizons, Parti Radical, Union des démocrates et indépendants)",
+      votechoice == 3 ~ "Coalition Réveiller l'Europe (Parti socialiste, Place publique)",
+      votechoice == 4 ~ "LFI - La France Insoumise",
+      votechoice == 5 ~ "LR - Les Républicains",
+      votechoice == 6 ~ "LE - EELV - Les Écologistes - Europe Ecologie Les Verts",
+      votechoice == 7 ~ "Coalition La France fière (Reconquête!, Centre national des indépendants et paysans)",
+      votechoice == 8 ~ "Autre",
+      TRUE ~ votechoice  # Keeps any values not in the list as they are
+    ))
+}
+if(context=="CZ")
+{
+  data <- data |>
+    mutate(votechoice = case_when(
+      votechoice == 1 ~ "ANO 2011",
+      votechoice == 2 ~ "SPOLU (Občanská demokratická strana, Křesťanská a demokratická unie – Československá strana lidová, Tradice Odpovědnost Prosperita 09)",
+      votechoice == 3 ~ "Přísaha a Motoristé (Přísaha – občanské hnutí Roberta Šlachty, AUTO - Motoristé sobě)",
+      votechoice == 4 ~ "Stačilo! - Koalice Stačilo! (Komunistická strana Čech a Moravy, Česká strana národně sociální, Spojení demokraté – Sdružení nezávislých)",
+      votechoice == 5 ~ "STAN - Starostové a osobnosti pro Evropu",
+      votechoice == 6 ~ "Piráti - Česká pirátská strana",
+      votechoice == 7 ~ "SPD a Trikolora (Svoboda a přímá demokracie, Trikolóra hnutí občanů)",
+      votechoice == 8 ~ "PRO - Právo Respekt Odbornost Jindřicha Rajchla",
+      votechoice == 9 ~ "SOCDEM - Sociální demokracie",
+      votechoice == 10 ~ "Svobodní - Strana svobodných občanů",
+      votechoice == 11 ~ "Zelení - Strana zelených",
+      votechoice == 12 ~ "Jinou stranu",
+      TRUE ~ votechoice  # Keeps any values not in the list as they are
+    ))
+  
+}
+if(context=="SW")
+{
+  data <- data |>
+    mutate(votechoice = case_when(
+      votechoice == 1 ~ "S - Socialdemokraterna",
+      votechoice == 2 ~ "M - Moderaterna",
+      votechoice == 3 ~ "MP - Miljöpartiet de gröna",
+      votechoice == 4 ~ "SD - Sverigedemokraterna",
+      votechoice == 5 ~ "V - Vänsterpartiet",
+      votechoice == 6 ~ "C - Centerpartiet",
+      votechoice == 7 ~ "KD - Kristdemokraterna",
+      votechoice == 8 ~ "L - Liberalerna",
+      votechoice == 9 ~ "Övriga parter",
+      TRUE ~ votechoice  # Keeps any values not in the list as they are
+    ))
+  
+}
 
 # - le variabili "nethet_", come per le "tipi_", sono nominate con numeri invece che con "nethet_right", "nethet_left", "nethet_center", etc. come indicato nel master
 #
