@@ -201,7 +201,7 @@ if(outcome == "trust")
     vcd_issue + vcd_nostalgia + vcd_valence +
     vcd_animal + vcd_food + vcd_crowd
 }
-if(outcome == "ideology")
+if(outcome == "populism")
 {
   formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 

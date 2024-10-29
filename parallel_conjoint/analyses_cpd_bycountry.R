@@ -101,30 +101,30 @@ draw_plot_effects_bycountry = function(effects,
     these_labels = y_labels[[type]][[category]]
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-      geom_pointrange(data=effects[effects$category == category & effects$country == "IT", ],
+      geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "IT", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/5),
                       show.legend = T)+
-      geom_pointrange(data=effects[effects$category == category & effects$country == "FR", ],
+      geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "FR", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/10),
                       show.legend = T)+
-      geom_pointrange(data=effects[effects$category == category & effects$country == "SW", ],
+      geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
                       show.legend = T)+
-      geom_pointrange(data=effects[effects$category == category & effects$country == "CZ", ],
+      geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = -1/10),
                       show.legend = T)+
-      geom_pointrange(data=effects[effects$category == category & effects$country == "POOL", ],
+      geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "POOL", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
                       alpha = 1,
                       position = position_nudge(y = -1/5),
@@ -180,7 +180,7 @@ full_analysis_bycountry = function(data,
                                    rightlim=999#the subdirectory where the plots will be saved
 ){
   
-  
+  #browser()
   ###### This function performs the whole analysis, draws the graphs and saves
   #them in the appropriate repositories. 
   #It calls the other functions previously defined plus the functions in cjregg and
@@ -204,7 +204,7 @@ full_analysis_bycountry = function(data,
          id = ~respid,
          estimate = estimator)
     
-    effects_pooled$country = "POOL"
+    effects_pooled$cpd_country = "POOL"
     effects_pooled$BY = "POOL"
     
     effects_bycountry <- data |>
@@ -225,27 +225,27 @@ full_analysis_bycountry = function(data,
          estimate = estimator,
          by = ~cpd_exparm)
     
-    effects_pooled$country = "POOL"
+    effects_pooled$cpd_country = "POOL"
     
     effects_bycountry =data.frame()
     
     for(context in c("IT", "FR", "SW", "CZ"))
     {
       temp_effects_bycountry <- data |>
-        filter((cpd_exparm2 == "natural" | cpd_exparm2 == arm) & country == context) |>
+        filter((cpd_exparm2 == "natural" | cpd_exparm2 == arm) & cpd_country == context) |>
         cj(formula_match,
            id = ~respid,
            estimate = estimator,
            by = ~cpd_exparm)
       
-      temp_effects_bycountry$country = context
+      temp_effects_bycountry$cpd_country = context
       
       effects_bycountry=rbind(effects_bycountry, temp_effects_bycountry)
     }
     
   }
   
-  ##browser()
+  #browser()
   effects = rbind(effects_bycountry, effects_pooled)
   
   
@@ -271,7 +271,7 @@ full_analysis_bycountry = function(data,
     ggsave(paste0(output_wd,"estimations/", subdir, category, "_bycountry.png"), 
            v[[category]], 
            height = 8, 
-           width = 8)
+           width = 8, create.dir = T)
     
   }
   
@@ -320,30 +320,30 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     these_labels = y_labels[[type]][[category]]
     ates_plot = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-      geom_pointrange(data=ates[ates$category == category & ates$country == "IT", ],
+      geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "IT", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/5),
                       show.legend = T)+
-      geom_pointrange(data=ates[ates$category == category & ates$country == "FR", ],
+      geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "FR", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/10),
                       show.legend = T)+
-      geom_pointrange(data=ates[ates$category == category & ates$country == "SW", ],
+      geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
                       show.legend = T)+
-      geom_pointrange(data=ates[ates$category == category & ates$country == "CZ", ],
+      geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = -1/10),
                       show.legend = T)+
-      geom_pointrange(data=ates[ates$category == category & ates$country == "POOL", ],
+      geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "POOL", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
                       alpha = 1,
                       position = position_nudge(y = -1/5),
@@ -390,30 +390,30 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     these_labels = y_labels[[type]][[category]]
     acdes_plot = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "IT", ],
+      geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "IT", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/5),
                       show.legend = T)+
-      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "FR", ],
+      geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "FR", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/10),
                       show.legend = T)+
-      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "SW", ],
+      geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
                       show.legend = T)+
-      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "CZ", ],
+      geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = -1/10),
                       show.legend = T)+
-      geom_pointrange(data=acdes[acdes$category == category & acdes$country == "POOL", ],
+      geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "POOL", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
                       alpha = 1,
                       position = position_nudge(y = -1/5),
@@ -461,30 +461,30 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
     these_labels = y_labels[[type]][[category]]
     ees_plot = ggplot()+
       geom_vline(aes(xintercept=0), col="black", alpha=1/4)+
-      geom_pointrange(data=ees[ees$category == category & ees$country == "IT", ],
+      geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "IT", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "IT", shape = "IT"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/5),
                       show.legend = T)+
-      geom_pointrange(data=ees[ees$category == category & ees$country == "FR", ],
+      geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "FR", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = 1/10),
                       show.legend = T)+
-      geom_pointrange(data=ees[ees$category == category & ees$country == "SW", ],
+      geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
                       show.legend = T)+
-      geom_pointrange(data=ees[ees$category == category & ees$country == "CZ", ],
+      geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
                       position = position_nudge(y = -1/10),
                       show.legend = T)+
-      geom_pointrange(data=ees[ees$category == category & ees$country == "POOL", ],
+      geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "POOL", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
                       alpha = 1,
                       position = position_nudge(y = -1/5),
@@ -553,6 +553,7 @@ full_match_effects_bycountry = function(data,
                                         formula, 
                                         exparm){
   
+  #browser()
   
   # exparm="natural"
   # formula=formula_natural_nmatches
@@ -561,13 +562,13 @@ full_match_effects_bycountry = function(data,
   # exparm=match.arg(exparm)
   
   full_df = data.frame()
-  for(country in c("IT", "FR","SW","CZ", "POOL"))
+  for(context_loc in c("IT", "FR","SW","CZ", "POOL"))
   {
-    if(country != "POOL")
+    if(context_loc != "POOL")
     {
       #filter the data by country and experimental arm 
       filtered_data = data |>
-        filter(country == country & cpd_exparm == exparm)
+        filter(cpd_country == context_loc & cpd_exparm == exparm)
       
     }
     else
@@ -604,7 +605,7 @@ full_match_effects_bycountry = function(data,
     
     #I add the country variable because then I row bind all the datasets created
     #by the loop toghether
-    effect_df$country = country
+    effect_df$cpd_country = context_loc
     
     #I bind the datasets
     full_df=rbind(full_df, effect_df)
@@ -613,23 +614,23 @@ full_match_effects_bycountry = function(data,
   
   # Create caterpillar plot
   p = ggplot() +
-    geom_pointrange(data = full_df[full_df$country == "IT", ], 
+    geom_pointrange(data = full_df[full_df$cpd_country == "IT", ], 
                     aes(x = x, y = fit, ymin = lower, ymax = upper, 
                         col="IT", shape="IT"),
                     position = position_nudge(x = -1/5)) +
-    geom_pointrange(data = full_df[full_df$country == "FR", ], 
+    geom_pointrange(data = full_df[full_df$cpd_country == "FR", ], 
                     aes(x = x, y = fit, ymin = lower, ymax = upper, 
                         col="FR", shape="FR"),
                     position = position_nudge(x = -1/10)) + 
-    geom_pointrange(data = full_df[full_df$country == "SW", ], 
+    geom_pointrange(data = full_df[full_df$cpd_country == "SW", ], 
                     aes(x = x, y = fit, ymin = lower, ymax = upper, 
                         col="SW", shape="SW"),
                     position = position_nudge(x = 0)) + 
-    geom_pointrange(data = full_df[full_df$country == "CZ", ], 
+    geom_pointrange(data = full_df[full_df$cpd_country == "CZ", ], 
                     aes(x = x, y = fit, ymin = lower, ymax = upper, 
                         col="CZ", shape="CZ"),
                     position = position_nudge(x = 1/10)) + 
-    geom_pointrange(data = full_df[full_df$country == "POOL", ], 
+    geom_pointrange(data = full_df[full_df$cpd_country == "POOL", ], 
                     aes(x = x, y = fit, ymin = lower, ymax = upper, 
                         col="POOL", shape="POOL"),
                     position = position_nudge(x = 1/5)) + 
@@ -669,7 +670,7 @@ full_match_effects_bycountry = function(data,
                 subdir,"bycountry_", exparm, ".png"), 
          p, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
 }
 
 
@@ -716,7 +717,7 @@ compare_effects_bycountry = function(data,
     cj(formula, id = ~respid,
        estimate = estimator)
   
-  ates_pooled$country = "POOL"
+  ates_pooled$cpd_country = "POOL"
   ates_pooled$BY = "POOL"
   
   ates=rbind(ates, ates_pooled)
@@ -738,7 +739,7 @@ compare_effects_bycountry = function(data,
        estimate = estimator)
   
   
-  acdes_pooled$country = "POOL"
+  acdes_pooled$cpd_country = "POOL"
   acdes_pooled$BY = "POOL"
   
   acdes=rbind(acdes, acdes_pooled)
@@ -750,13 +751,13 @@ compare_effects_bycountry = function(data,
   for(context in c("IT","FR","SW","CZ"))
   {
     ees_country = data |>
-      filter(country == context & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
+      filter(cpd_country == context & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
       cj(formula_match,
          id = ~respid,
          estimate = paste0(estimator, "_differences"),
          by = ~cpd_exparm)
     
-    ees_country$country = context
+    ees_country$cpd_country = context
     
     ees=rbind(ees, ees_country)
   }
@@ -767,7 +768,7 @@ compare_effects_bycountry = function(data,
        estimate = paste0(estimator, "_differences"),
        by = ~cpd_exparm)
   
-  ees_pooled$country = "POOL"
+  ees_pooled$cpd_country = "POOL"
   
   ######browser()
   
@@ -828,7 +829,7 @@ compare_effects_bycountry = function(data,
   ggsave(paste0(output_wd,"estimations/", subdir,"socio_bycountry.png"), 
          p_socio, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   ggsave(paste0(output_wd,"estimations/", subdir,"psycho_bycountry.png"), 
          p_psycho, 
@@ -838,7 +839,7 @@ compare_effects_bycountry = function(data,
   ggsave(paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.png"), 
          p_lifestyle, 
          height = 10, 
-         width = 10)
+         width = 10, create.dir = T)
   
   return(plots)
 }
@@ -944,7 +945,7 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 # data=rbind(data, data, data, data)
 # data=rbind(data, data, data, data)
 # 
-# data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
+# data$cpd_country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 
 #############################################################
@@ -975,7 +976,7 @@ full_analysis_bycountry(data,
 
 
 ### Same as before, but with AMCes (for appendix)
-subdir = "ATEs/match/MMs/"
+subdir = "ATEs/match/AMCEs/"
 
 full_analysis_bycountry(data, 
               formula_match,
@@ -983,8 +984,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "natural",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 
@@ -1015,9 +1016,9 @@ full_analysis_bycountry(data,
               "nominal",
               "amce",
               "natural",
-              subdir,
-              leftlim=0.3,
-              rightlim=0.7)
+              leftlim=-0.5,
+              rightlim=0.5,
+              subdir = subdir)
 
 
 ########################################
@@ -1084,8 +1085,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_match",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 ############################################################################
@@ -1100,8 +1101,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_mismatch",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 
@@ -1128,8 +1129,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_match",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 
@@ -1143,8 +1144,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_mismatch",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 
@@ -1158,8 +1159,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_match",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MISMATCH
@@ -1172,8 +1173,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_mismatch",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=-0.5,
+              rightlim=0.5,
               subdir)
 
 
@@ -1181,20 +1182,21 @@ full_analysis_bycountry(data,
 ### Analyses on the effects of multiple matches
 
 subdir = "MatchesEffects/"
+
 #model with just the number of matches predicting the probability of being chosen
-# summary(glm(data$cpd_chosen~data$cpd_n_matches, family = 
+# summary(glm(data$cpd_chosen~data$cpd_n_matches, family =
 #               "binomial"))
 
 #now i call the function to draw the effects in the model with the actual controls
-# 
-# full_match_effects_bycountry(data=data,
-#                    formula=formula_natural_nmatches, 
-#                    exparm="natural")
-# 
-# full_match_effects_bycountry(data, 
-#                    formula_mediated_nmatches, 
-#                    "mediated")
-# 
+#
+full_match_effects_bycountry(data=data,
+                   formula=formula_natural_nmatches,
+                   exparm="natural")
+
+full_match_effects_bycountry(data,
+                   formula_mediated_nmatches,
+                   "mediated")
+
 
 
 
@@ -1251,7 +1253,7 @@ p = plots_match$ates_plots$Sociodemographics | plots_match$ees_plots$Sociodemogr
 ggsave(paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.png"), 
        p, 
        height = 10, 
-       width = 10)
+       width = 10, create.dir = T)
 
 
 plots_match$ates_plots$Psychological = (plots_match$ates_plots$Psychological + labs(title = "ATEs (natural mediation arm)"))
@@ -1266,7 +1268,7 @@ p = plots_match$ates_plots$Psychological | plots_match$ees_plots$Psychological  
 ggsave(paste0(output_wd,"estimations/", subdir, "psychological_bycountry.png"), 
        p, 
        height = 10, 
-       width = 10)
+       width = 10, create.dir = T)
 
 
 
@@ -1282,4 +1284,4 @@ p = plots_match$ates_plots$Lifestyle | plots_match$ees_plots$Lifestyle  | plots_
 ggsave(paste0(output_wd,"estimations/", subdir, "Lifestyle_bycountry.png"), 
        p, 
        height = 10, 
-       width = 10)
+       width = 10, create.dir = T)
