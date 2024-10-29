@@ -151,11 +151,11 @@ draw_plot_effects_bycountry = function(effects_pooled,
 
 draw_interaction_effects_bycountry = function(effects){
   
-  effects_IT= effects |> filter(country=="IT")
-  effects_FR= effects |> filter(country=="FR")
-  effects_SW= effects |> filter(country=="SW")
-  effects_CZ= effects |> filter(country=="CZ")
-  effects_POOL= effects |> filter(country=="POOL")
+  effects_IT= effects |> filter(vcd_country=="IT")
+  effects_FR= effects |> filter(vcd_country=="FR")
+  effects_SW= effects |> filter(vcd_country=="SW")
+  effects_CZ= effects |> filter(vcd_country=="CZ")
+  effects_POOL= effects |> filter(vcd_country=="POOL")
   
   
   
@@ -399,7 +399,7 @@ effects_pooled <- data |>
      id = ~respid,
      estimate = "mm")
 
-effects_pooled$country = "POOL"
+effects_pooled$vcd_country = "POOL"
 effects_pooled$BY = "POOL"
 
 effects=rbind(effects, effects_pooled)
@@ -432,7 +432,7 @@ effects_pooled <- data |>
      id = ~respid,
      estimate = "mm")
 
-effects_pooled$country = "POOL"
+effects_pooled$vcd_country = "POOL"
 effects_pooled$BY = "POOL"
 
 effects=rbind(effects, effects_pooled)
@@ -464,7 +464,7 @@ effects_pooled <- data |>
      id = ~respid,
      estimate = "mm")
 
-effects_pooled$country = "POOL"
+effects_pooled$vcd_country = "POOL"
 effects_pooled$BY = "POOL"
 
 effects=rbind(effects, effects_pooled)
