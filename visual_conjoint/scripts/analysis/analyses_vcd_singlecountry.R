@@ -15,7 +15,8 @@ pacman::p_load(
   MASS, cjoint, corrplot, dplyr, 
   forcats, ggplot2, gt, gtools, 
   gtsummary, margins, openxlsx, 
-  patchwork, rio, texreg, tools
+  patchwork, rio, texreg, tools,
+  wesanderson
 )
 
 #############################################################
@@ -76,7 +77,7 @@ v=list()
       ylab(attribute)+
       xlab("\n")+
       xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = y_labels_plots[[tolower(attribute)]]) +
+      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
       theme(legend.position = "none",
             axis.text.y = element_text(size=10),
             axis.title.y = element_text(size=12))
@@ -90,16 +91,135 @@ v=list()
 
 
 
+full_subgroup_analysis = function(data,
+                                 formula=formula_outcome,
+                                 estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
+                                 y_labels=y_labels_plots,
+                                 subdir, #the subdirectory where plots will be saved
+                                 leftlim=999, #the left limit of the plot
+                                 rightlim=999,#the right limit of the plot
+                                 x_intercept=999, #the vertical line to signal the difference from the insignificance
+                                 subgroup_variable, #the name of the variable on which subgroup analysis is conducted
+                                 subgroup_name, #the grouping name in natural language in natural language (eg. età, titolo di studio)
+                                 subgroup1, #the name of the first subgroup (variable level)
+                                 subgroup2 #the name of the second subgroup (variable level)
+){
+  
+  estimator=match.arg(estimator)
+  
+  #browser()
+  
+  data$temp_subgroup = factor(data[[subgroup_variable]])
+  
+  effects_pooled <- data |>
+    cj(formula, 
+       id = ~respid,
+       by = ~temp_subgroup,
+       estimate = "mm")
+  
+  effects_pooled = set_categories_and_levels_visual(effects_pooled,
+                                                    attributes = attributes)
+  
+  
+  
+  v = list()
+  
+  if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+    #with [-1; 1] for amces and [0, 1] for mm
+  {
+    
+    leftlim=ifelse(estimator!="mm", -1, 0)
+    rightlim=1
+  }
+  if(x_intercept==999)
+  {
+    intercept = ifelse(estimator!="mm", 0, 0.5)
+  }
+  
+  v=list()
+  
+  effects_subgroup1 = effects_pooled |>
+    filter(temp_subgroup == subgroup1)
+  
+  effects_subgroup2 = effects_pooled |>
+    filter(temp_subgroup == subgroup2)
+  
+  for(attribute in unique(attributes))
+  {
+    p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
+      geom_vline(aes(xintercept=intercept), 
+                 col="black", 
+                 alpha=1/4)+
+      geom_pointrange(aes(x=estimate, 
+                          xmin=lower, 
+                          xmax=upper,
+                          y=level), 
+                      col=wesanderson::wes_palettes$Darjeeling1[1],
+                      shape=19,
+                      position = position_nudge(y = 1/10),
+                      show.legend = T)+
+      geom_pointrange(data=effects_subgroup2[effects_subgroup2$feature==attribute, ],
+                      aes(x=estimate,
+                          xmin=lower,
+                          xmax=upper,
+                          y=level), 
+                      col=wesanderson::wes_palettes$Darjeeling1[2],
+                      shape=17,
+                      position = position_nudge(y = -1/10),
+                      show.legend = T)+
+      ylab(attribute)+
+      xlab("\n")+
+      xlim(leftlim,rightlim)+
+      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+      # scale_color_manual(
+      #   values = c(subgroup1 = wesanderson::wes_palettes$Darjeeling1[1],
+      #              subgroup2 = wesanderson::wes_palettes$Darjeeling1[2]),
+      #   name = subgroup_name,
+      #   limits = c(subgroup1, subgroup2)
+      # ) +
+      # scale_shape_manual(
+      #   values = c(subgroup1 = 19,
+      #              subgroup2 = 17),
+      #   name = subgroup_name,
+      #   limits = c(subgroup1, subgroup2)
+      # )+
+      theme(legend.position = "right",
+            axis.text.y = element_text(size=10),
+            axis.title.y = element_text(size=12))
+    
+    v[[attribute]] = p
+  }
+  
+  p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+  
+  p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
+
+  ggsave(paste0(output_wd, subdir, subgroup_name, ".png"), 
+         p, 
+         height = 10, 
+         width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, ".rds"))
+}
 
 
-draw_interaction_effects = function(effects){
+
+
+
+full_interaction_effects = function(data,
+                                    formula){
+  
+  effects <- data |>
+    cj(formula, 
+       id = ~respid,
+       estimate = "mm")
   
   p=ggplot(effects)+
     geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                        y=level, col=feature))+
+                        y=fct_reorder(effects$level, desc(effects$estimate)), col=feature))+
     labs(y="",x="Marginal Mean")+
-    xlim(-0.1,1.1)+
+    xlim(-0.01,1.01)+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
@@ -145,10 +265,13 @@ full_analysis = function(data,
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment"),
                                  caption= toupper(estimator))
   
-  ggsave(paste0(output_wd,"estimations/", subdir,"singlecountry.png"), 
+  ggsave(paste0(output_wd, subdir,"singlecountry.png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.png"))
+  
   
 }
 
@@ -225,7 +348,7 @@ if(outcome == "populism")
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/", outcome, "/", context, "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/single_country/", outcome, "/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
 
@@ -233,6 +356,9 @@ data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 ######################################
 ############ EFFECTS ################# 
 ######################################
+
+
+######### MAIN EFFECTS ###########
 
 
 subdir = "MMs/"
@@ -254,7 +380,10 @@ full_analysis(data,
               "amce",
               subdir)
 
-##### ACIE of Sociodemos
+################## ACIEs #####################
+
+
+##### ACIEs
 
 
 data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep =" ")
@@ -295,58 +424,87 @@ if(outcome=="populism")
 
 subdir = "Interactions/"
 
-effects <- data |>
-  cj(formula_interaction_sociodemos, 
-     id = ~respid,
-     estimate = "mm")
 
-p = draw_interaction_effects(effects)
+p = full_interaction_effects(data, 
+                             formula_interaction_sociodemos)
 
-p
-
-ggsave(paste0(output_wd,"estimations/", subdir,"interacted_sociodemos_singlecountry.png"), 
+ggsave(paste0(output_wd, subdir,"interacted_sociodemos.png"), 
        p, 
        height = 10, 
        width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos.rds"))
 
 
 
 ##### ACIE of the cultural dimensions
 
 
-subdir = "Interactions/"
 
-effects <- data |>
-  cj(formula_interaction_cultural, 
-     id = ~respid,
-     estimate = "mm")
+p = full_interaction_effects(data, 
+                             formula_interaction_cultural)
 
-p = draw_interaction_effects(effects)
-
-p
-
-ggsave(paste0(output_wd,"estimations/", subdir,"interacted_cultural_singlecountry.png"), 
+ggsave(paste0(output_wd, subdir,"interacted_cultural.png"), 
        p, 
        height = 10, 
        width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
 
 
 #####  ACIE of the political dimensions
 
 
-subdir = "Interactions/"
+p = full_interaction_effects(data, 
+                             formula_interaction_political)
 
-effects <- data |>
-  cj(formula_interaction_political, 
-     id = ~respid,
-     estimate = "mm")
-
-p = draw_interaction_effects(effects)
-
-p
-
-ggsave(paste0(output_wd,"estimations/", subdir,"interacted_political_singlecountry.png"), 
+ggsave(paste0(output_wd, subdir,"interacted_political.png"), 
        p, 
        height = 10, 
        width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
+
+
+################################################################
+################ SUBGROUP ANALYSES #############################
+################################################################
+
+subdir = "Subgroup Analyses/"
+
+data$gender_r = factor(ifelse(data$gender == "nonbinary", NA, toTitleCase(data$gender)))
+
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       leftlim = 0.3,
+                       rightlim = 0.7,
+                       subgroup_variable = "gender_r",
+                       subgroup_name = "Gender",
+                       subgroup1 = "Female",
+                       subgroup2 = "Male" #the name of the second subgroup (variable level)
+)
+
+data$educ_r = ifelse(data$EDU_LEVEL =="nocollege", "No college", data$EDU_LEVEL)
+                     
+data$educ_r = factor(toTitleCase(data$educ_r))
+
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       leftlim = 0.3,
+                       rightlim = 0.7,
+                       subgroup_variable = "educ_r",
+                       subgroup_name = "Education level",
+                       subgroup1 = "College",
+                       subgroup2 = "No College" #the name of the second subgroup (variable level)
+)
+
+
+
+### altre da aggiungere
 

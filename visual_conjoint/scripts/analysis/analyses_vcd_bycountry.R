@@ -80,7 +80,7 @@ draw_plot_effects_bycountry = function(effects_pooled,
   v=list()
   for(attribute in unique(attributes))
   {
-    these_labels = y_labels_plots[[tolower(attribute)]]
+    these_labels = rev(y_labels_plots[[tolower(attribute)]])
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(data=effects_IT[effects_IT$feature == attribute, ],
@@ -149,7 +149,25 @@ draw_plot_effects_bycountry = function(effects_pooled,
   return(v)
 }
 
-draw_interaction_effects_bycountry = function(effects){
+full_interaction_effects_bycountry = function(data,
+                                              formula,
+                                              type_of_interaction){
+  
+  effects <- data |>
+    cj(formula, 
+       id = ~respid,
+       estimate = "mm",
+       by=~vcd_country)
+  
+  effects_pooled <- data |>
+    cj(formula, 
+       id = ~respid,
+       estimate = "mm")
+  
+  effects_pooled$vcd_country = "POOL"
+  effects_pooled$BY = "POOL"
+  
+  effects=rbind(effects, effects_pooled)
   
   effects_IT= effects |> filter(vcd_country=="IT")
   effects_FR= effects |> filter(vcd_country=="FR")
@@ -212,8 +230,16 @@ draw_interaction_effects_bycountry = function(effects){
       axis.title.y = element_text(size = 12)
     )
   
-  return(p)
-}
+  
+  ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, ".png"), 
+         p, 
+         height = 12, 
+         width = 8,
+         create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
+  
+  }
 
 
 
@@ -232,7 +258,7 @@ full_analysis_bycountry = function(data,
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
   
-  # formula=formula_rw
+  # formula=formula_outcome
   # estimator="mm"
 
   estimator=match.arg(estimator)
@@ -299,28 +325,48 @@ attributes= c("Ethnicity", "Ethnicity",
               "Crowd","Crowd","Crowd","Crowd")
 
 
+##################
+
+# outcome = "ideology"
+# outcome = "trust"
+# outcome = "populism"
+
+if(outcome == "ideology")
+{
+  formula_outcome = vcd_chosen_rw ~  vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_nostalgia + vcd_valence +
+    vcd_animal + vcd_food + vcd_crowd
+}
+
+if(outcome == "trust")
+{
+  formula_outcome = vcd_chosen_trust ~ vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_nostalgia + vcd_valence +
+    vcd_animal + vcd_food + vcd_crowd
+}
+if(outcome == "populism")
+{
+  formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_nostalgia + vcd_valence +
+    vcd_animal + vcd_food + vcd_crowd
+}
 
 
 
-formula_rw = vcd_chosen_rw ~  vcd_ethnicity + 
-  vcd_gender + vcd_age + vcd_job + 
-  vcd_issue + vcd_nostalgia + vcd_valence +
-  vcd_animal + vcd_food + vcd_crowd
 
 
 #############################################################
 
-
+#setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/parallel_conjoint/")
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = paste0(gdrive_code, "/VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/", outcome, "/")
+
 data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_vcd_POOL.RDS"))
-
-# data=rbind(data, data, data, data)
-# data=rbind(data, data, data, data)
-
-#data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 #############################################################
 
@@ -332,7 +378,7 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 subdir = "MMs/"
 
 v = full_analysis_bycountry(data,
-              formula_rw,
+              formula_outcome,
               "mm",
               subdir,
               leftlim=0.3,
@@ -342,12 +388,16 @@ v = full_analysis_bycountry(data,
 for(attribute in unique(attributes))
 {
   p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
-                                 caption= "Marginal means")
+                                 caption= paste("Marginal means on", outcome, "perceptions"))
   
-  ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
+  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
-         width = 6)
+         width = 6,
+         create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
+  
   
 }
 
@@ -356,19 +406,22 @@ for(attribute in unique(attributes))
 subdir = "AMCEs/"
 
 v= full_analysis_bycountry(data,
-              formula_rw,
+              formula_outcome,
               "amce",
               subdir)
 
 for(attribute in unique(attributes))
 {
   p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
-                                              caption= "Average marginal component effects")
+                                              caption= paste("Average marginal component effects on", outcome, "perceptions"))
   
-  ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
+  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
-         width = 6)
+         width = 6,
+         create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds") )
   
 }
 
@@ -385,33 +438,11 @@ subdir = "Interactions/"
 
 data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep =" ")
 
-formula_interaction_rw = vcd_chosen_rw ~ interacted_sociodemos
+formula_interaction_sociodemos = vcd_chosen_rw ~ interacted_sociodemos
 
-
-effects <- data |>
-  cj(formula_interaction_rw, 
-     id = ~respid,
-     estimate = "mm",
-     by=~vcd_country)
-
-effects_pooled <- data |>
-  cj(formula_interaction_rw, 
-     id = ~respid,
-     estimate = "mm")
-
-effects_pooled$vcd_country = "POOL"
-effects_pooled$BY = "POOL"
-
-effects=rbind(effects, effects_pooled)
-p = draw_interaction_effects_bycountry(effects)
-
-p
-
-ggsave(paste0(output_wd,"estimations/", subdir,"interacted_sociodemos_bycountry.png"), 
-       p, 
-       height = 12, 
-       width = 8)
-
+full_interaction_effects_bycountry(data,
+                                   formula_interaction_sociodemos,
+                                       "sociodemos")
 
 
 ##### ACIE of the cultural dimensions
@@ -419,31 +450,11 @@ ggsave(paste0(output_wd,"estimations/", subdir,"interacted_sociodemos_bycountry.
 
 data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
 
-formula_interaction_rw = vcd_chosen_rw ~ interacted_cultural
+formula_interaction_cultural = vcd_chosen_rw ~ interacted_cultural
 
-effects <- data |>
-  cj(formula_interaction_rw, 
-     id = ~respid,
-     estimate = "mm",
-     by=~vcd_country)
-
-effects_pooled <- data |>
-  cj(formula_interaction_rw, 
-     id = ~respid,
-     estimate = "mm")
-
-effects_pooled$vcd_country = "POOL"
-effects_pooled$BY = "POOL"
-
-effects=rbind(effects, effects_pooled)
-p = draw_interaction_effects_bycountry(effects)
-
-p
-
-ggsave(paste0(output_wd,"estimations/", subdir,"interacted_cultural_bycountry.png"), 
-       p, 
-       height = 12, 
-       width = 8)
+full_interaction_effects_bycountry(data,
+                                   formula_interaction_cultural,
+                                   "cultural")
 
 
 #####  ACIE of the political dimensions
@@ -451,31 +462,11 @@ ggsave(paste0(output_wd,"estimations/", subdir,"interacted_cultural_bycountry.pn
 
 data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep =" ")
 
-formula_interaction_rw = vcd_chosen_rw ~ interacted_political
+formula_interaction_political = vcd_chosen_rw ~ interacted_political
 
-effects <- data |>
-  cj(formula_interaction_rw, 
-     id = ~respid,
-     estimate = "mm",
-     by=~vcd_country)
-
-effects_pooled <- data |>
-  cj(formula_interaction_rw, 
-     id = ~respid,
-     estimate = "mm")
-
-effects_pooled$vcd_country = "POOL"
-effects_pooled$BY = "POOL"
-
-effects=rbind(effects, effects_pooled)
-p = draw_interaction_effects_bycountry(effects)
-
-p
-
-ggsave(paste0(output_wd,"estimations/", subdir,"interacted_political_bycountry.png"), 
-       p, 
-       height = 12, 
-       width = 8)
+full_interaction_effects_bycountry(data,
+                                   formula_interaction_political,
+                                   "political")
 
 
 

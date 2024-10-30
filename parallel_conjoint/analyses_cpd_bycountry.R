@@ -273,6 +273,8 @@ full_analysis_bycountry = function(data,
            height = 8, 
            width = 8, create.dir = T)
     
+    saveRDS(p, file = paste0(output_wd,"estimations/", subdir, category, "_bycountry.rds"))
+    
   }
   
 }
@@ -671,6 +673,12 @@ full_match_effects_bycountry = function(data,
          p, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", 
+                           subdir,"bycountry_", exparm, ".rds"))
+  
+  
+  
 }
 
 
@@ -831,15 +839,23 @@ compare_effects_bycountry = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,"socio_bycountry.rds"))
+  
   ggsave(paste0(output_wd,"estimations/", subdir,"psycho_bycountry.png"), 
          p_psycho, 
          height = 10, 
          width = 10)
   
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,"psycho_bycountry.rds"))
+  
+  
   ggsave(paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.png"), 
          p_lifestyle, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.rds"))
+  
   
   return(plots)
 }
@@ -1255,6 +1271,8 @@ ggsave(paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.png
        height = 10, 
        width = 10, create.dir = T)
 
+saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.rds"))
+
 
 plots_match$ates_plots$Psychological = (plots_match$ates_plots$Psychological + labs(title = "ATEs (natural mediation arm)"))
 
@@ -1269,6 +1287,8 @@ ggsave(paste0(output_wd,"estimations/", subdir, "psychological_bycountry.png"),
        p, 
        height = 10, 
        width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "psychological_bycountry.rds"))
 
 
 
@@ -1285,3 +1305,5 @@ ggsave(paste0(output_wd,"estimations/", subdir, "Lifestyle_bycountry.png"),
        p, 
        height = 10, 
        width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "Lifestyle_bycountry.rds"))

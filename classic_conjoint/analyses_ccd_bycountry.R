@@ -158,6 +158,98 @@ draw_plot_effects_bycountry = function(effects_pooled,
   return(v)
 }
 
+full_interaction_effects_bycountry = function(data,
+                                              formula,
+                                              type_of_interaction){
+  
+  effects <- data |>
+    cj(formula, 
+       id = ~respid,
+       estimate = "mm",
+       by=~ccd_country)
+  
+  effects_pooled <- data |>
+    cj(formula, 
+       id = ~respid,
+       estimate = "mm")
+  
+  effects_pooled$ccd_country = "POOL"
+  effects_pooled$BY = "POOL"
+  
+  effects=rbind(effects, effects_pooled)
+  
+  effects_IT= effects |> filter(ccd_country=="IT")
+  effects_FR= effects |> filter(ccd_country=="FR")
+  effects_SW= effects |> filter(ccd_country=="SW")
+  effects_CZ= effects |> filter(ccd_country=="CZ")
+  effects_POOL= effects |> filter(ccd_country=="POOL")
+  
+  
+  
+  p=ggplot()+
+    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_pointrange(data=effects_IT, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="IT", shape="IT"),
+                    alpha = 1,
+                    position = position_nudge(y = 1/5),
+                    show.legend = T)+
+    geom_pointrange(data=effects_FR, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="FR", shape="FR"),
+                    alpha = 1,
+                    position = position_nudge(y = 1/10),
+                    show.legend = T)+
+    geom_pointrange(data=effects_SW, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="SW", shape="SW"),
+                    alpha = 1,
+                    position = position_nudge(y =0),
+                    show.legend = T)+
+    geom_pointrange(data=effects_CZ, aes(x=estimate, xmin=lower, xmax=upper,
+                                         y=level, col="CZ", shape="CZ"),
+                    alpha = 1,
+                    position = position_nudge(y = -1/10),
+                    show.legend = T)+
+    geom_pointrange(data=effects_POOL, aes(x=estimate, xmin=lower, xmax=upper,
+                                           y=level, col="POOL", shape="POOL"),
+                    alpha = 1,
+                    position = position_nudge(y = -1/5),
+                    show.legend = T)+
+    labs(y="",x="Marginal Mean")+
+    xlim(-0.1,1.1)+
+    scale_color_manual(
+      values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
+                 "FR" = wesanderson::wes_palettes$Darjeeling1[2],
+                 "SW" = wesanderson::wes_palettes$Darjeeling1[3],
+                 "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                 "POOL" = 'black'),
+      name = "Country",
+      limits = c("IT", "FR", "SW", "CZ", "POOL")
+    ) +
+    scale_shape_manual(
+      values = c("IT" = 19, 
+                 "FR" = 17, 
+                 "SW" = 15, 
+                 "CZ" = 18, 
+                 "POOL" = 1),
+      name = "Country",
+      limits = c("IT", "FR", "SW", "CZ", "POOL")
+    ) +
+    theme(
+      legend.position = "right",  # You can change this to "top", "bottom", etc.
+      axis.text.y = element_text(size = 10),
+      axis.title.y = element_text(size = 12)
+    )
+  
+  
+  ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, ".png"), 
+         p, 
+         height = 12, 
+         width = 8,
+         create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
+  
+}
+
 
 
 
@@ -269,17 +361,11 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 #############################################################
 
 
-
+#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/bycountry/")
 
 data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_POOL.RDS"))
-
-# 
-# data=rbind(data, data, data, data)
-# data=rbind(data, data, data, data)
-# 
-# data$country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 #############################################################
 
@@ -287,6 +373,11 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 ############ EFFECTS ################# 
 ######################################
 
+
+
+######################################
+########### MAIN EFFECTS ################# 
+######################################
 
 subdir = "MMs/"
 
@@ -301,11 +392,14 @@ for(attribute in unique(attributes))
   p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
                                               caption= "Marginal means")
   
-  ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
+  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
          width = 6, 
          create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
+  
   
 }
 
@@ -323,11 +417,13 @@ for(attribute in unique(attributes))
   p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
                                               caption= "Average marginal component effects")
   
-  ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
+  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 8, 
          width = 8, 
          create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
   
 }
 
@@ -347,10 +443,50 @@ for(attribute in unique(attributes))
   p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
                                               caption= "Average marginal component effects")
   
-  ggsave(paste0(output_wd,"estimations/", subdir, attribute,"_bycountry.png"), 
+  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 8, 
          width = 8, 
          create.dir = T)
   
+  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
+  
+  
 }
+
+
+######################################
+########### ACIEs ################# 
+######################################
+
+################# ACIEs (interaction effects) #####################
+
+subdir = "Interactions/"
+
+#sociodemos
+
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_gender, sep =" ")
+
+formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+
+full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos")
+
+#psycho
+
+data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep =" ")
+
+formula_interaction_psycho = ccd_chosen_rw ~ interacted_psycho
+
+full_interaction_effects_bycountry(data, formula_interaction_psycho, "psycho")
+
+#cultural
+
+data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep =" ")
+
+formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
+
+p = full_interaction_effects_bycountry(data, formula_interaction_cultural, "cultural")
+
+
+
+
