@@ -80,7 +80,76 @@ for(var in cpd_age_names)
   
 } 
 # - education (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
-# TODo
+
+if(context == "IT")
+{
+  data <- data |>
+    mutate(education = case_when(
+      education == 1 ~ "Scuola primaria",
+      education == 2 ~ "Scuola media",
+      education == 3 ~ "Diploma di scuola superiore",
+      education == 4 ~ "Laurea triennale",
+      education == 5 ~ "Laurea magistrale o a ciclo unico (4-5 anni)",
+      education == 6 ~ "Scuola post-laurea/dottorato",
+      TRUE ~ as.character(education)  # Keeps any values not in the list as they are
+    ))
+  
+}
+
+
+if(context == "FR")
+{
+  
+  data <- data |>
+    mutate(education = case_when(
+      education == 1 ~ "École élémentaire",
+      education == 2 ~ "Collège",
+      education == 3 ~ "Lycée",
+      education == 4 ~ "Enseignement supérieur, Université",
+      education == 5 ~ "Licence, maîtrise",
+      education == 6 ~ "Master",
+      education == 7 ~ "Doctorat",
+      TRUE ~ as.character(education)  # Keeps any values not in the list as they are
+    ))
+  
+}
+
+if(context == "CZ")
+{
+  
+  data <- data |>
+    mutate(education = case_when(
+      education == 1 ~ "Základní vzdělání",
+      education == 2 ~ "Střední vzdělání",
+      education == 3 ~ "Bakalářský stupeň",
+      education == 4 ~ "Magisterský stupeň",
+      education == 5 ~ "Doktorský stupeň",
+      TRUE ~ as.character(education)  # Keeps any values not in the list as they are
+    ))
+}
+
+
+if(context == "SW")
+{
+  
+  data <- data |>
+    mutate(education = case_when(
+      education == 1 ~ "Grundskola eller motsvarande, kortare än 9 år",
+      education == 2 ~ "Grundskola eller motsvarande, 9 år eller längre",
+      education == 3 ~ "Gymnasium eller motsvarande, kortare än 3 år",
+      education == 4 ~ "Gymnasium eller motsvarande, 3 år eller längre",
+      education == 5 ~ "Eftergymnasial utbildning, ej högskola/universitet, kortare än 3 år",
+      education == 6 ~ "Eftergymnasial utbildning, ej högskola/universitet, 3 år eller längre",
+      education == 7 ~ "Högskola/universitet, kortare än 3 år",
+      education == 8 ~ "Högskola/universitet, 3 år eller längre men kortare än 4 år",
+      education == 9 ~ "Högskola/universitet, 4 år eller längre",
+      education == 10 ~ "Forskarutbildninge",
+      education == 11 ~ "Inga av dessa",
+      TRUE ~ as.character(education)  # Keeps any values not in the list as they are
+    ))
+  
+}
+
 
 data = data |>
   mutate(EDU_LEVEL, 
@@ -682,7 +751,7 @@ if(context=="IT")
       votechoice == 10 ~ "Non ho votato/Mi sono astenuto",
       votechoice == 11 ~ "Scheda bianca/nulla",
       votechoice == 12 ~ "Preferisco non rispondere",
-      TRUE ~ votechoice  # Keeps any values not in the list as they are
+      TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
 }
@@ -698,7 +767,7 @@ if(context=="FR")
       votechoice == 6 ~ "LE - EELV - Les Écologistes - Europe Ecologie Les Verts",
       votechoice == 7 ~ "Coalition La France fière (Reconquête!, Centre national des indépendants et paysans)",
       votechoice == 8 ~ "Autre",
-      TRUE ~ votechoice  # Keeps any values not in the list as they are
+      TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
 }
 if(context=="CZ")
@@ -717,7 +786,7 @@ if(context=="CZ")
       votechoice == 10 ~ "Svobodní - Strana svobodných občanů",
       votechoice == 11 ~ "Zelení - Strana zelených",
       votechoice == 12 ~ "Jinou stranu",
-      TRUE ~ votechoice  # Keeps any values not in the list as they are
+      TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
 }
@@ -734,7 +803,7 @@ if(context=="SW")
       votechoice == 7 ~ "KD - Kristdemokraterna",
       votechoice == 8 ~ "L - Liberalerna",
       votechoice == 9 ~ "Övriga parter",
-      TRUE ~ votechoice  # Keeps any values not in the list as they are
+      TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
 }
