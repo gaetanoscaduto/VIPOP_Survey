@@ -133,7 +133,7 @@ if(context == "IT")
       region == "18" ~ "Umbria",
       region == "19" ~ "Valle d'Aosta",
       region == "20" ~ "Veneto",
-      TRUE ~ region  # Keeps any values not in the list as they are
+      TRUE ~ as.character(region)  # Keeps any values not in the list as they are
     ))
   
 }
@@ -155,7 +155,7 @@ if(context == "FR")
       region == "11" ~ "Occitanie",
       region == "12" ~ "Pays de la Loire",
       region == "13" ~ "Provence-Alpes-Côte d'Azur",
-      TRUE ~ region  # Keeps any values not in the list as they are
+      TRUE ~ as.character(region)  # Keeps any values not in the list as they are
     ))
   
 }
@@ -178,7 +178,7 @@ if(context == "CZ")
       region == "12" ~ "Ústecký kraj",
       region == "13" ~ "Kraj Vysočina",
       region == "14" ~ "Zlínský kraj",
-      TRUE ~ region  # Keeps any values not in the list as they are
+      TRUE ~ as.character(region)  # Keeps any values not in the list as they are
     ))
   
 }
@@ -208,7 +208,7 @@ if(context == "SW")
       region == "19" ~ "Jämtlands",
       region == "20" ~ "Västerbottens",
       region == "21" ~ "Norrbottens",
-      TRUE ~ region  # Keeps any values not in the list as they are
+      TRUE ~ as.character(region)  # Keeps any values not in the list as they are
     ))
   
 }
