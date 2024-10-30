@@ -1,5 +1,16 @@
 #Master script
 
+# if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
+# pacman::p_load(
+#   cregg, dplyr, ggpubr, cowplot, 
+#   MASS, cjoint, corrplot, dplyr, 
+#   forcats, ggplot2, gt, gtools, 
+#   gtsummary, margins, openxlsx, 
+#   patchwork, rio, texreg, tools, 
+#   lme4, ggeffects, wesanderson
+# )
+
+
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
 
 dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
