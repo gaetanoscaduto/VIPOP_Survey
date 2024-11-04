@@ -107,99 +107,152 @@ full_subgroup_analysis = function(data,
   
   estimator=match.arg(estimator)
   
-  #browser()
+  # ()
   
   data$temp_subgroup = factor(data[[subgroup_variable]])
   
-  effects_pooled <- data |>
-    cj(formula, 
-       id = ~respid,
-       by = ~temp_subgroup,
-       estimate = "mm")
-  
-  effects_pooled = set_categories_and_levels_visual(effects_pooled,
-                                                    attributes = attributes)
-  
-  
-  
-  v = list()
-  
-  if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
-    #with [-1; 1] for amces and [0, 1] for mm
+  if(estimator == "mm" | estimator == "amce")
   {
+    effects_pooled <- data |>
+      cj(formula, 
+         id = ~respid,
+         by = ~temp_subgroup,
+         estimate = estimator)
     
-    leftlim=ifelse(estimator!="mm", -1, 0)
-    rightlim=1
-  }
-  if(x_intercept==999)
-  {
-    intercept = ifelse(estimator!="mm", 0, 0.5)
-  }
-  
-  v=list()
-  
-  effects_subgroup1 = effects_pooled |>
-    filter(temp_subgroup == subgroup1)
-  
-  effects_subgroup2 = effects_pooled |>
-    filter(temp_subgroup == subgroup2)
-  
-  for(attribute in unique(attributes))
-  {
-    p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
-      geom_vline(aes(xintercept=intercept), 
-                 col="black", 
-                 alpha=1/4)+
-      geom_pointrange(aes(x=estimate, 
-                          xmin=lower, 
-                          xmax=upper,
-                          y=level), 
-                      col=wesanderson::wes_palettes$Darjeeling1[1],
-                      shape=19,
-                      position = position_nudge(y = 1/10),
-                      show.legend = T)+
-      geom_pointrange(data=effects_subgroup2[effects_subgroup2$feature==attribute, ],
-                      aes(x=estimate,
-                          xmin=lower,
-                          xmax=upper,
-                          y=level), 
-                      col=wesanderson::wes_palettes$Darjeeling1[2],
-                      shape=17,
-                      position = position_nudge(y = -1/10),
-                      show.legend = T)+
-      ylab(attribute)+
-      xlab("\n")+
-      xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
-      # scale_color_manual(
-      #   values = c(subgroup1 = wesanderson::wes_palettes$Darjeeling1[1],
-      #              subgroup2 = wesanderson::wes_palettes$Darjeeling1[2]),
-      #   name = subgroup_name,
-      #   limits = c(subgroup1, subgroup2)
-      # ) +
-      # scale_shape_manual(
-      #   values = c(subgroup1 = 19,
-      #              subgroup2 = 17),
-      #   name = subgroup_name,
-      #   limits = c(subgroup1, subgroup2)
-      # )+
-      theme(legend.position = "right",
-            axis.text.y = element_text(size=10),
-            axis.title.y = element_text(size=12))
+    effects_pooled = set_categories_and_levels_visual(effects_pooled,
+                                               attributes = attributes)
     
-    v[[attribute]] = p
+    
+    
+    v = list()
+    
+    if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+      #with [-1; 1] for amces and [0, 1] for mm
+    {
+      
+      leftlim=ifelse(estimator!="mm", -1, 0)
+      rightlim=1
+    }
+    if(x_intercept==999)
+    {
+      intercept = ifelse(estimator!="mm", 0, 0.5)
+    }
+    
+    v=list()
+    
+    effects_subgroup1 = effects_pooled |>
+      filter(temp_subgroup == subgroup1)
+    
+    effects_subgroup2 = effects_pooled |>
+      filter(temp_subgroup == subgroup2)
+    
+    for(attribute in unique(attributes))
+    {
+      p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
+        geom_vline(aes(xintercept=intercept), 
+                   col="black", 
+                   alpha=1/4)+
+        geom_pointrange(aes(x=estimate, 
+                            xmin=lower, 
+                            xmax=upper,
+                            y=level), 
+                        col=wesanderson::wes_palettes$Darjeeling1[1],
+                        shape=19,
+                        position = position_nudge(y = 1/10),
+                        show.legend = T)+
+        geom_pointrange(data=effects_subgroup2[effects_subgroup2$feature==attribute, ],
+                        aes(x=estimate,
+                            xmin=lower,
+                            xmax=upper,
+                            y=level), 
+                        col=wesanderson::wes_palettes$Darjeeling1[2],
+                        shape=17,
+                        position = position_nudge(y = -1/10),
+                        show.legend = T)+
+        ylab(attribute)+
+        xlab("\n")+
+        xlim(leftlim,rightlim)+
+        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        theme(legend.position = "right",
+              axis.text.y = element_text(size=10),
+              axis.title.y = element_text(size=12))
+      
+      v[[attribute]] = p
+    }
+    
+    p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    
+    p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
+    
   }
   
-  p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+  if(estimator == "mm_differences" | estimator == "amce_differences")
+    
+  {
+    effects_pooled <- data |>
+      cj(formula, 
+         id = ~respid,
+         by = ~temp_subgroup,
+         estimate = estimator)
+    
+    effects_pooled = set_categories_and_levels_visual(effects_pooled,
+                                               attributes = attributes)
+    
+    
+    
+    v = list()
+    
+    if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+      #with [-1; 1] for amces and [0, 1] for mm
+    {
+      
+      leftlim=-0.5
+      rightlim=0.5
+    }
+    if(x_intercept==999)
+    {
+      intercept = 0
+    }
+    
+    v=list()
+    
+    
+    for(attribute in unique(attributes))
+    {
+      p = ggplot(effects_pooled[effects_pooled$feature==attribute, ])+
+        geom_vline(aes(xintercept=intercept), 
+                   col="black", 
+                   alpha=1/4)+
+        geom_pointrange(aes(x=estimate, 
+                            xmin=lower, 
+                            xmax=upper,
+                            y=level), 
+                        col=wesanderson::wes_palettes$Darjeeling1[1],
+                        shape=19)+
+        ylab(attribute)+
+        xlab("\n")+
+        xlim(leftlim,rightlim)+
+        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        theme(legend.position = "right",
+              axis.text.y = element_text(size=10),
+              axis.title.y = element_text(size=12))
+      
+      v[[attribute]] = p
+    }
+    
+    p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    
+    p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
+    
+    
+  }
   
-  p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
-
-  ggsave(paste0(output_wd, subdir, subgroup_name, ".png"), 
+  ggsave(paste0(output_wd, subdir, subgroup_name, estimator, ".png"), 
          p, 
-         height = 10, 
-         width = 10, create.dir = T)
+         height = 12, 
+         width = 12, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, ".rds"))
+  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
 }
 
 
@@ -303,11 +356,29 @@ attributes= c("Ethnicity", "Ethnicity",
                       "Animal","Animal","Animal","Animal",
                       "Crowd","Crowd","Crowd","Crowd")
 
-##################
 
-# outcome = "ideology"
-# outcome = "trust"
-# outcome = "populism"
+#############################################################
+
+
+#If you launch this script from the master script, make sure to have the context 
+# and the outcome fixed. Otherwise, uncomment desired context
+
+#context = "IT"
+#context = "FR"
+#context = "CZ"
+#context = "SW"
+#context = "POOL"
+
+#outcome = "ideology"
+#outcome = "trust"
+#outcome = "populism"
+
+# gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+# dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
+
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/single_country/", outcome, "/", context, "/")
+data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
+
 
 if(outcome == "ideology")
 {
@@ -331,27 +402,6 @@ if(outcome == "populism")
     vcd_issue + vcd_nostalgia + vcd_valence +
     vcd_animal + vcd_food + vcd_crowd
 }
-
-
-#############################################################
-
-
-#If you launch this script from the master script, make sure to have the context fixed
-#otherwise, uncomment desired context
-#context = "IT"
-#context = "FR"
-#context = "CZ"
-#context = "SW"
-#context = "POOL"
-
-
-#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
-#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
-
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/single_country/", outcome, "/", context, "/")
-data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
-
-
 
 ######################################
 ############ EFFECTS ################# 
@@ -487,6 +537,17 @@ full_subgroup_analysis(data,
                        subgroup2 = "Male" #the name of the second subgroup (variable level)
 )
 
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       subgroup_variable = "gender_r",
+                       subgroup_name = "Gender",
+                       subgroup1 = "Female",
+                       subgroup2 = "Male" #the name of the second subgroup (variable level)
+)
+
 data$educ_r = ifelse(data$EDU_LEVEL =="nocollege", "No college", data$EDU_LEVEL)
                      
 data$educ_r = factor(toTitleCase(data$educ_r))
@@ -503,6 +564,19 @@ full_subgroup_analysis(data,
                        subgroup1 = "College",
                        subgroup2 = "No College" #the name of the second subgroup (variable level)
 )
+
+
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       subgroup_variable = "educ_r",
+                       subgroup_name = "Education level",
+                       subgroup1 = "College",
+                       subgroup2 = "No College" #the name of the second subgroup (variable level)
+)
+
 
 
 

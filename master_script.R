@@ -1,29 +1,38 @@
 #Master script
 
-# if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
-# pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot, 
-#   MASS, cjoint, corrplot, dplyr, 
-#   forcats, ggplot2, gt, gtools, 
-#   gtsummary, margins, openxlsx, 
-#   patchwork, rio, texreg, tools, 
-#   lme4, ggeffects, wesanderson
-# )
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
+pacman::p_load(
+  cregg, dplyr, ggpubr, cowplot,
+  MASS, cjoint, corrplot, dplyr,
+  forcats, ggplot2, gt, gtools,
+  gtsummary, margins, openxlsx,
+  patchwork, rio, texreg, tools,
+  lme4, ggeffects, wesanderson
+)
 
 
 setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
 
-dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+#gdrive_code is personal for the google drive user. Change it if you are not Gaetano
 gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-#generate pooled dataset
-source("rbind_country_datasets.R")
 
-for(context in c("IT", "FR", "CZ", "SW", "POOL"))
+for(context in c("IT", "FR", "CZ", "SW"))
 {
   ## recoding script
   source("others/recodings/recoding_demo.R")
   
+}
+#generate pooled dataset
+source("rbind_country_datasets.R")
+
+
+#recoding pooled dataset
+#source("others/recodings/recoding_demo.R")
+
+for(context in c("IT", "FR", "CZ", "SW", "POOL"))
+{
   #descriptives script
   source("others/descriptives/descriptives_internal.R")
   
@@ -35,7 +44,7 @@ for(context in c("IT", "FR", "CZ", "SW", "POOL"))
   #visual conjoint scripts
   source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
   source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")
-  #
+  
   for(outcome in c("ideology", "trust", "populism"))
   {
     source("visual_conjoint/scripts/analysis/analyses_vcd_singlecountry.R")

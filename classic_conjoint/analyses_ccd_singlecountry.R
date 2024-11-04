@@ -29,7 +29,7 @@ pacman::p_load(
 #fashion in the mm dataset resulting from the cj function. The
 #functio
 
-set_categories_and_levels_visual = function(effects, 
+set_categories_and_levels = function(effects, 
                                             attributes=attributes){
   # effects=effects_pooled
   # attributes=attributes
@@ -138,99 +138,152 @@ full_subgroup_analysis = function(data,
   
   estimator=match.arg(estimator)
   
-  #browser()
+  # ()
   
   data$temp_subgroup = factor(data[[subgroup_variable]])
   
-  effects_pooled <- data |>
-    cj(formula, 
-       id = ~respid,
-       by = ~temp_subgroup,
-       estimate = "mm")
-  
-  effects_pooled = set_categories_and_levels_visual(effects_pooled,
-                                                    attributes = attributes)
-  
-  
-  
-  v = list()
-  
-  if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
-    #with [-1; 1] for amces and [0, 1] for mm
+  if(estimator == "mm" | estimator == "amce")
   {
+    effects_pooled <- data |>
+      cj(formula, 
+         id = ~respid,
+         by = ~temp_subgroup,
+         estimate = estimator)
     
-    leftlim=ifelse(estimator!="mm", -1, 0)
-    rightlim=1
-  }
-  if(x_intercept==999)
-  {
-    intercept = ifelse(estimator!="mm", 0, 0.5)
-  }
-  
-  v=list()
-  
-  effects_subgroup1 = effects_pooled |>
-    filter(temp_subgroup == subgroup1)
-  
-  effects_subgroup2 = effects_pooled |>
-    filter(temp_subgroup == subgroup2)
-  
-  for(attribute in unique(attributes))
-  {
-    p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
-      geom_vline(aes(xintercept=intercept), 
-                 col="black", 
-                 alpha=1/4)+
-      geom_pointrange(aes(x=estimate, 
-                          xmin=lower, 
-                          xmax=upper,
-                          y=level), 
-                      col=wesanderson::wes_palettes$Darjeeling1[1],
-                      shape=19,
-                      position = position_nudge(y = 1/10),
-                      show.legend = T)+
-      geom_pointrange(data=effects_subgroup2[effects_subgroup2$feature==attribute, ],
-                      aes(x=estimate,
-                          xmin=lower,
-                          xmax=upper,
-                          y=level), 
-                      col=wesanderson::wes_palettes$Darjeeling1[2],
-                      shape=17,
-                      position = position_nudge(y = -1/10),
-                      show.legend = T)+
-      ylab(attribute)+
-      xlab("\n")+
-      xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
-      # scale_color_manual(
-      #   values = c(subgroup1 = wesanderson::wes_palettes$Darjeeling1[1],
-      #              subgroup2 = wesanderson::wes_palettes$Darjeeling1[2]),
-      #   name = subgroup_name,
-      #   limits = c(subgroup1, subgroup2)
-      # ) +
-      # scale_shape_manual(
-      #   values = c(subgroup1 = 19,
-      #              subgroup2 = 17),
-      #   name = subgroup_name,
-      #   limits = c(subgroup1, subgroup2)
-      # )+
-      theme(legend.position = "right",
-            axis.text.y = element_text(size=10),
-            axis.title.y = element_text(size=12))
+    effects_pooled = set_categories_and_levels(effects_pooled,
+                                               attributes = attributes)
     
-    v[[attribute]] = p
+    
+    
+    v = list()
+    
+    if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+      #with [-1; 1] for amces and [0, 1] for mm
+    {
+      
+      leftlim=ifelse(estimator!="mm", -1, 0)
+      rightlim=1
+    }
+    if(x_intercept==999)
+    {
+      intercept = ifelse(estimator!="mm", 0, 0.5)
+    }
+    
+    v=list()
+    
+    effects_subgroup1 = effects_pooled |>
+      filter(temp_subgroup == subgroup1)
+    
+    effects_subgroup2 = effects_pooled |>
+      filter(temp_subgroup == subgroup2)
+    
+    for(attribute in unique(attributes))
+    {
+      p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
+        geom_vline(aes(xintercept=intercept), 
+                   col="black", 
+                   alpha=1/4)+
+        geom_pointrange(aes(x=estimate, 
+                            xmin=lower, 
+                            xmax=upper,
+                            y=level), 
+                        col=wesanderson::wes_palettes$Darjeeling1[1],
+                        shape=19,
+                        position = position_nudge(y = 1/10),
+                        show.legend = T)+
+        geom_pointrange(data=effects_subgroup2[effects_subgroup2$feature==attribute, ],
+                        aes(x=estimate,
+                            xmin=lower,
+                            xmax=upper,
+                            y=level), 
+                        col=wesanderson::wes_palettes$Darjeeling1[2],
+                        shape=17,
+                        position = position_nudge(y = -1/10),
+                        show.legend = T)+
+        ylab(attribute)+
+        xlab("\n")+
+        xlim(leftlim,rightlim)+
+        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        theme(legend.position = "right",
+              axis.text.y = element_text(size=10),
+              axis.title.y = element_text(size=12))
+      
+      v[[attribute]] = p
+    }
+    
+    p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+    
+    p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
+    
   }
   
-  p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+  if(estimator == "mm_differences" | estimator == "amce_differences")
+    
+  {
+    effects_pooled <- data |>
+      cj(formula, 
+         id = ~respid,
+         by = ~temp_subgroup,
+         estimate = estimator)
+    
+    effects_pooled = set_categories_and_levels(effects_pooled,
+                                               attributes = attributes)
+    
+    
+    
+    v = list()
+    
+    if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+      #with [-1; 1] for amces and [0, 1] for mm
+    {
+      
+      leftlim=-0.5
+      rightlim=0.5
+    }
+    if(x_intercept==999)
+    {
+      intercept = 0
+    }
+    
+    v=list()
+    
+
+    for(attribute in unique(attributes))
+    {
+      p = ggplot(effects_pooled[effects_pooled$feature==attribute, ])+
+        geom_vline(aes(xintercept=intercept), 
+                   col="black", 
+                   alpha=1/4)+
+        geom_pointrange(aes(x=estimate, 
+                            xmin=lower, 
+                            xmax=upper,
+                            y=level), 
+                        col=wesanderson::wes_palettes$Darjeeling1[1],
+                        shape=19)+
+        ylab(attribute)+
+        xlab("\n")+
+        xlim(leftlim,rightlim)+
+        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        theme(legend.position = "right",
+              axis.text.y = element_text(size=10),
+              axis.title.y = element_text(size=12))
+      
+      v[[attribute]] = p
+    }
+    
+    p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+    
+    p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
+                                                     
+    
+  }
   
-  p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
-  
-  ggsave(paste0(output_wd, subdir, subgroup_name, ".png"), 
+  ggsave(paste0(output_wd, subdir, subgroup_name, estimator, ".png"), 
          p, 
-         height = 10, 
-         width = 10, create.dir = T)
+         height = 12, 
+         width = 12, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, ".rds"))
+  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
 }
 
 
@@ -249,12 +302,10 @@ full_analysis = function(data,
   
   ###### This function performs the whole analysis, draws the graphs and saves
   #them in the appropriate repositories. 
-  #It calls the other functions previously defined plus the functions in cjregg and
-  #patchwork
+  #It calls the other functions previously defined plus the functions in  the R
+  #libraries cjregg and patchwork
   
-  # formula=formula_continuous
-  #  estimator="mm"
-  
+
   estimator=match.arg(estimator)
   
   effects_pooled <- data |>
@@ -262,7 +313,7 @@ full_analysis = function(data,
        id = ~respid,
        estimate = estimator)
   
-  effects_pooled = set_categories_and_levels_visual(effects_pooled,
+  effects_pooled = set_categories_and_levels(effects_pooled,
                                                     attributes = attributes)
   
   if(continuous==F)
@@ -329,7 +380,7 @@ attributes= c("Gender", "Gender", "Gender",
 
 formula_rw = ccd_chosen_rw ~ ccd_gender+
   ccd_age+ccd_religion+ccd_citysize+ccd_job+
-  ccd_consc+ccd_ope+ ccd_neu+
+  ccd_consc+ccd_ope+ccd_neu+
   ccd_restaurant+ccd_transport+ccd_animal
 
 formula_continuous = ccd_continuous ~ ccd_gender+
@@ -348,23 +399,13 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 #context = "SW"
 #context = "POOL"
 
-#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
-#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
+# gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+# dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 
-# data=rbind(data, data, data, data)
-#data=rbind(data, data, data, data)
-
-# context = "IT"
-# context = "FR"
-# context = "SW"
-# context = "CZ"
-# 
-# data = data |>
-#   filter(country == "IT")
 
 #############################################################
 
@@ -383,7 +424,7 @@ full_analysis(data,
               subdir)
 
 
-### Same as before, but with AMCes (for appendix)
+### Same as before, but with AMCEs (for appendix)
 
 subdir = "AMCEs/"
 
@@ -465,6 +506,18 @@ full_subgroup_analysis(data,
                        subgroup2 = "Male" #the name of the second subgroup (variable level)
 )
 
+full_subgroup_analysis(data,
+                       formula=formula_rw,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       subgroup_variable = "gender_r",
+                       subgroup_name = "Gender",
+                       subgroup1 = "Female",
+                       subgroup2 = "Male" #the name of the second subgroup (variable level)
+)
+
+
 data$educ_r = ifelse(data$EDU_LEVEL =="nocollege", "No college", data$EDU_LEVEL)
 
 data$educ_r = factor(toTitleCase(data$educ_r))
@@ -476,6 +529,17 @@ full_subgroup_analysis(data,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
+                       subgroup_variable = "educ_r",
+                       subgroup_name = "Education level",
+                       subgroup1 = "College",
+                       subgroup2 = "No College" #the name of the second subgroup (variable level)
+)
+
+full_subgroup_analysis(data,
+                       formula=formula_rw,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
                        subgroup_variable = "educ_r",
                        subgroup_name = "Education level",
                        subgroup1 = "College",

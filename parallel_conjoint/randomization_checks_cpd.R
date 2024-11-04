@@ -23,7 +23,7 @@ pacman::p_load(
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/", context,  "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/", context,"/randomization_checks/",)
 data = readRDS(paste0(dataset_rep, "cjdata_cpd_", context, ".RDS"))
 
 names(data)
@@ -63,7 +63,7 @@ plot(cj_freqs(data, cpd_chosen ~ cpd_gender + cpd_age + cpd_educ + cpd_regionfee
               id = ~respid), col="grey")
 
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_cj.png"), 
+ggsave(paste0(output_wd,  "diagnostic_randomization_nomatch_cj.png"), 
        height = 15, width = 8, create.dir = T)
 
 
@@ -95,7 +95,7 @@ p = v[[1]]/v[[2]]/v[[3]]/v[[4]]/v[[5]]/v[[6]]/v[[7]]/v[[8]]/v[[9]]/v[[10]]
 
 p
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_ggplot.png"),
+ggsave(paste0(output_wd,  "diagnostic_randomization_nomatch_ggplot.png"),
        p, height = 15, width = 8, create.dir = T)
 
 
@@ -110,7 +110,7 @@ plot(cj_freqs(data, cpd_chosen ~ cpd_match_gender + cpd_match_age +
               id = ~respid), col="grey")
 
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_match_cj.png"), 
+ggsave(paste0(output_wd,  "diagnostic_randomization_match_cj.png"), 
        height = 15, width = 8, create.dir = T)
 
 
@@ -143,13 +143,23 @@ p = v[[1]]/v[[2]]/v[[3]]/v[[4]]/v[[5]]/v[[6]]/v[[7]]/v[[8]]/v[[9]]/v[[10]]
 
 p
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_match_ggplot.png"),
+ggsave(paste0(output_wd,  "diagnostic_randomization_match_ggplot.png"),
        p, height = 15, width = 8, create.dir = T)
 
 
+#checking whether being shown to the right influences choice to be chosen
+
+data$cpd_profile_number = as.factor(data$cpd_profile_number)
+
+plot(cj(data, 
+        cpd_chosen ~ cpd_profile_number,
+        id = ~respid,
+        estimate = "amce"),
+     vline = 0)
 
 
-#### Checking whether there is a preference for the profile shone to the right
+#### Checking whether tthe effects varies on whether the profile is shown 
+#to the right (signifiance is when the two ci dn't overlap)
 
 data$cpd_profile_number = as.factor(data$cpd_profile_number)
 
@@ -163,23 +173,6 @@ plot(cj(data,
         estimate = "mm"),
      group = "cpd_profile_number",
      vline = 0.5)
-
-### checking it with a different approach: if the effect is significant, 
-# it means that  the effect of a certain attribute s influenced by whether a
-#profile is on the left or on the right
-
-data$cpd_profile_number = as.numeric(data$cpd_profile_number)-1
-plot(cj(data, 
-        cpd_profile_number ~ cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-          cpd_consc + cpd_ope +
-          cpd_diet + cpd_animal + cpd_holiday+
-          cpd_ideology,
-        id = ~respid,
-        estimate = "mm"),
-     vline = 0.5)
-
-#se non ci sono differenze significative rispetto alla zero, non c'è preferenza 
-#particolare per il profilo a destra
 
 
 #### same checks as above but with match variables
@@ -198,19 +191,7 @@ plot(cj(data,
      group = "cpd_profile_number",
      vline = 0.5)
 
-### checking it with a different approach: if the effect is significant, 
-# it means that  the effect of a certain attribute s influenced by whether a
-#profile is on the left or on the right
 
-data$cpd_profile_number = as.numeric(data$cpd_profile_number)-1
-plot(cj(data, 
-        cpd_profile_number ~ cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
-          cpd_match_consc + cpd_match_ope +
-          cpd_match_diet + cpd_match_animal + cpd_match_holiday+
-          cpd_match_ideology,
-        id = ~respid,
-        estimate = "mm"),
-     vline = 0.5)
 
 #se non ci sono differenze significative rispetto alla zero, non c'è preferenza 
 #particolare per il profilo a destra

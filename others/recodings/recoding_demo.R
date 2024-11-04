@@ -3,14 +3,15 @@ library(dplyr)
 
 #If you launch this script from the master script, make sure to have the context fixed
 #otherwise, uncomment desired context
+
 #context = "IT"
 #context = "FR"
 #context = "CZ"
-#context = "SW"
+# context = "SW"
 #context = "POOL"
 
-#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
-#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+# dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+# gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
 
 data = import(paste0(dataset_rep, "demo_data_", context, ".sav"))
@@ -52,7 +53,6 @@ for(var in cpd_gender_names)
 
 # age group
 
-
 data = data |>
   mutate(AGE_GROUP, 
          AGE_GROUP = case_when(
@@ -65,7 +65,6 @@ data = data |>
 
 # age cpd
 
-
 cpd_age_names = names(data)[grepl("C1",names(data)) & grepl("A2_", names(data))]
 for(var in cpd_age_names)
 {
@@ -75,9 +74,9 @@ for(var in cpd_age_names)
       !!sym(var) == "2" ~ "between30and59",
       !!sym(var) == "3" ~ "over60",
       is.na(!!sym(var)) ~ NA
-    ) 
+      )
     )
-  
+      
 } 
 # - education (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
@@ -164,6 +163,7 @@ data = data |>
 
 
 cpd_educ_names = names(data)[grepl("C1",names(data)) & grepl("A3_", names(data))]
+
 for(var in cpd_educ_names)
 {
   data = data |>
@@ -283,26 +283,112 @@ if(context == "SW")
 }
 
 
-
-# 
-# 
-# if(context == "IT")
-# {
-# data = data |>
-#   mutate(region, 
-#          macroregion = case_when(
-#            region %in% c("Lombardia", "Piemonte", "Val d'Aosta", "Liguria") ~ "North-West",
-#            region %in% c("Veneto", "Trentino-Alto Adige", "Emilia-Romagna", "Friuli-Venezia Giulia") ~ "North-East",
-#            region %in% c("Lazio", "Marche", "Toscana", "Umbria") ~ "Center",
-#            region %in% c("Abruzzo", "Basilicata", "Molise", "Calabria", "Campania", "Puglia", "Sardegna", "Sicilia") ~ "South",
-#            is.na(region) ~ NA
-#          ) 
-#   )
-# 
-# }
-
-#table(data$macroregion)
 # - region_feel (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
+# 
+if(context == "IT")
+{
+  data <- data |>
+    mutate(region_feel = case_when(
+      region_feel == 1 ~ "nord",
+      region_feel == 2 ~ "centro",
+      region_feel == 3 ~ "sud",
+      TRUE ~ as.character(region_feel)  # Keeps any values not in the list as they are
+    )
+    )
+  
+  cpd_regionfeel_names = names(data)[grepl("C1",names(data)) & grepl("A4_", names(data))]
+  for(var in cpd_regionfeel_names)
+  {
+    data = data |>
+      mutate(!!var := case_when(
+        !!sym(var) == "1" ~ "nord",
+        !!sym(var) == "2" ~ "centro",
+        !!sym(var) == "3" ~ "sud",
+        is.na(!!sym(var)) ~ NA
+        )
+      )
+  }
+
+}
+
+
+if(context == "FR")
+{
+
+  data <- data |>
+    mutate(region_feel = case_when(
+      region_feel == 1 ~ "paris",
+      region_feel == 2 ~ "noparis",
+      TRUE ~ as.character(region_feel)  # Keeps any values not in the list as they are
+    )
+    )
+  
+  cpd_regionfeel_names = names(data)[grepl("C1",names(data)) & grepl("A4_", names(data))]
+  for(var in cpd_regionfeel_names)
+  {
+    data = data |>
+      mutate(!!var := case_when(
+        !!sym(var) == "1" ~ "paris",
+        !!sym(var) == "2" ~ "noparis",
+        is.na(!!sym(var)) ~ NA
+      )
+      )
+  }
+
+}
+
+if(context == "CZ")
+{
+
+  data <- data |>
+    mutate(region_feel = case_when(
+      region_feel == 1 ~ "cechia",
+      region_feel == 2 ~ "moravia",
+      region_feel == 3 ~ "prague",
+      TRUE ~ as.character(region_feel)  # Keeps any values not in the list as they are
+    ))
+  
+  cpd_regionfeel_names = names(data)[grepl("C1",names(data)) & grepl("A4_", names(data))]
+  for(var in cpd_regionfeel_names)
+  {
+    data = data |>
+      mutate(!!var := case_when(
+        !!sym(var) == "1" ~ "cechia",
+        !!sym(var) == "2" ~ "moravia",
+        !!sym(var) == "3" ~ "prague",
+        is.na(!!sym(var)) ~ NA
+      )
+      )
+  }
+}
+
+
+if(context == "SW")
+{
+
+  data <- data |>
+    mutate(region_feel = case_when(
+      region_feel == 1 ~ "gotland",
+      region_feel == 2 ~ "svealand",
+      region_feel == 3 ~ "norrland",
+      TRUE ~ as.character(region_feel)  # Keeps any values not in the list as they are
+    ))
+  
+  cpd_regionfeel_names = names(data)[grepl("C1",names(data)) & grepl("A4_", names(data))]
+  for(var in cpd_regionfeel_names)
+  {
+    data = data |>
+      mutate(!!var := case_when(
+        !!sym(var) == "1" ~ "gotland",
+        !!sym(var) == "2" ~ "svealand",
+        !!sym(var) == "3" ~ "norrland",
+        is.na(!!sym(var)) ~ NA
+      )
+      )
+  }
+
+}
+
 
 #todo
 
@@ -338,6 +424,7 @@ data = data |>
 ## cpd diet
 
 cpd_diet_names = names(data)[grepl("C1",names(data)) & grepl("A7_", names(data))]
+
 for(var in cpd_diet_names)
 {
   data = data |>
@@ -361,13 +448,13 @@ data = data |>
                          "3" = "none",
                          .missing = "NA",
                          .default = "default"
-  ) 
-  )
+                         )
+         )
 
 # cpd animal
 
-
 cpd_animal_names = names(data)[grepl("C1",names(data)) & grepl("A8_", names(data))]
+
 for(var in cpd_animal_names)
 {
   data = data |>
@@ -391,13 +478,14 @@ data = data |>
                           "3" = "relax",
                           .missing = "NA",
                           .default = "default"
-  ) 
-  )
+                          )
+         )
 
 #holiday cpd
 
 
 cpd_holiday_names = names(data)[grepl("C1",names(data)) & grepl("A9_", names(data))]
+
 for(var in cpd_holiday_names)
 {
   data = data |>
@@ -411,7 +499,7 @@ for(var in cpd_holiday_names)
   
 } 
 
-# - ideology (dovrebbe essere categoriale in quanto ci sono anche modalità non numeriche)
+# - socialposition
 
 table(data$socialposition)
 data = data |>
@@ -427,7 +515,6 @@ data = data |>
                                  "8" = "8",
                                  "9" = "9",
                                  "10" = "10",
-                                 
                                  .missing = "NA",
                                  .default = "default"
   ) 
@@ -449,6 +536,7 @@ data = data |>
 
 
 cpd_con_names = names(data)[grepl("C1",names(data)) & grepl("A5_", names(data))]
+
 for(var in cpd_con_names)
 {
   data = data |>
@@ -492,7 +580,8 @@ for(var in cpd_ope_names)
 
 
 
-table(data$ideology)
+#table(data$ideology)
+
 data = data |>
   mutate(ideology = recode(ideology,
                            "0" = "0",
@@ -509,9 +598,10 @@ data = data |>
                            "13" = "notplaced",
                            .missing = "NA",
                            .default = "default"
-  ) 
-  )
-table(data$ideology)
+                           ) 
+         )
+
+#table(data$ideology)
 
 # ideology for cpd match
 
@@ -527,10 +617,10 @@ data = data |>
          ) 
   )
 
-### cpd
-
+### cpd idelogy
 
 cpd_ideo_names = names(data)[grepl("C1",names(data)) & grepl("A10_", names(data))]
+
 for(var in cpd_ideo_names)
 {
   data = data |>
@@ -558,12 +648,13 @@ data = data |>
                               "3" = "between10and30",
                               "4" = "between30and60",
                               "5" = "morethan60",
-  ) 
-  )
+                              ) 
+         )
 
-table(data$sns_use_rec)
+#table(data$sns_use_rec)
 
 #sns_use - dicotomica
+
 data = data |>
   mutate(sns_use_dummy = recode(sns_use,
                                 "1" = "rarely",
@@ -571,26 +662,27 @@ data = data |>
                                 "3" = "rarely",
                                 "4" = "often",
                                 "5" = "often",
-  ) 
-  )
+                                ) 
+         )
 
-table(data$sns_use_dummy)
+#table(data$sns_use_dummy)
 ##
 
 #interest - recode
-table(data$interest)
+
+#table(data$interest)
 
 data = data |>
   mutate(interest_rec = recode(interest,
                                "1" = "not_all",
                                "2" = "little",
-                               "3" = "nolitlot",
+                               "3" = "average",
                                "4" = "quite",
                                "5" = "very",
-  ) 
-  )
+                               ) 
+         )
 
-table(data$interest_rec)
+#table(data$interest_rec)
 
 #interest - dicotomica
 data = data |>
@@ -600,28 +692,29 @@ data = data |>
                                  "3" = "no_interest",
                                  "4" = "yes_interest",
                                  "5" = "yes_interest",
-  ) 
-  )
-##
+                                 ) 
+         )
 
 #exposure - recode
-table(data$exposure)
+
+#table(data$exposure)
 
 data = data |>
   mutate(exposure_rec = recode(exposure,
                                "1" = "never",
                                "2" = "rarely",
                                "3" = "less10min",
-                               "4" = "10_30min",
-                               "5" = "30min_1hr",
-                               "6" = "1_2hr",
-                               "7" = "more2hr")
+                               "4" = "between10and30",
+                               "5" = "between30and60",
+                               "6" = "between60and120",
+                               "7" = "above120")
          
   )
 
-table(data$exposure_rec)
+#table(data$exposure_rec)
 
 #exposure - dicotomica
+
 data = data |>
   mutate(exposure_dummy = recode(exposure,
                                  "1" = "less10min",
@@ -631,8 +724,7 @@ data = data |>
                                  "5" = "more10min",
                                  "6" = "more10min",
                                  "7" = "more10min")
-         
-  )
+         )
 ##
 
 
@@ -663,7 +755,7 @@ ccd_varnames=list(gender=c(""),
                   restaurant=c(""),
                   transport=c(""),
                   animal=c("")
-)
+                  )
 
 
 # i put in ccd_varnames[attribute] the names of the variables that in the dataset
@@ -690,6 +782,7 @@ label_list <- list(gender=c("Female", "Male", "Non-binary"),
                    animal=c("Large dog","Small dog","Cat", "No pets")
 )
 
+
 # Function to recode old variable based on label list
 recode_variable <- function(old_var, label_var) {
   recoded_var <- sapply(old_var, function(x)  {
@@ -712,12 +805,9 @@ for(attribute in conjattr_full)
     data[, var_to_recode] = recode_variable( data[, var_to_recode], label_list[[attribute]])
 } 
 
-#View(data[, ccd_varnames$animal])
-
-#View(data[, ccd_varnames$neu])
 
 # - attention_check_1 (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
-# 
+
 
 table(data$attention_check1)
 data = data |>
@@ -728,10 +818,10 @@ data = data |>
                                    "4" = "med",
                                    .missing = "NA",
                                    .default = "default"
-  ) 
-  )
+                                   ) 
+         )
 
-table(data$attention_check1)
+#table(data$attention_check1)
 
 # - votechoice (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
@@ -808,11 +898,8 @@ if(context=="SW")
   
 }
 
-# - le variabili "nethet_", come per le "tipi_", sono nominate con numeri invece che con "nethet_right", "nethet_left", "nethet_center", etc. come indicato nel master
-#
 
-# - discorso analogo per le variabili "ft_", "trust_", "populism_"
-# 
+
 # - attention_check_2 (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 # 
 
@@ -826,16 +913,15 @@ data = data |>
                                    "4" = "uspres",
                                    .missing = "NA",
                                    .default = "default"
-  ) 
-  )
+                                   )
+         )
 
-table(data$attention_check2)
-
-
+#table(data$attention_check2)
 
 ### changing variables names
 
 #tipi 
+
 change=paste0(rep("tipi_", 10), c("ext","agr_r","con","neu","ope","ext_r","agr","con_r","neu_r","ope_r"))
 
 change
@@ -848,6 +934,7 @@ data <- data %>%
 names(data)[15:24]
 
 #nethet
+
 change=paste0(rep("nethet_", 5), c("right","left","center","notplaced","dontknow"))
 
 change
@@ -900,7 +987,6 @@ data <- data %>%
   rename_with(~ change, starts_with("populism_") & (!ends_with("REC") & !ends_with("open")))
 
 names(data)[which(grepl("populism",names(data)))]
-
 
 
 export(data, paste0(dataset_rep, "data_recoded_", context, ".RDS"))
