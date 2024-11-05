@@ -25,7 +25,7 @@ for(context in c("IT", "FR", "CZ", "SW"))
   
 }
 #generate pooled dataset
-source("rbind_country_datasets.R")
+source("others/rbind_country_datasets.R")
 
 
 #recoding pooled dataset
