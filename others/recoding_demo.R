@@ -4,7 +4,7 @@ library(dplyr)
 #If you launch this script from the master script, make sure to have the context fixed
 #otherwise, uncomment desired context
 
-#context = "IT"
+context = "IT"
 #context = "FR"
 #context = "CZ"
 # context = "SW"
@@ -504,17 +504,17 @@ for(var in cpd_holiday_names)
 table(data$socialposition)
 data = data |>
   mutate(socialposition = recode(socialposition,
-                                 "0" = "0",
-                                 "1" = "1",
-                                 "2" = "2",
-                                 "3" = "3",
-                                 "4" = "4",
-                                 "5" = "5",
-                                 "6" = "6",
-                                 "7" = "7",
-                                 "8" = "8",
-                                 "9" = "9",
-                                 "10" = "10",
+                                 "1" = "0",
+                                 "2" = "1",
+                                 "3" = "2",
+                                 "4" = "3",
+                                 "5" = "4",
+                                 "6" = "5",
+                                 "7" = "6",
+                                 "8" = "7",
+                                 "9" = "8",
+                                 "10" = "9",
+                                 "11" = "10",
                                  .missing = "NA",
                                  .default = "default"
   ) 
@@ -584,17 +584,17 @@ for(var in cpd_ope_names)
 
 data = data |>
   mutate(ideology = recode(ideology,
-                           "0" = "0",
-                           "1" = "1",
-                           "2" = "2",
-                           "3" = "3",
-                           "4" = "4",
-                           "5" = "5",
-                           "6" = "6",
-                           "7" = "7",
-                           "8" = "8",
-                           "9" = "9",
-                           "10" = "10",
+                           "1" = "0",
+                           "2" = "1",
+                           "3" = "2",
+                           "4" = "3",
+                           "5" = "4",
+                           "6" = "5",
+                           "7" = "6",
+                           "8" = "7",
+                           "9" = "8",
+                           "10" = "9",
+                           "11" = "10",
                            "13" = "notplaced",
                            .missing = "NA",
                            .default = "default"
