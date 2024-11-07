@@ -25,7 +25,7 @@ gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
 data = readRDS(paste0(dataset_rep, "data_recoded_", context, ".RDS"))
 
-output_wd = "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/Dissertation/Tables/"
+setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/Dissertation/Tables/")
 
 #CHECK THE STATE OF THE COUNTRY VARIABLE
 data |> filter(country=="IT")
@@ -48,7 +48,7 @@ descriptive <- data |>
 
 descriptive |>
   as_gt() |>
-  gtsave(filename = paste0(output_wd,"Descriptive_general.docx"))
+  gtsave(filename = "Descriptive_general.docx")
 
 
 ### Descriptives for the parallel design experiment
@@ -78,4 +78,4 @@ descriptive <- data |>
 
 descriptive |>
   as_gt() |>
-  gtsave(filename = paste0(output_wd,"Descriptive_parallel.docx"))
+  gtsave(filename ="Descriptive_parallel.docx")

@@ -109,7 +109,7 @@ plot(cj(data,
 #data$ccd_profile_number = as.numeric(data$ccd_profile_number)
 
 plot(cj(data, 
-        ccd_chosen ~ ccd_profile_number,
+        ccd_chosen_rw ~ ccd_profile_number,
         id = ~respid,
         estimate = "amce"),
      vline = 0)
