@@ -11,17 +11,27 @@ library(gt)
 library(gtsummary)
 library(openxlsx)
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
+context = "IT"
+#context = "FR"
+#context = "CZ"
+#context = "SW"
+#context = "POOL"
 
-data = readRDS("data_recoded.RDS")
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/others/descriptives/Descriptives_tesi_gaetano/")
+dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+
+# import the dataset with row=respondent
+
+data = readRDS(paste0(dataset_rep, "data_recoded_", context, ".RDS"))
+
+output_wd = "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/Dissertation/Tables/"
 
 #CHECK THE STATE OF THE COUNTRY VARIABLE
 data |> filter(country=="IT")
 
 descriptive <- data |> 
-  select(gender, age, education, macroregion, citysize, socialposition) |>
+  select(gender, age, education, region, citysize, socialposition) |>
   tbl_summary(
     missing = "ifany",
     digits = everything() ~ 1, 
@@ -29,7 +39,7 @@ descriptive <- data |>
       gender ~ "Gender",
       age ~ "Age",
       education ~ "Education",
-      macroregion ~ "Macroegion",
+      region ~ "Macroegion",
       citysize ~ "Size of the city",
       socialposition ~ "Placement on 0-10 social scale"
     )
@@ -38,7 +48,7 @@ descriptive <- data |>
 
 descriptive |>
   as_gt() |>
-  gtsave(filename = "Descriptive_general.docx")
+  gtsave(filename = paste0(output_wd,"Descriptive_general.docx"))
 
 
 ### Descriptives for the parallel design experiment
@@ -68,4 +78,4 @@ descriptive <- data |>
 
 descriptive |>
   as_gt() |>
-  gtsave(filename = "Descriptive_parallel.docx")
+  gtsave(filename = paste0(output_wd,"Descriptive_parallel.docx"))

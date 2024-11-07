@@ -8,14 +8,14 @@
 #LIBRARY CALLS
 #############################################################
 
-pacman::p_load(
-  cregg, dplyr, ggpubr, cowplot, 
-  MASS, cjoint, corrplot, dplyr, 
-  forcats, ggplot2, gt, gtools, 
-  gtsummary, margins, openxlsx, 
-  patchwork, rio, texreg, tools, 
-  lme4, ggeffects
-)
+# pacman::p_load(
+#   cregg, dplyr, ggpubr, cowplot, 
+#   MASS, cjoint, corrplot, dplyr, 
+#   forcats, ggplot2, gt, gtools, 
+#   gtsummary, margins, openxlsx, 
+#   patchwork, rio, texreg, tools, 
+#   lme4, ggeffects, wesanderson
+# )
 
 #############################################################
 # DEFINING FUNCTIONS

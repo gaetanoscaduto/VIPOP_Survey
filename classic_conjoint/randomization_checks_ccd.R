@@ -1,14 +1,14 @@
 ###############################################################################
 #this script is for the randomization checks related to the classic conjoint design
 ###############################################################################
-
-pacman::p_load(
-  cregg, dplyr, ggpubr, cowplot, 
-  MASS, cjoint, corrplot, dplyr, 
-  forcats, ggplot2, gt, gtools, 
-  gtsummary, margins, openxlsx, 
-  patchwork, rio, texreg, tools
-)
+# 
+# pacman::p_load(
+#   cregg, dplyr, ggpubr, cowplot, 
+#   MASS, cjoint, corrplot, dplyr, 
+#   forcats, ggplot2, gt, gtools, 
+#   gtsummary, margins, openxlsx, 
+#   patchwork, rio, texreg, tools
+# )
 
 
 #If you launch this script from the master script, make sure to have the context fixed
