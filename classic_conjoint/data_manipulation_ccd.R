@@ -178,10 +178,10 @@ for(i in 1:ncol(cjdata_prev))
 }
 
 #check if everything is okay with making them all factors but the outcomes
-for(i in 1:ncol(cjdata))
-{
-  print(is.factor(cjdata[, i]))
-}
+# for(i in 1:ncol(cjdata))
+# {
+#   print(is.factor(cjdata[, i]))
+# }
 
 
 #outcomes must be numeric, non factor

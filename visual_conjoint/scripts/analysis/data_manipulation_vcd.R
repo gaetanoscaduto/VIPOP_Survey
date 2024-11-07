@@ -301,7 +301,6 @@ rm(cjdata1)
 for(i in 1:ncol(cjdata_prev))
 {
   cjdata[, i] = factor(toTitleCase(as.character(cjdata[, i]))) 
-  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
 
 #quelli che non voglio factor sono i chosen oltre alle prime (per ora)!
@@ -313,39 +312,9 @@ cjdata[, "vcd_chosen_pop"] = as.numeric(cjdata[, "vcd_chosen_pop"])-1
 
 
 #check if everything is okay with making them all factors
-for(i in 1:ncol(cjdata))
-{
-  print(is.factor(cjdata[, i]))
-}
-
-#very rough visual randomization check
-# 
-# for (i in 4:ncol(data)) {
-#   
-#   print(names(cjdata)[i])
-#   
-#   print(table(cjdata[, i], useNA = "always"))
-#   
-#   # Pause and wait for user input to proceed
-#   readline(prompt = "Press [Enter] to proceed to the next variable:")
-#   
-#   # Continue to the next iteration
-# }
-
-
-# rough check regarding the probability of seeing a match or not 
-# 
-# for (variable in variables_to_set)
+# for(i in 1:ncol(cjdata))
 # {
-#   
-#   print(paste0("match ", variable))
-#   
-#   print(table(cjdata[, paste0("vcd_match_", variable)], useNA = "always"))
-#   
-#   # Pause and wait for user input to proceed
-#   readline(prompt = "Press [Enter] to proceed to the next variable:")
-#   
-#   # Continue to the next iteration
+#   print(is.factor(cjdata[, i]))
 # }
 
 

@@ -11,7 +11,7 @@ pacman::p_load(
 )
 
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
+#setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
 
 #gdrive_code is personal for the google drive user. Change it if you are not Gaetano
 gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
@@ -21,7 +21,9 @@ dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 for(context in c("IT", "FR", "CZ", "SW"))
 {
   ## recoding script
-  source("others/recodings/recoding_demo.R")
+  source("others/recoding_demo.R")
+  
+  print(paste("Ok recoding", context, Sys.time()))
   
 }
 #generate pooled dataset
@@ -34,36 +36,50 @@ source("others/rbind_country_datasets.R")
 for(context in c("IT", "FR", "CZ", "SW", "POOL"))
 {
   #descriptives script
-  source("others/descriptives/descriptives_internal.R")
+  source("others/descriptives_internal.R")
+  
+  print(paste("Ok descriptives", context, Sys.time()))
   
   #classic conjoint scripts
   source("classic_conjoint/data_manipulation_ccd.R")
+  print(paste("Ok ccd data man", context, Sys.time()))
   source("classic_conjoint/randomization_checks_ccd.R")
+  print(paste("Ok ccd randcheck", context, Sys.time()))
   source("classic_conjoint/analyses_ccd_singlecountry.R")
+  print(paste("Ok ccd analyses", context, Sys.time()))
   
   #visual conjoint scripts
   source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
+  print(paste("Ok vcd data man", context, Sys.time()))
   source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")
+  print(paste("Ok vcd randcheck", context, Sys.time()))
   
   for(outcome in c("ideology", "trust", "populism"))
   {
     source("visual_conjoint/scripts/analysis/analyses_vcd_singlecountry.R")
+    print(paste("Ok vcd analyses", outcome, context, Sys.time()))
   }
   
   
   # #parallel conjoint scripts
   source("parallel_conjoint/data_manipulation_cpd.R")
+  print(paste("Ok cpd dataman", context, Sys.time()))
   source("parallel_conjoint/randomization_checks_cpd.R")
+  print(paste("Ok cpd randcheck", context, Sys.time()))
   source("parallel_conjoint/analyses_cpd_singlecountry.R")
+  print(paste("Ok cpd analyses", context, Sys.time()))
   
 }
 
 
 source("classic_conjoint/analyses_ccd_bycountry.R")
+print(paste("Ok cpd byocuntry", context, Sys.time()))
 
 for(outcome in c("ideology", "trust", "populism"))
 {
   source("visual_conjoint/scripts/analysis/analyses_vcd_bycountry.R")
+  print(paste("Ok vcd bycountry", outcome, context, Sys.time()))
 }
 
 source("parallel_conjoint/analyses_cpd_bycountry.R")
+print(paste("Ok cpd bycountry", context, Sys.time()))

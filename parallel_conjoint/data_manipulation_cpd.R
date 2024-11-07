@@ -248,7 +248,6 @@ cjdata$cpd_exparm2 = ifelse(cjdata$cpd_exparm=="natural", "natural",
 for(i in 1:ncol(cjdata))
 {
   cjdata[, i] = factor(cjdata[, i]) 
-  #levels = unique(cjdata[, i])[1:length(unique(cjdata[, i]))])
 }
 
 #the following factor needs to be reordered
@@ -268,10 +267,11 @@ for(variable in names(cjdata)[grepl("cpd_match_", names(cjdata))])
 }
 
 #check if everything is okay with making them all factors
-for(i in 1:ncol(cjdata))
-{
-  print(is.factor(cjdata[, i]))
-}
+
+# for(i in 1:ncol(cjdata))
+# {
+#   print(is.factor(cjdata[, i]))
+# }
 
 
 # creation of the variable expressing the number of matches in terms of attribute levels
