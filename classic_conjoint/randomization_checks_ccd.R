@@ -22,7 +22,7 @@
 # gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/", context, "/randomization_checks/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", context, "/randomization_checks/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 
 names(data)

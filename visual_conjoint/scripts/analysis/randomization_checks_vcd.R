@@ -22,7 +22,7 @@
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/", context, "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/", context,"randomization_checks/")
 
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
@@ -112,7 +112,7 @@ p = v[[1]]/v[[2]]/v[[3]]/v[[4]]/v[[5]]/v[[6]]
 
 p
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_ggplot1.png"),
+ggsave(paste0(output_wd, "diagnostic_randomization_nomatch_ggplot1.png"),
        p, height = 12, width = 8, create.dir = T)
 
 if(context != "POOL")
@@ -127,7 +127,7 @@ if(context == "POOL")
 
 p
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_ggplot2.png"),
+ggsave(paste0(output_wd, "diagnostic_randomization_nomatch_ggplot2.png"),
        p, height = 12, width = 8, create.dir = T)
 
 

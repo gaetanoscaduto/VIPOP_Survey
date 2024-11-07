@@ -1,6 +1,7 @@
 library(rio)
 library(ggplot2)
 library(margins)
+library(stringr)
 library(dplyr)
 library(corrplot)
 library(texreg)
@@ -52,8 +53,18 @@ descriptive |>
 
 
 ### Descriptives for the parallel design experiment
+ data1 = data |> 
+  select(gender, AGE_GROUP, EDU_LEVEL, region_feel, 
+         TIPI_CON_REC, TIPI_OPE_REC,
+         diet, animal, holiday,
+         ideology)
 
-descriptive <- data |> 
+data1 <- data1 %>%
+  mutate(across(everything(), ~ str_to_title(as.character(.))))
+
+
+
+descriptive <- data1 |> 
   select(gender, AGE_GROUP, EDU_LEVEL, region_feel, 
          TIPI_CON_REC, TIPI_OPE_REC,
          diet, animal, holiday,

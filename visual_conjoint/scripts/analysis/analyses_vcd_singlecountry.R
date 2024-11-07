@@ -376,7 +376,7 @@ attributes= c("Ethnicity", "Ethnicity",
 # gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/single_country/", outcome, "/", context, "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/", outcome, "/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
 
