@@ -86,7 +86,10 @@ v=list()
   }
   
   p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
-  return(p)
+  
+  return_list= list(plot = p, 
+                    effects_data=effects)
+  return(return_list)
 }
 
 
@@ -244,15 +247,20 @@ full_subgroup_analysis = function(data,
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
     
-    
   }
-  
+
   ggsave(paste0(output_wd, subdir, subgroup_name, estimator, ".png"), 
          p, 
          height = 12, 
          width = 12, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
+  
+  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
+  
+  saveRDS(effects_pooled, file = paste0(output_wd, subdir, subgroup_name, estimator, "_data.rds"))
+  
+  
 }
 
 
@@ -260,24 +268,46 @@ full_subgroup_analysis = function(data,
 
 
 full_interaction_effects = function(data,
-                                    formula){
+                                    formula, 
+                                    estimator = c("mm", "amce"),
+                                    leftlim = 999,
+                                    rightlim = 999){
+  
+  estimator = match.arg(estimator)
+  
+  if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+    #with [-1; 1] for amces and [0, 1] for mm
+  {
+    
+    leftlim=ifelse(estimator!="mm", -1, 0)
+    rightlim=1
+  }
+  if(x_intercept==999)
+  {
+    intercept = ifelse(estimator!="mm", 0, 0.5)
+  }
+  
   
   effects <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = "mm")
+       estimate = estimator)
   
   p=ggplot(effects)+
-    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
                         y=fct_reorder(effects$level, desc(effects$estimate)), col=feature))+
     labs(y="",x="Marginal Mean")+
-    xlim(-0.01,1.01)+
+    xlim(leftlim-0.1,rightlim+0.01)+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
   
-  return(p)
+  
+  return_list = list(plot=p, 
+                     effects_data = effects)
+  
+  return(return_list)
 }
 
 
@@ -308,23 +338,25 @@ full_analysis = function(data,
   
   effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                     attributes = attributes)
-  
-  p = draw_plot_effects(effects_pooled,
+  result_list = draw_plot_effects(effects_pooled,
                         estimator=estimator,
                         y_labels=y_labels_plots,
                         leftlim,
                         rightlim)
   
+  p=result_list$plot
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment"),
                                  caption= toupper(estimator))
   
+
   ggsave(paste0(output_wd, subdir,"singlecountry.png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.png"))
+  saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.rds"))
   
+  saveRDS(result_list$effects_data, file = paste0(output_wd, subdir,"singlecountry_data.rds"))
   
 }
 
@@ -436,11 +468,11 @@ full_analysis(data,
 ##### ACIEs
 
 
-data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep =" ")
+data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep ="\n")
 
-data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
+data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep ="\n")
 
-data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep =" ")
+data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep ="\n")
 
 
 
@@ -471,12 +503,17 @@ if(outcome=="populism")
   
 }
 
+######## ACIEs with MMs
 
-subdir = "Interactions/"
+subdir = "Interactions/MMs/"
+estimator="mm"
 
 
-p = full_interaction_effects(data, 
-                             formula_interaction_sociodemos)
+return_list = full_interaction_effects(data, 
+                             formula_interaction_sociodemos,
+                             estimator)
+
+p=return_list$plot
 
 ggsave(paste0(output_wd, subdir,"interacted_sociodemos.png"), 
        p, 
@@ -485,14 +522,17 @@ ggsave(paste0(output_wd, subdir,"interacted_sociodemos.png"),
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos.rds"))
 
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_sociodemos_data.rds"))
+
 
 
 ##### ACIE of the cultural dimensions
 
+return_list = full_interaction_effects(data, 
+                             formula_interaction_cultural,
+                             estimator)
 
-
-p = full_interaction_effects(data, 
-                             formula_interaction_cultural)
+p=return_list$plot
 
 ggsave(paste0(output_wd, subdir,"interacted_cultural.png"), 
        p, 
@@ -501,12 +541,18 @@ ggsave(paste0(output_wd, subdir,"interacted_cultural.png"),
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
 
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cultural_data.rds"))
+
+
 
 #####  ACIE of the political dimensions
 
 
 p = full_interaction_effects(data, 
-                             formula_interaction_political)
+                             formula_interaction_political,
+                             estimator)
+
+p=return_list$plot
 
 ggsave(paste0(output_wd, subdir,"interacted_political.png"), 
        p, 
@@ -514,6 +560,70 @@ ggsave(paste0(output_wd, subdir,"interacted_political.png"),
        width = 10, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_data.rds"))
+
+
+
+######## ACIEs with AMCEs
+
+subdir = "Interactions/AMCEs/"
+estimator="amce"
+
+
+return_list = full_interaction_effects(data, 
+                                       formula_interaction_sociodemos,
+                                       estimator)
+
+p=return_list$plot
+
+ggsave(paste0(output_wd, subdir,"interacted_sociodemos.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_sociodemos_data.rds"))
+
+
+
+##### ACIE of the cultural dimensions
+
+return_list = full_interaction_effects(data, 
+                                       formula_interaction_cultural,
+                                       estimator)
+
+p=return_list$plot
+
+ggsave(paste0(output_wd, subdir,"interacted_cultural.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cultural_data.rds"))
+
+
+
+#####  ACIE of the political dimensions
+
+
+p = full_interaction_effects(data, 
+                             formula_interaction_political,
+                             estimator)
+
+p=return_list$plot
+
+ggsave(paste0(output_wd, subdir,"interacted_political.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_data.rds"))
 
 
 ################################################################

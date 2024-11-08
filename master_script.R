@@ -14,6 +14,7 @@ pacman::p_load(
 #setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/VIPOP/VIPOP_Survey/")
 
 #gdrive_code is personal for the google drive user. Change it if you are not Gaetano
+
 gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
@@ -51,11 +52,11 @@ for(context in c("IT", "FR", "CZ", "SW", "POOL"))
   #visual conjoint scripts
   source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
   print(paste("Ok vcd data man", context, Sys.time()))
-  source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")
-  print(paste("Ok vcd randcheck", context, Sys.time()))
   
   for(outcome in c("ideology", "trust", "populism"))
   {
+    source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")
+    print(paste("Ok vcd randcheck", outcome, context, Sys.time()))
     source("visual_conjoint/scripts/analysis/analyses_vcd_singlecountry.R")
     print(paste("Ok vcd analyses", outcome, context, Sys.time()))
   }
