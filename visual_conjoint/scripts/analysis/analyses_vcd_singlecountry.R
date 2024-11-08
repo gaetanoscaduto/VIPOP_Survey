@@ -271,7 +271,8 @@ full_interaction_effects = function(data,
                                     formula, 
                                     estimator = c("mm", "amce"),
                                     leftlim = 999,
-                                    rightlim = 999){
+                                    rightlim = 999,
+                                    x_intercept = 999){
   
   estimator = match.arg(estimator)
   
