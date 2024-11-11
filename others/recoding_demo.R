@@ -301,9 +301,9 @@ if(context == "IT")
   {
     data = data |>
       mutate(!!var := case_when(
-        !!sym(var) == "1" ~ "north",
-        !!sym(var) == "2" ~ "center",
-        !!sym(var) == "3" ~ "south",
+        !!sym(var) == "1" ~ "northern italy",
+        !!sym(var) == "2" ~ "central italy",
+        !!sym(var) == "3" ~ "southern italy",
         is.na(!!sym(var)) ~ NA
         )
       )

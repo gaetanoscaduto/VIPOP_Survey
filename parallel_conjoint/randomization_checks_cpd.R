@@ -46,9 +46,6 @@ subcategories = list(Sociodemographics=c("Gender Match", "Gender Mismatch",
 
 
 
-# data = data |>
-#   filter(country=="IT")
-
 ###################
 #### DIAGNOSTICS ####
 ###################
