@@ -441,9 +441,11 @@ full_analysis(data,
 subdir = "AMCEs/"
 
 full_analysis(data,
-              formula_rw,
-              "amce",
-              subdir)
+              formula=formula_rw,
+              estimator="amce",
+              subdir=subdir,
+              leftlim = 0.35,
+              rightlim = 0.65)
 
 ######### Continuous outcome, mm
 
