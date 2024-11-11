@@ -167,8 +167,7 @@ full_analysis = function(data,
   estimator=match.arg(estimator)
   arm=match.arg(arm)
   
-  browser()
-  
+
   if(effect!= "EEs")
   {
     effects_pooled <- data |>
