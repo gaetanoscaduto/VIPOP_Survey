@@ -429,9 +429,9 @@ data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 subdir = "MMs/"
 
 full_analysis(data,
-              formula_rw,
-              "mm",
-              subdir,
+              formula=formula_rw,
+              estimator="mm",
+              subdir=subdir,
               leftlim = 0.35,
               rightlim = 0.65)
 
