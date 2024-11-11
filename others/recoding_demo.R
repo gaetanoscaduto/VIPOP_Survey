@@ -20,7 +20,16 @@ if(context !="POOL")
 {
   data$country = context
 }
-#View(data)
+
+table(data$vce_validation, useNA = "always")
+
+#since the variable vce_validation has been added only after 
+# the pilot, we use its missing category as the flag for whether the interview
+# belongs to the pilot or not
+
+data$pilot = ifelse(is.na(data$vce_validation), 1, 0)
+
+table(data$pilot)
 
 # - gender (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 
@@ -641,7 +650,9 @@ for(var in cpd_ideo_names)
 #sns_use - recode
 table(data$sns_use)
 
+
 data = data |>
+  filter(data$pilot == 0) |>
   mutate(sns_use_rec = recode(sns_use,
                               "1" = "nev_hardev",
                               "2" = "lessthan10",
@@ -650,6 +661,18 @@ data = data |>
                               "5" = "morethan60",
                               ) 
          )
+
+data = data |>
+  filter(data$pilot == 1) |>
+  mutate(sns_use_rec = recode(sns_use,
+                              "1" = "nev_hardev",
+                              "2" = "at_least_once_a_month",
+                              "3" = "at_least_once_a_week",
+                              "4" = "at_least_once_a_day",
+                              "5" = "more_than_once_per_day",
+  ) 
+  )
+
 
 #table(data$sns_use_rec)
 
@@ -664,6 +687,7 @@ data = data |>
                                 "5" = "often",
                                 ) 
          )
+
 
 #table(data$sns_use_dummy)
 ##
@@ -857,6 +881,9 @@ if(context=="FR")
       votechoice == 6 ~ "LE - EELV - Les Écologistes - Europe Ecologie Les Verts",
       votechoice == 7 ~ "Coalition La France fière (Reconquête!, Centre national des indépendants et paysans)",
       votechoice == 8 ~ "Autre",
+      votechoice == 9 ~ "Je n'ai pas voté/je me suis abstenu(e)",
+      votechoice == 10 ~ "Bulletin blanc/nul",
+      votechoice == 11 ~ "Je préfère ne pas répondre",
       TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
 }
@@ -876,6 +903,9 @@ if(context=="CZ")
       votechoice == 10 ~ "Svobodní - Strana svobodných občanů",
       votechoice == 11 ~ "Zelení - Strana zelených",
       votechoice == 12 ~ "Jinou stranu",
+      votechoice == 13 ~ "Nehlasoval jsem/zdržel jsem se hlasování",
+      votechoice == 14 ~ "Prázdný/neplatný hlasovací lístek",
+      votechoice == 15 ~ "Raději jsem neodpověděl(a)",
       TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
@@ -893,6 +923,9 @@ if(context=="SW")
       votechoice == 7 ~ "KD - Kristdemokraterna",
       votechoice == 8 ~ "L - Liberalerna",
       votechoice == 9 ~ "Övriga parter",
+      votechoice == 10 ~ "Jag röstade inte/avstod från att rösta",
+      votechoice == 11 ~ "Blank/Null röstsedel",
+      votechoice == 12 ~ "Jag föredrar att inte svara ",
       TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
