@@ -48,7 +48,7 @@ draw_plot_effects = function(effects,
                              y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
-                             x_intercept=999
+                             intercept=999
 ){
   
   estimator=match.arg(estimator)
@@ -62,14 +62,11 @@ draw_plot_effects = function(effects,
     rightlim=1
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
-  else #continuous outcome 0-10s
-  {
-    intercept = 5
-  }
   
   v=list()
   for(attribute in unique(attributes))
   {
+    
     p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
@@ -85,7 +82,7 @@ draw_plot_effects = function(effects,
     v[[attribute]] = p
   }
   
-  p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+  p = ((v[["Gender"]]+xlim(0.3,0.7))/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
   return(p)
 }
 
@@ -181,6 +178,7 @@ full_subgroup_analysis = function(data,
     
     for(attribute in unique(attributes))
     {
+      
       p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
         geom_vline(aes(xintercept=intercept), 
                    col="black", 
@@ -301,6 +299,7 @@ full_analysis = function(data,
                          estimator=c("mm","amce"), #marginal means and amces
                          leftlim=999,
                          rightlim=999,
+                         intercept=999,
                          subdir,#the subdirectory where the plots will be saved
                          continuous=F #to change if we are dealing with continuous outcome
 ){
@@ -328,7 +327,8 @@ full_analysis = function(data,
                         estimator=estimator,
                         y_labels=y_labels_plots,
                         leftlim,
-                        rightlim)
+                        rightlim,
+                        intercept)
   }
   else
   {
@@ -336,7 +336,8 @@ full_analysis = function(data,
                           estimator=estimator,
                           y_labels=y_labels_plots,
                           leftlim = 0, 
-                          rightlim = 10)
+                          rightlim = 10,
+                          intercept =5)
   }
   
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Classic Conjoint Experiment"),
@@ -432,8 +433,9 @@ full_analysis(data,
               formula=formula_rw,
               estimator="mm",
               subdir=subdir,
-              leftlim = 0.35,
-              rightlim = 0.65)
+              leftlim = 0.4,
+              rightlim = 0.6,
+              intercept = 0.5)
 
 
 ### Same as before, but with AMCEs (for appendix)
@@ -444,8 +446,9 @@ full_analysis(data,
               formula=formula_rw,
               estimator="amce",
               subdir=subdir,
-              leftlim = 0.35,
-              rightlim = 0.65)
+              leftlim = -0.2,
+              rightlim = 0.2,
+              intercept=0)
 
 ######### Continuous outcome, mm
 
