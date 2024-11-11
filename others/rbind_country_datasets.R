@@ -45,6 +45,6 @@ data_POOL = rbind(data_IT,
                   data_CZ,
                   data_SW)
 
-export(data_POOL, paste0(dataset_rep, "data_recoded_POOL.sav"))
+export(data_POOL, paste0(dataset_rep, "data_recoded_POOL.rds"))
 
 rm(data_IT, data_FR,data_CZ, data_SW, data_POOL)
