@@ -4,7 +4,7 @@ library(dplyr)
 #If you launch this script from the master script, make sure to have the context fixed
 #otherwise, uncomment desired context
 
-context = "IT"
+#context = "IT"
 #context = "FR"
 #context = "CZ"
 # context = "SW"

@@ -146,7 +146,9 @@ draw_plot_effects_bycountry = function(effects_pooled,
   }
   
   
-  return(v)
+  return_list = list(plot=v, effects = effects_bycountry)
+  
+  return(return_list)
 }
 
 full_interaction_effects_bycountry = function(data,
@@ -237,7 +239,10 @@ full_interaction_effects_bycountry = function(data,
          width = 8,
          create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
+  saveRDS(p, file = paste0(output_wd, subdir, "interacted_", type_of_interaction, ".rds"))
+  
+  saveRDS(effects, file = paste0(output_wd, subdir, "interacted_", type_of_interaction, "_data.rds"))
+  
   
   }
 
@@ -293,7 +298,10 @@ full_analysis_bycountry = function(data,
                                   rightlim=rightlim)
   
   
-  return(v)
+  saveRDS(v$effects, file = paste0(output_wd, subdir, "_bycountry_data.rds"))
+  
+  
+  return(v$plot)
 }
 
 #Our levels regarding match and mismatches (for labeling)

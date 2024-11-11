@@ -256,8 +256,6 @@ full_subgroup_analysis = function(data,
   
   saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
   
-  saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
-  
   saveRDS(effects_pooled, file = paste0(output_wd, subdir, subgroup_name, estimator, "_data.rds"))
   
   
