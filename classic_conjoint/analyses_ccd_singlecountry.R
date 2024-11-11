@@ -452,9 +452,9 @@ full_analysis(data,
 subdir = "Continuous/"
 
 full_analysis(data,
-              formula_continuous,
-              "mm",
-              subdir,
+              formula=formula_continuous,
+              estimator="mm",
+              subdir=subdir,
               continuous = T)
 
 
