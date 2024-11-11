@@ -177,16 +177,16 @@ plot(cj(data,
 
 data$cpd_profile_number = as.factor(data$cpd_profile_number)
 
-plot(cj(data, 
-        cpd_chosen ~ cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
-          cpd_match_consc + cpd_match_ope +
-          cpd_match_diet + cpd_match_animal + cpd_match_holiday+
-          cpd_match_ideology,
-        id = ~respid,
-        by = ~cpd_profile_number,
-        estimate = "mm"),
-     group = "cpd_profile_number",
-     vline = 0.5)
+# plot(cj(data, 
+#         cpd_chosen ~ cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
+#           cpd_match_consc + cpd_match_ope +
+#           cpd_match_diet + cpd_match_animal + cpd_match_holiday+
+#           cpd_match_ideology,
+#         id = ~respid,
+#         by = ~cpd_profile_number,
+#         estimate = "mm"),
+#      group = "cpd_profile_number",
+#      vline = 0.5)
 
 
 
