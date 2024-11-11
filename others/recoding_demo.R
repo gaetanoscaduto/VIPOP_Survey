@@ -648,30 +648,29 @@ for(var in cpd_ideo_names)
 # - interest/exposure variables (recodifica levels nomi abbreviati e aggiunta dicotomiche)
 
 #sns_use - recode
-table(data$sns_use)
-
-
-data = data |>
-  filter(data$pilot == 0) |>
-  mutate(sns_use_rec = recode(sns_use,
-                              "1" = "nev_hardev",
-                              "2" = "lessthan10",
-                              "3" = "between10and30",
-                              "4" = "between30and60",
-                              "5" = "morethan60",
-                              ) 
-         )
-
-data = data |>
-  filter(data$pilot == 1) |>
-  mutate(sns_use_rec = recode(sns_use,
-                              "1" = "nev_hardev",
-                              "2" = "at_least_once_a_month",
-                              "3" = "at_least_once_a_week",
-                              "4" = "at_least_once_a_day",
-                              "5" = "more_than_once_per_day",
-  ) 
-  )
+# table(data$sns_use)
+# 
+# 
+# data = data |>
+#   mutate(sns_use_rec = recode(sns_use,
+#                               "1" = "nev_hardev",
+#                               "2" = "lessthan10",
+#                               "3" = "between10and30",
+#                               "4" = "between30and60",
+#                               "5" = "morethan60"
+#                               ) 
+#          )
+# 
+# data = data |>
+#   filter(data$pilot == 1) |>
+#   mutate(sns_use_rec = recode(sns_use,
+#                               "1" = "nev_hardev",
+#                               "2" = "at_least_once_a_month",
+#                               "3" = "at_least_once_a_week",
+#                               "4" = "at_least_once_a_day",
+#                               "5" = "more_than_once_per_day",
+#   ) 
+#   )
 
 
 #table(data$sns_use_rec)
