@@ -313,11 +313,15 @@ full_analysis_bycountry = function(data,
                                     rightlim = 10)
   }
   
+  
   effects_pooled$BY = "POOL"
   
   effects_pooled$ccd_country = "POOL"
   
-  saveRDS(rbind(effects_pooled, effects_bycountry), file = paste0(output_wd, subdir,"_data.rds"))
+
+  binded_dataset = rbind(effects_pooled, effects_bycountry)
+  
+  saveRDS(binded_dataset, file = paste0(output_wd, subdir,"_data.rds"))
   
   return(v)
 }
@@ -372,6 +376,7 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/bycountry/")
 
 data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_POOL.RDS"))
