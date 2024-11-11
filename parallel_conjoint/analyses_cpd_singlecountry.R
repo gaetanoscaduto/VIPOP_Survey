@@ -30,7 +30,6 @@
 set_categories_and_levels = function(effects, 
                                      type=c("match","nominal"), 
                                      nominal_attributes=nominal_attributes){
-  #browser()
   type=match.arg(type)
   
   effects$category="Sociodemographics"
@@ -564,26 +563,12 @@ y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
                       Political = c("Ideology Mismatch",
                                     "Ideology Match"))
 
-y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                              "Under 30", "Between 30 and 59","Over 60",
-                                              "Degree","No degree",
-                                              "Regionfeel1","Regionfeel2","Regionfeel3"),
-                        Psychological = c("High Consc.","Med. Consc.","Low Consc.",
-                                          "High Ope.","Med. Ope.","Low Ope."),
-                        Lifestyle = c("Omnivore","Vegetarian","Vegan",
-                                      "Cat","Dog","No pet",
-                                      "City","Outdoor","Relax"),
-                        Political = c("Right-wing",
-                                      "Left-wing",
-                                      "Center",
-                                      "Not collocated"))
 
-y_labels_plots=list(match=y_labels_match, 
-                    nominal=y_labels_nominal)
+
 
 #Our nominal attributes (here called nominal_attributes)
 
-if(context != "FR")
+if(context == "IT")
 {
   #if we are not in france, three regionfeel categories!)               
   nominal_attributes= c("Gender", "Gender",
@@ -599,14 +584,29 @@ if(context != "FR")
   levels_vector= c("Female", "Male",
                    "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
-                   "Regionfeel1","Regionfeel2","Regionfeel3",
+                   "Center","North","South",
                    "High Consc.","Med. Consc.","Low Consc.",
                    "High Ope.","Med. Ope.","Low Ope.",
                    "Omnivore","Vegetarian","Vegan",
                    "Cat","Dog","No pet",
                    "City","Outdoor","Relax")
   
+  y_labels_nominal = list(Sociodemographics = c("Female", "Male",
+                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Degree","No degree",
+                                                "Center","North","South"),
+                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                            "High Ope.","Med. Ope.","Low Ope."),
+                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                        "Cat","Dog","No pet",
+                                        "City","Outdoor","Relax"),
+                          Political = c("Right-wing",
+                                        "Left-wing",
+                                        "Center",
+                                        "Not collocated"))
+  
 }
+
 if(context=="FR")
 {
   # if we are in france, only two regionfeel (paris vs all)
@@ -623,15 +623,161 @@ if(context=="FR")
   levels_vector= c("Female", "Male",
                    "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
-                   "Regionfeel1","Regionfeel2",
+                   "No Paris","Paris",
                    "High Consc.","Med. Consc.","Low Consc.",
                    "High Ope.","Med. Ope.","Low Ope.",
                    "Omnivore","Vegetarian","Vegan",
                    "Cat","Dog","No pet",
                    "City","Outdoor","Relax")
   
+  y_labels_nominal = list(Sociodemographics = c("Female", "Male",
+                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Degree","No degree",
+                                                "No Paris","Paris"),
+                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                            "High Ope.","Med. Ope.","Low Ope."),
+                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                        "Cat","Dog","No pet",
+                                        "City","Outdoor","Relax"),
+                          Political = c("Right-wing",
+                                        "Left-wing",
+                                        "Center",
+                                        "Not collocated"))
+  
 }
 
+
+if(context == "CZ")
+{
+  #if we are not in france, three regionfeel categories!)               
+  nominal_attributes= c("Gender", "Gender",
+                        "Age", "Age","Age",
+                        "Education","Education",
+                        "Regionfeel","Regionfeel","Regionfeel",
+                        "Conscientiousness","Conscientiousness","Conscientiousness",
+                        "Openness","Openness","Openness",
+                        "Diet","Diet","Diet",
+                        "Animal","Animal","Animal",
+                        "Holiday","Holiday","Holiday")
+  
+  levels_vector= c("Female", "Male",
+                   "Under 30", "Between 30 and 59","Over 60",
+                   "Degree","No degree",
+                   "Cechia","Moravia","Prague",
+                   "High Consc.","Med. Consc.","Low Consc.",
+                   "High Ope.","Med. Ope.","Low Ope.",
+                   "Omnivore","Vegetarian","Vegan",
+                   "Cat","Dog","No pet",
+                   "City","Outdoor","Relax")
+  
+  y_labels_nominal = list(Sociodemographics = c("Female", "Male",
+                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Degree","No degree",
+                                                "Cechia","Moravia","Prague"),
+                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                            "High Ope.","Med. Ope.","Low Ope."),
+                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                        "Cat","Dog","No pet",
+                                        "City","Outdoor","Relax"),
+                          Political = c("Right-wing",
+                                        "Left-wing",
+                                        "Center",
+                                        "Not collocated"))
+  
+}
+
+if(context == "SW")
+{
+  #if we are not in france, three regionfeel categories!)               
+  nominal_attributes= c("Gender", "Gender",
+                        "Age", "Age","Age",
+                        "Education","Education",
+                        "Regionfeel","Regionfeel","Regionfeel",
+                        "Conscientiousness","Conscientiousness","Conscientiousness",
+                        "Openness","Openness","Openness",
+                        "Diet","Diet","Diet",
+                        "Animal","Animal","Animal",
+                        "Holiday","Holiday","Holiday")
+  
+  levels_vector= c("Female", "Male",
+                   "Under 30", "Between 30 and 59","Over 60",
+                   "Degree","No degree",
+                   "Gotland","Norrland","Svealand",
+                   "High Consc.","Med. Consc.","Low Consc.",
+                   "High Ope.","Med. Ope.","Low Ope.",
+                   "Omnivore","Vegetarian","Vegan",
+                   "Cat","Dog","No pet",
+                   "City","Outdoor","Relax")
+  
+  y_labels_nominal = list(Sociodemographics = c("Female", "Male",
+                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Degree","No degree",
+                                                "Gotland","Norrland","Svealand"),
+                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                            "High Ope.","Med. Ope.","Low Ope."),
+                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                        "Cat","Dog","No pet",
+                                        "City","Outdoor","Relax"),
+                          Political = c("Right-wing",
+                                        "Left-wing",
+                                        "Center",
+                                        "Not collocated"))
+  
+}
+
+
+if(context=="POOL")
+{
+  # if we are in france, only two regionfeel (paris vs all)
+  nominal_attributes= c("Gender", "Gender",
+                        "Age", "Age","Age",
+                        "Education","Education",
+                        "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
+                        "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
+                        "Regionfeel","Regionfeel","Regionfeel",
+                        "Conscientiousness","Conscientiousness","Conscientiousness",
+                        "Openness","Openness","Openness",
+                        "Diet","Diet","Diet",
+                        "Animal","Animal","Animal",
+                        "Holiday","Holiday","Holiday")
+  
+  levels_vector= c("Female", "Male",
+                   "Under 30", "Between 30 and 59","Over 60",
+                   "Degree","No degree",
+                   "Cechia (CZ)","Center (IT)", "Gotland (SW)",
+                   "Moravia (CZ)", "No Paris (FR)", "North (IT)",
+                   "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
+                   "South (IT)", "Svealand (SW)",
+                   "High Consc.","Med. Consc.","Low Consc.",
+                   "High Ope.","Med. Ope.","Low Ope.",
+                   "Omnivore","Vegetarian","Vegan",
+                   "Cat","Dog","No pet",
+                   "City","Outdoor","Relax")
+  
+  y_labels_nominal = list(Sociodemographics = c("Female", "Male",
+                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Degree","No degree",
+                                                "Cechia (CZ)","Center (IT)", "Gotland (SW)",
+                                                "Moravia (CZ)", "No Paris (FR)", "North (IT)",
+                                                "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
+                                                "South (IT)", "Svealand (SW)"),
+                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                            "High Ope.","Med. Ope.","Low Ope."),
+                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                        "Cat","Dog","No pet",
+                                        "City","Outdoor","Relax"),
+                          Political = c("Right-wing",
+                                        "Left-wing",
+                                        "Center",
+                                        "Not collocated"))
+  
+}
+
+
+
+
+y_labels_plots=list(match=y_labels_match, 
+                    nominal=y_labels_nominal)
 
 #Levels (as a vector)
 
@@ -661,9 +807,6 @@ formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
 
 #############################################################
 
-
-
-
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
@@ -671,13 +814,6 @@ output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/
 
 data = readRDS(paste0(dataset_rep, "cjdata_cpd_", context, ".RDS"))
 
-# data=rbind(data, data, data, data)
-# data=rbind(data, data, data, data)
-
-
-
-# data = data |>
-#   filter(country == "IT")
 
 #############################################################
 
@@ -733,8 +869,8 @@ full_analysis(data,
               "mm",
               "natural",
               subdir,
-              leftlim=0.35,
-              rightlim=0.65)
+              leftlim=0.10,
+              rightlim=0.90)
 
 
 #same but with amce
