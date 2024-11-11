@@ -299,6 +299,8 @@ full_subgroup_analysis = function(data,
 full_analysis = function(data,
                          formula, #the conjoint formula
                          estimator=c("mm","amce"), #marginal means and amces
+                         leftlim=999,
+                         rightlim=999,
                          subdir,#the subdirectory where the plots will be saved
                          continuous=F #to change if we are dealing with continuous outcome
 ){
@@ -324,7 +326,9 @@ full_analysis = function(data,
   {
   p = draw_plot_effects(effects_pooled,
                         estimator=estimator,
-                        y_labels=y_labels_plots)
+                        y_labels=y_labels_plots,
+                        leftlim,
+                        rightlim)
   }
   else
   {
@@ -427,7 +431,9 @@ subdir = "MMs/"
 full_analysis(data,
               formula_rw,
               "mm",
-              subdir)
+              subdir,
+              leftlim = 0.35,
+              rightlim = 0.65)
 
 
 ### Same as before, but with AMCEs (for appendix)
