@@ -289,9 +289,9 @@ if(context == "IT")
 {
   data <- data |>
     mutate(region_feel = case_when(
-      region_feel == 1 ~ "nord",
-      region_feel == 2 ~ "centro",
-      region_feel == 3 ~ "sud",
+      region_feel == 1 ~ "northern italy",
+      region_feel == 2 ~ "central italy",
+      region_feel == 3 ~ "southern italy",
       TRUE ~ as.character(region_feel)  # Keeps any values not in the list as they are
     )
     )

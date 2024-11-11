@@ -167,6 +167,8 @@ full_analysis = function(data,
   estimator=match.arg(estimator)
   arm=match.arg(arm)
   
+  browser()
+  
   if(effect!= "EEs")
   {
     effects_pooled <- data |>
@@ -342,7 +344,7 @@ compare_effects = function(data,
   
   ees = data |>
     filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-    cj(formula_match,
+    cj(formula,
        id = ~respid,
        estimate = paste0(estimator, "_differences"),
        by = ~cpd_exparm)
