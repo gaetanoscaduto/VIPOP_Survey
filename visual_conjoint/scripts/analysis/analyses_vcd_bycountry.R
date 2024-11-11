@@ -298,7 +298,7 @@ full_analysis_bycountry = function(data,
                                   rightlim=rightlim)
   
   
-  saveRDS(v$effects, file = paste0(output_wd, subdir, "_bycountry_data.rds"))
+  #saveRDS(v$effects, file = paste0(output_wd, subdir, "bycountry_data.rds"))
   
   
   return(v$plot)

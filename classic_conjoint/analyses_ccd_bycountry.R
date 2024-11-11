@@ -248,7 +248,7 @@ full_interaction_effects_bycountry = function(data,
   
   saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
   
-  saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
+  #saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
   
   
 }
@@ -321,7 +321,7 @@ full_analysis_bycountry = function(data,
 
   binded_dataset = rbind(effects_pooled, effects_bycountry)
   
-  saveRDS(binded_dataset, file = paste0(output_wd, subdir,"_data.rds"))
+  #saveRDS(binded_dataset, file = paste0(output_wd, subdir, "data.rds"))
   
   return(v)
 }
