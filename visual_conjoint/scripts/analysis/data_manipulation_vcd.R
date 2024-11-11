@@ -139,7 +139,6 @@ for(i in 1:ntask) #for each task
                                   i, #task numebr
                                   "__open")], "_")
     
-    
     for(k in 1:nrow(data)) #for each row in the dataset
     {
       if(length(temp[[k]]) <15) #if the vector null (the respondent likely did not

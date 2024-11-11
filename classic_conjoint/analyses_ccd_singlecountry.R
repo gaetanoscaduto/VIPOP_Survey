@@ -115,6 +115,8 @@ full_interaction_effects = function(data,
          width = 10, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
+
+  saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
   
 }
 
@@ -284,6 +286,8 @@ full_subgroup_analysis = function(data,
          width = 12, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
+  
+  saveRDS(effects_pooled, file = paste0(output_wd, subdir, subgroup_name, estimator, "_data.rds"))
 }
 
 
@@ -340,6 +344,8 @@ full_analysis = function(data,
          width = 10, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.rds"))
+
+  saveRDS(effects_pooled, file = paste0(output_wd, subdir,"_data_singlecountry.rds"))
   
   return(p)
   
