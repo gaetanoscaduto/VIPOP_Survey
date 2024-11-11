@@ -884,45 +884,57 @@ y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
                       Political = c("Ideology Mismatch",
                                     "Ideology Match"))
 
+
+nominal_attributes= c("Gender", "Gender",
+                        "Age", "Age","Age",
+                        "Education","Education",
+                        "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
+                        "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
+                        "Regionfeel","Regionfeel","Regionfeel",
+                        "Conscientiousness","Conscientiousness","Conscientiousness",
+                        "Openness","Openness","Openness",
+                        "Diet","Diet","Diet",
+                        "Animal","Animal","Animal",
+                        "Holiday","Holiday","Holiday")
+  
+levels_vector= c("Female", "Male",
+                   "Under 30", "Between 30 and 59","Over 60",
+                   "Degree","No degree",
+                   "Cechia (CZ)","Center (IT)", "Gotland (SW)",
+                   "Moravia (CZ)", "No Paris (FR)", "North (IT)",
+                   "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
+                   "South (IT)", "Svealand (SW)",
+                   "High Consc.","Med. Consc.","Low Consc.",
+                   "High Ope.","Med. Ope.","Low Ope.",
+                   "Omnivore","Vegetarian","Vegan",
+                   "Cat","Dog","No pet",
+                   "City","Outdoor","Relax")
+  
 y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                              "Under 30", "Between 30 and 59","Over 60",
-                                              "Degree","No degree",
-                                              "Regionfeel1","Regionfeel2","Regionfeel3"),
-                        Psychological = c("High Consc.","Med. Consc.","Low Consc.",
-                                          "High Ope.","Med. Ope.","Low Ope."),
-                        Lifestyle = c("Omnivore","Vegetarian","Vegan",
-                                      "Cat","Dog","No pet",
-                                      "City","Outdoor","Relax"),
-                        Political = c("Right-wing",
-                                      "Left-wing",
-                                      "Center",
-                                      "Not collocated"))
+                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Degree","No degree",
+                                                "Cechia (CZ)","Center (IT)", "Gotland (SW)",
+                                                "Moravia (CZ)", "No Paris (FR)", "North (IT)",
+                                                "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
+                                                "South (IT)", "Svealand (SW)"),
+                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                            "High Ope.","Med. Ope.","Low Ope."),
+                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                        "Cat","Dog","No pet",
+                                        "City","Outdoor","Relax"),
+                          Political = c("Right-wing",
+                                        "Left-wing",
+                                        "Center",
+                                        "Not collocated"))
+  
+
 
 y_labels_plots=list(match=y_labels_match, 
                     nominal=y_labels_nominal)
 
 #Our nominal attributes (here called nominal_attributes)
 
-nominal_attributes= c("Gender", "Gender",
-                      "Age", "Age","Age",
-                      "Education","Education",
-                      "Regionfeel","Regionfeel","Regionfeel",
-                      "Conscientiousness","Conscientiousness","Conscientiousness",
-                      "Openness","Openness","Openness",
-                      "Diet","Diet","Diet",
-                      "Animal","Animal","Animal",
-                      "Holiday","Holiday","Holiday")
 
-#Levels (as a vector)
-levels_vector= c("Female", "Male",
-                 "Under 30", "Between 30 and 59","Over 60",
-                 "Degree","No degree",
-                 "Regionfeel1","Regionfeel2","Regionfeel3",
-                 "High Consc.","Med. Consc.","Low Consc.",
-                 "High Ope.","Med. Ope.","Low Ope.",
-                 "Omnivore","Vegetarian","Vegan",
-                 "Cat","Dog","No pet",
-                 "City","Outdoor","Relax")
 
 
 formula_match = cpd_chosen ~  cpd_match_gender + cpd_match_age + 
