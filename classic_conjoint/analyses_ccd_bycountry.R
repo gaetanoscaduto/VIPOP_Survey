@@ -313,8 +313,6 @@ full_analysis_bycountry = function(data,
                                     rightlim = 10)
   }
   
-  browser()
-  
   effects_pooled$BY = "POOL"
   
   effects_pooled$ccd_country = "POOL"
