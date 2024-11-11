@@ -226,10 +226,13 @@ full_analysis = function(data,
   p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
                                  caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
   
-  ggsave(paste0(output_wd,"estimations/", subdir, "/singlecountry.png"), 
+  ggsave(paste0(output_wd,"estimations/", subdir, "singlecountry.png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "singlecountry.rds"))
+  
   
 }
 
@@ -292,10 +295,14 @@ full_match_effects = function(data,
     )
   
   ggsave(paste0(output_wd,"estimations/", 
-                subdir, "/singlecountry_", exparm, ".png"), 
+                subdir, "singlecountry_", exparm, ".png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", 
+                           subdir, "singlecountry_", exparm, ".rds"))
+  
 }
 
 
@@ -430,20 +437,29 @@ compare_effects = function(data,
   # p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
   #                                caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
   # 
-  ggsave(paste0(output_wd,"estimations/", subdir, "/socio_singlecountry.png"), 
+  ggsave(paste0(output_wd,"estimations/", subdir, "socio_singlecountry.png"), 
          p_socio, 
          height = 10, 
          width = 10, create.dir = T)
   
-  ggsave(paste0(output_wd,"estimations/", subdir, "/psycho_singlecountry.png"), 
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "socio_singlecountry.rds"))
+  
+  
+  ggsave(paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.png"), 
          p_psycho, 
          height = 10, 
          width = 10, create.dir = T)
   
-  ggsave(paste0(output_wd,"estimations/", subdir, "/lifestyle_singlecountry.png"), 
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.rds"))
+  
+  
+  ggsave(paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.png"), 
          p_lifestyle, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.rds"))
+  
   
   
   #I create the more flexible list to return
@@ -475,10 +491,13 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
   p = plots_match$ates_plots$Sociodemographics | plots_match$ees_plots$Sociodemographics  | plots_mismatch$ees_plots$Sociodemographics                   
   
   
-  ggsave(paste0(output_wd,"estimations/", subdir,  "/sociodemographics_singlecountry.png"), 
+  ggsave(paste0(output_wd,"estimations/", subdir,  "sociodemographics_singlecountry.png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,  "sociodemographics_singlecountry.rds"))
+  
   
   
   plots_match$ates_plots$Psychological = (plots_match$ates_plots$Psychological + labs(title = "ATEs (natural mediation arm)"))
@@ -490,11 +509,12 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
   p = plots_match$ates_plots$Psychological | plots_match$ees_plots$Psychological  | plots_mismatch$ees_plots$Psychological                   
   
   
-  ggsave(paste0(output_wd,"estimations/", subdir, "/psychological_singlecountry.png"), 
+  ggsave(paste0(output_wd,"estimations/", subdir, "psychological_singlecountry.png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
   
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "psychological_singlecountry.rds"))
   
   
   plots_match$ates_plots$Lifestyle = (plots_match$ates_plots$Lifestyle + labs(title = "ATEs (natural mediation arm)"))
@@ -506,10 +526,13 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
   p = plots_match$ates_plots$Lifestyle | plots_match$ees_plots$Lifestyle  | plots_mismatch$ees_plots$Lifestyle                   
   
   
-  ggsave(paste0(output_wd,"estimations/", subdir,  "/Lifestyle_singlecountry.png"), 
+  ggsave(paste0(output_wd,"estimations/", subdir,  "Lifestyle_singlecountry.png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,  "Lifestyle_singlecountry.rds"))
+  
   
   
 }
