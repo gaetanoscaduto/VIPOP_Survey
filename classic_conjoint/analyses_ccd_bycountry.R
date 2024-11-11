@@ -313,6 +313,10 @@ full_analysis_bycountry = function(data,
                                     rightlim = 10)
   }
   
+  browser()
+  
+  effects_pooled$BY = "POOL"
+  effects_pooled$ccd_country = "POOL"
   saveRDS(rbind(effects_pooled, effects_bycountry), file = paste0(output_wd, subdir,"_data.rds"))
   
   return(v)
