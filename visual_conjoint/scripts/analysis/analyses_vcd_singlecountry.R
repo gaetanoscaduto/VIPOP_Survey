@@ -687,7 +687,62 @@ full_subgroup_analysis(data,
 )
 
 
+data$interest_r = ifelse(data$interest_dummy =="no_interest", "Low", "High")
+
+data$interest_r = factor(toTitleCase(data$interest_r))
 
 
-### altre da aggiungere
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       subgroup_variable = "interest_r",
+                       subgroup_name = "Political Interest",
+                       subgroup1 = "Low",
+                       subgroup2 = "High" #the name of the second subgroup (variable level) 
+)
+
+full_subgroup_analysis(data,
+                       formula=formula_rw,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       subgroup_variable = "interest_r",
+                       subgroup_name = "Political Interest",
+                       subgroup1 = "Low",
+                       subgroup2 = "High"    #the name of the second subgroup (variable level)
+)
+
+
+
+data$exposure_r = ifelse(data$exposure_dummy =="less10min", "Low", "High")
+
+data$exposure_r = factor(toTitleCase(data$exposure_r))
+
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       leftlim = 0.3,
+                       rightlim = 0.7,
+                       subgroup_variable = "exposure_r",
+                       subgroup_name = "News media Exposure",
+                       subgroup1 = "Low",
+                       subgroup2 = "High" #the name of the second subgroup (variable level)
+)
+
+
+full_subgroup_analysis(data,
+                       formula=formula_outcome,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       subgroup_variable = "exposure_r",
+                       subgroup_name = "News media Exposure",
+                       subgroup1 = "Low",
+                       subgroup2 = "High" #the name of the second subgroup (variable level)
+)
+
 

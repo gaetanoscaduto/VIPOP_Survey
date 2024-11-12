@@ -593,8 +593,6 @@ full_subgroup_analysis(data,
                        subgroup2 = "High"  #the name of the second subgroup (variable level)
 )
 
-### altre da aggiungere
-
 
 
 data$exposure_r = ifelse(data$exposure_dummy =="less10min", "Low", "High")
