@@ -445,7 +445,7 @@ if(outcome == "ideology")
 }
 if(outcome == "populism")
 {
-  formula_oucome = ccd_populism ~ ccd_gender+
+  formula_outcome = ccd_populism ~ ccd_gender+
     ccd_age+ccd_religion+ccd_citysize+ccd_job+
     ccd_consc+ccd_ope+ccd_neu+
     ccd_restaurant+ccd_transport+ccd_animal
