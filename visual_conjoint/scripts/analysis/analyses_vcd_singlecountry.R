@@ -371,7 +371,7 @@ y_labels_plots = list(ethnicity=c("Black","White"),
                       valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
                       animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
                       food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                      crowd=c("Mixedelite","Mixedpeople", "Whiteelite","Whitepeople")
+                      crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
                       )
 
 levels_vector= unlist(y_labels_plots, use.names = F)

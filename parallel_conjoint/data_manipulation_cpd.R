@@ -249,10 +249,36 @@ for(i in 1:ncol(cjdata))
   cjdata[, i] = factor(cjdata[, i]) 
 }
 
-#the following factor needs to be reordered
+#the following factors needs to be reordered
 cjdata[, "cpd_age"] = factor(cjdata[, "cpd_age"], levels = c("under30",
                                                              "between30and59",
                                                              "over60"))
+
+cjdata[, "cpd_consc"] = factor(cjdata[, "cpd_consc"], levels = c("con_agree",
+                                                             "con_neither",
+                                                             "con_disagree"))
+
+cjdata[, "cpd_ope"] = factor(cjdata[, "cpd_ope"], levels = c("ope_agree", 
+                                                             "ope_neither",
+                                                             "ope_disagree"))
+
+cjdata[, "cpd_diet"] = factor(cjdata[, "cpd_diet"], levels = c("omnivore", 
+                                                             "vegetarian",
+                                                             "vegan"))
+
+cjdata[, "cpd_animal"] = factor(cjdata[, "cpd_animal"], levels = c("cat", 
+                                                               "dog",
+                                                               "none"))
+
+cjdata[, "cpd_holiday"] = factor(cjdata[, "cpd_holiday"], levels = c("city", 
+                                                                   "outdoor",
+                                                                   "relax"))
+
+cjdata[, "cpd_ideology"] = factor(cjdata[, "cpd_ideology"], levels = c("right", 
+                                                                     "center",
+                                                                     "left",
+                                                                     "notplaced"))
+
 
 #l'unico che non voglio factor è chosen!
 
