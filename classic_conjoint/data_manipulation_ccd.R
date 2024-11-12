@@ -131,7 +131,16 @@ for(i in 1:nrow(data)) #for every row in data
       #it is a dummy variable: 0 = not chosen, 1=chosen
       cjdata[this_row, "ccd_chosen_rw"] = data[i, paste0("cjcl_",k,"_ideo_dic")]
       
-      cjdata[this_row, "ccd_continuous"] = data[i, paste0("cjcl_",k,"_ideo__1")]
+      #the continuous outcome is referred only to profile A (the one shown to the right,
+      #for which j=1)
+      if(j==1)
+      {
+        cjdata[this_row, "ccd_continuous"] = data[i, paste0("cjcl_",k,"_ideo__1")]
+      }
+      if(j==2)
+      {
+        cjdata[this_row, "ccd_continuous"] = NA
+      }
       
       cjdata[this_row, "ccd_populism"] = data[i, paste0("cjcl_",k,"_pop")]
       

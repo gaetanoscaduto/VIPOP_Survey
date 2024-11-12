@@ -48,7 +48,8 @@ draw_plot_effects = function(effects,
                              y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
-                             intercept=999
+                             intercept=999,
+                             continuous = F
 ){
   
   estimator=match.arg(estimator)
@@ -82,9 +83,16 @@ draw_plot_effects = function(effects,
     v[[attribute]] = p
   }
   
-  p = ((v[["Gender"]]+xlim(0.3,0.7))/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+  if(continuous == F) #outcome not continuous
+  {
+    v[["Gender"]] = v[["Gender"]]+xlim(0.3,0.7)
+  }
+  
+  p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+  
   return(p)
 }
+
 
 
 full_interaction_effects = function(data, 
@@ -330,14 +338,15 @@ full_analysis = function(data,
                         rightlim,
                         intercept)
   }
-  else
+  if(continuous == T)
   {
     p = draw_plot_effects(effects_pooled,
                           estimator=estimator,
                           y_labels=y_labels_plots,
-                          leftlim = 0, 
-                          rightlim = 10,
-                          intercept =5)
+                          leftlim = leftlim, 
+                          rightlim = rightlim,
+                          intercept = intercept,
+                          continuous=T)
   }
   
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Classic Conjoint Experiment"),
@@ -426,6 +435,8 @@ data = data[data$time_diff_mins>5.2, ]
 #Remove laggards
 data = data[data$time_diff_mins<35, ]
 
+#The continuous outcome should only be used for profile A, which is the one to the left
+data_continuous = data[data$ccd_profile_number == 1, ]
 
 
 #############################################################
@@ -464,10 +475,13 @@ full_analysis(data,
 
 subdir = "Continuous/"
 
-full_analysis(data,
+full_analysis(data_continuous,
               formula=formula_continuous,
               estimator="mm",
               subdir=subdir,
+              leftlim = 5, 
+              rightlim = 8,
+              intercept =5,
               continuous = T)
 
 

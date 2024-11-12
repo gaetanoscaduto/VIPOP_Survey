@@ -18,6 +18,9 @@ pacman::p_load(
 gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
+#If you want the dataset cleansed by laggards, speeders, and people who fail 
+#attention checks, clean must be true. Otherwise set it to false
+clean = T
 
 for(context in c("IT", "FR", "CZ", "SW"))
 {
