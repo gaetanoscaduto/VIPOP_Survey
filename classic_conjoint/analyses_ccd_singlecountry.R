@@ -511,7 +511,16 @@ subdir = "Interactions/"
 #gender and age
 data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_gender, sep =" ")
 
-formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
 
 full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_genderage")
 
@@ -519,7 +528,15 @@ full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_gende
 
 data$interacted_sociodemos = interaction(data$ccd_gender, data$ccd_job, sep =" ")
 
-formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
 
 full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobgender")
 
@@ -527,13 +544,31 @@ full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobge
 
 data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep =" ")
 
-formula_interaction_psycho = ccd_chosen_rw ~ interacted_psycho
+if(outcome == "ideology")
+{
+  formula_interaction_psycho = ccd_chosen_rw ~ interacted_psycho
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_psycho = ccd_populism ~ interacted_psycho
+}
 
 full_interaction_effects(data, formula_interaction_psycho, "psycho")
 
 #cultural
 
 data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_cultural = ccd_populism ~ interacted_cultural
+}
 
 formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
 
