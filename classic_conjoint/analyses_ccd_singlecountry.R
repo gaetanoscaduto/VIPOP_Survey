@@ -398,16 +398,6 @@ attributes= c("Gender", "Gender", "Gender",
 )
 
 
-formula_rw = ccd_chosen_rw ~ ccd_gender+
-  ccd_age+ccd_religion+ccd_citysize+ccd_job+
-  ccd_consc+ccd_ope+ccd_neu+
-  ccd_restaurant+ccd_transport+ccd_animal
-
-formula_continuous = ccd_continuous ~ ccd_gender+
-  ccd_age+ccd_religion+ccd_citysize+ccd_job+
-  ccd_consc+ccd_ope+ ccd_neu+
-  ccd_restaurant+ccd_transport+ccd_animal
-
 
 #############################################################
 
@@ -419,11 +409,13 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 #context = "SW"
 #context = "POOL"
 
+#outcome = "ideology"
+#outcome = "populism"
 
 # gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", context, "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 
 #Remove those that did attention_check 2 wrong
@@ -439,6 +431,27 @@ data = data[data$time_diff_mins<35, ]
 data_continuous = data[data$ccd_profile_number == 1, ]
 
 
+if(outcome == "ideology")
+{
+  formula_outcome = ccd_chosen_rw ~ ccd_gender+
+    ccd_age+ccd_religion+ccd_citysize+ccd_job+
+    ccd_consc+ccd_ope+ccd_neu+
+    ccd_restaurant+ccd_transport+ccd_animal
+  
+  formula_continuous = ccd_continuous ~ ccd_gender+
+    ccd_age+ccd_religion+ccd_citysize+ccd_job+
+    ccd_consc+ccd_ope+ ccd_neu+
+    ccd_restaurant+ccd_transport+ccd_animal
+}
+if(outcome == "populism")
+{
+  formula_oucome = ccd_populism ~ ccd_gender+
+    ccd_age+ccd_religion+ccd_citysize+ccd_job+
+    ccd_consc+ccd_ope+ccd_neu+
+    ccd_restaurant+ccd_transport+ccd_animal
+}
+
+
 #############################################################
 
 ######################################
@@ -451,7 +464,7 @@ data_continuous = data[data$ccd_profile_number == 1, ]
 subdir = "MMs/"
 
 full_analysis(data,
-              formula=formula_rw,
+              formula=formula_outcome,
               estimator="mm",
               subdir=subdir,
               leftlim = 0.4,
@@ -464,7 +477,7 @@ full_analysis(data,
 subdir = "AMCEs/"
 
 full_analysis(data,
-              formula=formula_rw,
+              formula=formula_outcome,
               estimator="amce",
               subdir=subdir,
               leftlim = -0.2,
@@ -473,16 +486,19 @@ full_analysis(data,
 
 ######### Continuous outcome, mm
 
-subdir = "Continuous/"
-
-full_analysis(data_continuous,
-              formula=formula_continuous,
-              estimator="mm",
-              subdir=subdir,
-              leftlim = 5, 
-              rightlim = 8,
-              intercept =5,
-              continuous = T)
+if(outcome == "ideology")
+{
+  subdir = "Continuous/"
+  
+  full_analysis(data_continuous,
+                formula=formula_continuous,
+                estimator="mm",
+                subdir=subdir,
+                leftlim = 5, 
+                rightlim = 8,
+                intercept =5,
+                continuous = T)
+}
 
 
 
@@ -535,7 +551,7 @@ subdir = "Subgroup Analyses/"
 data$gender_r = factor(ifelse(data$gender == "nonbinary", NA, toTitleCase(data$gender)))
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm",
                        y_labels=y_labels_plots,
                        subdir,
@@ -548,7 +564,7 @@ full_subgroup_analysis(data,
 )
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
@@ -564,7 +580,7 @@ data$educ_r = ifelse(data$EDU_LEVEL =="nocollege", "No college", data$EDU_LEVEL)
 data$educ_r = factor(toTitleCase(data$educ_r))
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm",
                        y_labels=y_labels_plots,
                        subdir,
@@ -577,7 +593,7 @@ full_subgroup_analysis(data,
 )
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
@@ -594,7 +610,7 @@ data$interest_r = ifelse(data$interest_dummy =="no_interest", "Low", "High")
 data$interest_r = factor(toTitleCase(data$interest_r))
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm",
                        y_labels=y_labels_plots,
                        subdir,
@@ -607,7 +623,7 @@ full_subgroup_analysis(data,
 )
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
@@ -624,7 +640,7 @@ data$exposure_r = ifelse(data$exposure_dummy =="less10min", "Low", "High")
 data$exposure_r = factor(toTitleCase(data$exposure_r))
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm",
                        y_labels=y_labels_plots,
                        subdir,
@@ -637,7 +653,7 @@ full_subgroup_analysis(data,
 )
 
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
