@@ -547,7 +547,7 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cu
 #####  ACIE of the political dimensions
 
 
-p = full_interaction_effects(data, 
+return_list = full_interaction_effects(data, 
                              formula_interaction_political,
                              estimator)
 
@@ -609,7 +609,7 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cu
 #####  ACIE of the political dimensions
 
 
-p = full_interaction_effects(data, 
+return_list = full_interaction_effects(data, 
                              formula_interaction_political,
                              estimator)
 
