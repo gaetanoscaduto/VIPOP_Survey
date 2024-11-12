@@ -30,7 +30,7 @@
 #functio
 
 set_categories_and_levels = function(effects, 
-                                            attributes=attributes){
+                                     attributes=attributes){
   # effects=effects_pooled
   # attributes=attributes
   effects$feature = factor(attributes, levels = unique(attributes))
@@ -65,6 +65,7 @@ draw_plot_effects = function(effects,
   }
   
   v=list()
+  
   for(attribute in unique(attributes))
   {
     
@@ -83,11 +84,7 @@ draw_plot_effects = function(effects,
     v[[attribute]] = p
   }
   
-  if(continuous == F) #outcome not continuous
-  {
-    v[["Gender"]] = v[["Gender"]]+xlim(0.3,0.7)
-  }
-  
+
   p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
   
   return(p)
@@ -105,6 +102,9 @@ full_interaction_effects = function(data,
     cj(formula, 
        id = ~respid,
        estimate = "mm")
+  
+  effects = effects |>
+    filter(level != "Non-Binary")
   
   if(leftlim == 999)
   {
@@ -129,7 +129,7 @@ full_interaction_effects = function(data,
          width = 10, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
-
+  
   saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
   
 }
@@ -165,6 +165,9 @@ full_subgroup_analysis = function(data,
          id = ~respid,
          by = ~temp_subgroup,
          estimate = estimator)
+    
+    effects_pooled = effects_pooled |>
+      filter(level != "Non-Binary")
     
     effects_pooled = set_categories_and_levels(effects_pooled,
                                                attributes = attributes)
@@ -243,6 +246,9 @@ full_subgroup_analysis = function(data,
          by = ~temp_subgroup,
          estimate = estimator)
     
+    effects_pooled = effects_pooled |>
+      filter(level != "Non-Binary")
+    
     effects_pooled = set_categories_and_levels(effects_pooled,
                                                attributes = attributes)
     
@@ -264,7 +270,7 @@ full_subgroup_analysis = function(data,
     
     v=list()
     
-
+    
     for(attribute in unique(attributes))
     {
       p = ggplot(effects_pooled[effects_pooled$feature==attribute, ])+
@@ -291,7 +297,7 @@ full_subgroup_analysis = function(data,
     p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
-                                                     
+    
     
   }
   
@@ -327,7 +333,7 @@ full_analysis = function(data,
   #It calls the other functions previously defined plus the functions in  the R
   #libraries cjregg and patchwork
   
-
+  
   estimator=match.arg(estimator)
   
   effects_pooled <- data |>
@@ -335,17 +341,20 @@ full_analysis = function(data,
        id = ~respid,
        estimate = estimator)
   
+  effects_pooled = effects_pooled |>
+    filter(level != "Non-Binary")
+  
   effects_pooled = set_categories_and_levels(effects_pooled,
-                                                    attributes = attributes)
+                                             attributes = attributes)
   
   if(continuous==F)
   {
-  p = draw_plot_effects(effects_pooled,
-                        estimator=estimator,
-                        y_labels=y_labels_plots,
-                        leftlim,
-                        rightlim,
-                        intercept)
+    p = draw_plot_effects(effects_pooled,
+                          estimator=estimator,
+                          y_labels=y_labels_plots,
+                          leftlim,
+                          rightlim,
+                          intercept)
   }
   if(continuous == T)
   {
@@ -367,7 +376,7 @@ full_analysis = function(data,
          width = 10, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.rds"))
-
+  
   saveRDS(effects_pooled, file = paste0(output_wd, subdir,"_data_singlecountry.rds"))
   
   return(p)
@@ -377,7 +386,7 @@ full_analysis = function(data,
 #Our levels regarding match and mismatches (for labeling)
 
 
-y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
+y_labels_plots = list(gender=c("Female", "Male"),
                       age=c("25 years old","45 years old","65 years old"),
                       religion=c("Non believer","Non practitioner", "Practitioner"),
                       citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
@@ -393,7 +402,7 @@ y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
 
 levels_vector= unlist(y_labels_plots, use.names = F)
 
-attributes= c("Gender", "Gender", "Gender",
+attributes= c("Gender", "Gender",
               "Age","Age","Age",
               "Religion","Religion","Religion",
               "Citysize","Citysize","Citysize",
@@ -424,7 +433,7 @@ attributes= c("Gender", "Gender", "Gender",
 # gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/")
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/Without NB/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 
 #Remove those that did attention_check 2 wrong
@@ -437,7 +446,10 @@ data = data[data$time_diff_mins>5.2, ]
 data = data[data$time_diff_mins<35, ]
 
 #Remove those that received non-binary attribute level
-#data = data[data$ccd_gender != "Non-Binary", ]
+data = data |> 
+  filter(ccd_gender != "Non-Binary")
+
+data$ccd_gender = factor(data$ccd_gender, levels = c("Female", "Male"))
 
 
 
@@ -556,8 +568,6 @@ full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobag
 
 ### job and religion
 
-#job and age
-
 data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_job, sep =" ")
 
 if(outcome == "ideology")
@@ -571,6 +581,24 @@ if(outcome == "populism")
 }
 
 full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobreligion")
+
+### age religion and gender
+
+data$interacted_sociodemos = interaction(data$ccd_gender, data$ccd_age, data$ccd_religion, sep ="\n")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_agegenderreligion")
+
+
 
 #psycho
 

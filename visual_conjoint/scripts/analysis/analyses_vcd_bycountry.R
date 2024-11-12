@@ -310,13 +310,13 @@ full_analysis_bycountry = function(data,
 y_labels_plots = list(ethnicity=c("Black","White"),
                       gender=c("Female","Male"),
                       age=c("35", "70"),
-                      job=c("Lawyer","Waiter","Entrepreneur","Teacher","Politician"),
+                      job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
                       issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                      nostalgia=c("Past1","Past2","Future1","Future2"),
+                      nostalgia=c("Future1","Future2","Past1","Past2"),
                       valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                      food=c("Vegan","Ethnic","Meatpoor","Meatrich"),
                       animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                      crowd=c("Mixedpeople","Whitepeople","Mixedelite","Whiteelite")
+                      food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                      crowd=c("Mixedelite","Mixedpeople", "Whiteelite","Whitepeople")
 )
 
 levels_vector= unlist(y_labels_plots, use.names = F)
