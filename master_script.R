@@ -49,8 +49,12 @@ for(context in c("IT", "FR", "CZ", "SW", "POOL"))
   print(paste("Ok ccd data man", context, Sys.time()))
   source("classic_conjoint/randomization_checks_ccd.R")
   print(paste("Ok ccd randcheck", context, Sys.time()))
-  source("classic_conjoint/analyses_ccd_singlecountry.R")
-  print(paste("Ok ccd analyses", context, Sys.time()))
+  
+  for(outcome in c("ideology", "populism"))
+  {
+    source("classic_conjoint/analyses_ccd_singlecountry.R")
+    print(paste("Ok ccd analyses", outcome, context, Sys.time()))
+  }
   
   #visual conjoint scripts
   source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")

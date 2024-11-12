@@ -330,17 +330,18 @@ full_analysis_bycountry = function(data,
 
 
 y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
-                      age=c("25","45","65"),
-                      religion=c("Practitioner","Non practitioner", "Non believer"),
-                      citysize=c("Big", "Small", "Medium"), #ricorda di correggere l'ordine di sti factor
-                      job=c("Entrepreneur", "Teacher", "Waiter", "Lawyer"),
-                      consc=c("Reliable", "Disorganized"),
+                      age=c("25 years old","45 years old","65 years old"),
+                      religion=c("Non believer","Non practitioner", "Practitioner"),
+                      citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
+                      job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
+                      consc=c("Disorganized", "Reliable"),
                       ope=c("Open", "Rigid"),
-                      neu=c("Calm", "Anxious"),
-                      restaurant=c("Traditional", "Vegan","Asian","Steakhouse"),
+                      neu=c("Anxious", "Calm"),
+                      restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
                       transport=c("Bycicle","Public Transport","SUV"),
-                      animal=c("Large dog","Small dog","Cat", "No pets")
+                      animal=c("Cat","Large dog","No pets","Small dog")
 )
+
 
 levels_vector= unlist(y_labels_plots, use.names = F)
 
