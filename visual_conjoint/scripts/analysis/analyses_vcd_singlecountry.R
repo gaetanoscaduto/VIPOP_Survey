@@ -694,7 +694,7 @@ data$interest_r = factor(toTitleCase(data$interest_r))
 
 full_subgroup_analysis(data,
                        formula=formula_outcome,
-                       estimator="mm_differences",
+                       estimator="mm",
                        y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "interest_r",
@@ -703,8 +703,9 @@ full_subgroup_analysis(data,
                        subgroup2 = "High" #the name of the second subgroup (variable level) 
 )
 
+
 full_subgroup_analysis(data,
-                       formula=formula_rw,
+                       formula=formula_outcome,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
