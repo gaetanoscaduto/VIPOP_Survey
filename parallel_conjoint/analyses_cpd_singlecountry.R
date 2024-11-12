@@ -870,8 +870,8 @@ full_analysis(data,
               "mm",
               "natural",
               subdir,
-              leftlim=0.10,
-              rightlim=0.90)
+              leftlim=0.35,
+              rightlim=0.65)
 
 
 #same but with amce
@@ -914,7 +914,9 @@ full_analysis(data,
               "match",
               "mm",
               "ideology_match",
-              subdir)
+              subdir,
+              leftlim=0.35,
+              rightlim=0.65)
 
 
 ######################################
@@ -929,7 +931,9 @@ full_analysis(data,
               "match",
               "mm",
               "ideology_mismatch",
-              subdir)
+              subdir,
+              leftlim=0.35,
+              rightlim=0.65)
 
 ######################################
 #### ACDEs for ideological match with AMCE
@@ -991,7 +995,9 @@ full_analysis(data,
               "match",
               "mm",
               "ideology_match",
-              subdir)
+              subdir,
+              leftlim=-0.2,
+              rightlim=0.2)
 
 ##### ELIMINATED EFFECTS WITH MM FOR IDEOLOGICAL MISMATCH
 
@@ -1003,7 +1009,9 @@ full_analysis(data,
               "match",
               "mm",
               "ideology_mismatch",
-              subdir)
+              subdir,
+              leftlim=-0.2,
+              rightlim=0.2)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MATCH
 

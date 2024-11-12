@@ -382,9 +382,9 @@ y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
                       religion=c("Non believer","Non practitioner", "Practitioner"),
                       citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
                       job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
-                      consc=c("Disorganized", "Reliable"),
-                      ope=c("Open", "Rigid"),
-                      neu=c("Anxious", "Calm"),
+                      conscientiousness=c("Disorganized", "Reliable"),
+                      openness=c("Open", "Rigid"),
+                      neuroticism=c("Anxious", "Calm"),
                       restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
                       transport=c("Bycicle","Public Transport","SUV"),
                       animal=c("Cat","Large dog","No pets","Small dog")

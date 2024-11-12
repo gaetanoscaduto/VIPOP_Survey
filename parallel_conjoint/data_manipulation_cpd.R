@@ -275,8 +275,8 @@ cjdata[, "cpd_holiday"] = factor(cjdata[, "cpd_holiday"], levels = c("city",
                                                                    "relax"))
 
 cjdata[, "cpd_ideology"] = factor(cjdata[, "cpd_ideology"], levels = c("right", 
-                                                                     "center",
                                                                      "left",
+                                                                     "center",
                                                                      "notplaced"))
 
 
