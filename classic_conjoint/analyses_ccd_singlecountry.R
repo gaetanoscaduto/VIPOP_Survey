@@ -417,6 +417,16 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 
+#Remove those that did attention_check 2 wrong
+data = data[data$attention_check2 == "eucomm", ]
+
+#Remove speeders
+data = data[data$time_diff_mins>5.2, ]
+
+#Remove laggards
+data = data[data$time_diff_mins<35, ]
+
+
 
 #############################################################
 
