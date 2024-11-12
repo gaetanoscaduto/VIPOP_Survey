@@ -97,19 +97,28 @@ draw_plot_effects = function(effects,
 
 full_interaction_effects = function(data, 
                                     formula,
-                                    type_of_interaction){
+                                    type_of_interaction,
+                                    leftlim = 999,
+                                    rightlim = 999){
   
   effects <- data |>
     cj(formula, 
        id = ~respid,
        estimate = "mm")
   
+  if(leftlim == 999)
+  {
+    leftlim = min(effects$lower)-0.05
+    rightlim = max(effects$upper)+0.05
+  }
+  
+  
   p=ggplot(effects)+
     geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
                         y=fct_reorder(level, desc(estimate)), col=feature))+
     labs(y="",x="Marginal Mean")+
-    xlim(-0.01,1.01)+
+    xlim(leftlim,rightlim)+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
