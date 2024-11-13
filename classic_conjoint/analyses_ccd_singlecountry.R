@@ -556,7 +556,6 @@ full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobag
 
 ### job and religion
 
-#job and age
 
 data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_job, sep =" ")
 

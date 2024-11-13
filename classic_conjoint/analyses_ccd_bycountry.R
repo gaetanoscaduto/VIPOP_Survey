@@ -269,7 +269,7 @@ full_analysis_bycountry = function(data,
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
   
-  # formula=formula_rw
+  # formula=formula_outcome
   # estimator="mm"
   
   estimator=match.arg(estimator)
@@ -361,19 +361,12 @@ attributes= c("Gender", "Gender", "Gender",
 
 
 
-formula_rw = ccd_chosen_rw ~ ccd_gender+
-  ccd_age+ccd_religion+ccd_citysize+ccd_job+
-  ccd_consc+ccd_ope+ ccd_neu+
-  ccd_restaurant+ccd_transport+ccd_animal
-
-formula_continuous = ccd_continuous ~ ccd_gender+
-  ccd_age+ccd_religion+ccd_citysize+ccd_job+
-  ccd_consc+ccd_ope+ ccd_neu+
-  ccd_restaurant+ccd_transport+ccd_animal
 
 
 #############################################################
 
+#outcome="ideology"
+#outcome="populism"
 
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
@@ -381,6 +374,31 @@ formula_continuous = ccd_continuous ~ ccd_gender+
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/bycountry/")
 
 data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_ccd_POOL.RDS"))
+
+
+if(outcome=="ideology")
+{
+  formula_outcome = ccd_chosen_rw ~ ccd_gender+
+    ccd_age+ccd_religion+ccd_citysize+ccd_job+
+    ccd_consc+ccd_ope+ ccd_neu+
+    ccd_restaurant+ccd_transport+ccd_animal
+  
+  formula_continuous = ccd_continuous ~ ccd_gender+
+    ccd_age+ccd_religion+ccd_citysize+ccd_job+
+    ccd_consc+ccd_ope+ ccd_neu+
+    ccd_restaurant+ccd_transport+ccd_animal
+}
+
+
+if(outcome=="populism")
+{
+  formula_outcome = ccd_populism ~ ccd_gender +
+    ccd_age+ccd_religion+ccd_citysize+ccd_job+
+    ccd_consc+ccd_ope+ ccd_neu+
+    ccd_restaurant+ccd_transport+ccd_animal
+
+}
+
 
 #############################################################
 
@@ -397,7 +415,7 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 subdir = "MMs/"
 
 v = full_analysis_bycountry(data,
-                            formula_rw,
+                            formula_outcome,
                             "mm",
                             subdir)
 
@@ -423,7 +441,7 @@ for(attribute in unique(attributes))
 subdir = "AMCEs/"
 
 v= full_analysis_bycountry(data,
-                           formula_rw,
+                           formula_outcome,
                            "amce",
                            subdir)
 
@@ -445,27 +463,31 @@ for(attribute in unique(attributes))
 
 ### continuous outcome
 
-subdir = "Continuous/"
-
-v= full_analysis_bycountry(data,
-                           formula_continuous,
-                           "mm",
-                           subdir,
-                           continuous = T)
-
-for(attribute in unique(attributes))
+if(outcome == "ideology")
 {
-  p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
-                                              caption= "Average marginal component effects")
+  subdir = "Continuous/"
   
-  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
-         p, 
-         height = 8, 
-         width = 8, 
-         create.dir = T)
+  v= full_analysis_bycountry(data,
+                             formula_continuous,
+                             "mm",
+                             subdir,
+                             continuous = T)
   
-  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
-  
+  for(attribute in unique(attributes))
+  {
+    p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+                                                caption= "Average marginal component effects")
+    
+    ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
+           p, 
+           height = 8, 
+           width = 8, 
+           create.dir = T)
+    
+    saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
+    
+    
+  }
   
 }
 
@@ -478,27 +500,110 @@ for(attribute in unique(attributes))
 
 subdir = "Interactions/"
 
+##############
 #sociodemos
+################
+
+#Age and gender
 
 data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_gender, sep =" ")
 
-formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+  
+}
 
-full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos")
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
 
-#psycho
+full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_agegender")
+
+#Age and religion
+
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+  
+}
+
+full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_agereligion")
+
+#Age and job
+
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_job, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_agejob")
+
+#Job and religion
+
+data$interacted_sociodemos = interaction(data$ccd_job, data$ccd_religion, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_jobreligion")
+
+
+################
+#psychological variables
+##############
 
 data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep =" ")
 
-formula_interaction_psycho = ccd_chosen_rw ~ interacted_psycho
+if(outcome == "ideology")
+{
+  formula_interaction_psycho = ccd_chosen_rw ~ interacted_psycho
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_psycho = ccd_populism ~ interacted_psycho
+}
 
 full_interaction_effects_bycountry(data, formula_interaction_psycho, "psycho")
 
-#cultural
+#################
+#lifestyle variables
+##############
 
 data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep =" ")
 
-formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
+if(outcome == "ideology")
+{
+  formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_cultural = ccd_populism ~ interacted_cultural
+}
 
 p = full_interaction_effects_bycountry(data, formula_interaction_cultural, "cultural")
 

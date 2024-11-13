@@ -90,14 +90,14 @@ draw_plot_effects = function(effects,
     leftlim=ifelse(estimator!="mm" | effect == "EEs", -1, 0)
     rightlim=1
   }
+  
+  intercept = x_intercept
+  
   if(x_intercept==999)
   {
     intercept = ifelse(estimator!="mm" | effect == "EEs", 0, 0.5)
   }
-  else
-  {
-    intercept = x_intercept
-  }
+  
   
   
   for(category in categories[1:3])
@@ -418,8 +418,8 @@ compare_effects = function(data,
                            categories=categories,
                            estimator=estimator,
                            y_labels=y_labels_plots,
-                           leftlim=-0.35,
-                           rightlim=0.35,
+                           leftlim=-0.1,
+                           rightlim=0.1,
                            x_intercept = 0,
                            for_comparison = T)
   
@@ -539,6 +539,7 @@ plot_compare_effects = function(plots_match,#plot list outputted from compare_ef
 
 #If you launch this script from the master script, make sure to have the context fixed
 #otherwise, uncomment desired context
+
 #context = "IT"
 #context = "FR"
 #context = "CZ"
@@ -915,8 +916,8 @@ full_analysis(data,
               "mm",
               "ideology_match",
               subdir,
-              leftlim=0.35,
-              rightlim=0.65)
+              leftlim=0.4,
+              rightlim=0.6)
 
 
 ######################################
@@ -932,8 +933,8 @@ full_analysis(data,
               "mm",
               "ideology_mismatch",
               subdir,
-              leftlim=0.35,
-              rightlim=0.65)
+              leftlim=0.4,
+              rightlim=0.6)
 
 ######################################
 #### ACDEs for ideological match with AMCE
@@ -947,7 +948,9 @@ full_analysis(data,
               "match",
               "amce",
               "ideology_match",
-              subdir)
+              subdir,
+              leftlim=-0.1,
+              rightlim=0.1)
 
 ############################################################################
 ################ ACDEs for ideological mismatch with AMCE################### 
@@ -962,7 +965,9 @@ full_analysis(data,
               "match",
               "amce",
               "ideology_mismatch",
-              subdir)
+              subdir,
+              leftlim=-0.1,
+              rightlim=0.1)
 
 
 ############################################################################
@@ -1042,27 +1047,32 @@ full_analysis(data,
 ### Analyses on the effects of multiple matches
 
 subdir = "MatchesEffects/"
+
 #model with just the number of matches predicting the probability of being chosen
 # summary(glm(data$cpd_chosen~data$cpd_n_matches, family = 
 # #               "binomial"))
 # 
 # #now i call the function to draw the effects in the model with the actual controls
 # 
-# full_match_effects(data,
-#                    formula_natural_nmatches,
-#                    exparm="natural")
+full_match_effects(data,
+                   formula_natural_nmatches,
+                   exparm="natural")
 # 
 # 
 # 
-# #export(filtered_data, "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/upload.csv")
+export(filtered_data, "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/upload.csv")
+
 # 
 # 
+ full_match_effects(data,
+                    formula_mediated_nmatches,
+                    "mediated")
 # 
-# full_match_effects(data,
-#                    formula_mediated_nmatches,
-#                    "mediated")
 # 
-# 
+
+
+
+
 # 
 # #########################################
 # ### Now I want to have the three effects close to each other. How do I do that?
@@ -1079,8 +1089,8 @@ plots_match = compare_effects(data,
                               arm="ideology_match", #manipulated mediation arm with ideological match, 
                               #or manipulated mediation arm with ideological mismatch
                               subdir,#the subdirectory where the plots will be saved
-                              leftlim=0.3,
-                              rightlim=0.7#,
+                              leftlim=0.4,
+                              rightlim=0.6#,
                               #x_intercept=0.5
 )
 
@@ -1096,8 +1106,8 @@ plots_mismatch = compare_effects(data,
                                  arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                                  #or manipulated mediation arm with ideological mismatch
                                  subdir,#the subdirectory where the plots will be saved
-                                 leftlim=0.3,
-                                 rightlim=0.7#,
+                                 leftlim=0.4,
+                                 rightlim=0.6#,
                                  # #x_intercept=0.5
 )
 
@@ -1121,10 +1131,10 @@ plots_match = compare_effects(data,
                 estimator="amce", #marginal means and amces
                 arm="ideology_match", #manipulated mediation arm with ideological match, 
                 #or manipulated mediation arm with ideological mismatch
-                subdir#,#the subdirectory where the plots will be saved
-               # leftlim=0.3,
-                #rightlim=0.7#,
-                #x_intercept=0.5
+                subdir,#the subdirectory where the plots will be saved
+                leftlim=-0.1,
+                rightlim=0.1,
+                x_intercept=0
                 )
 
 
@@ -1138,10 +1148,10 @@ plots_mismatch = compare_effects(data,
                 estimator="amce", #marginal means and amces
                 arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                 #or manipulated mediation arm with ideological mismatch
-                subdir#,#the subdirectory where the plots will be saved
-                # leftlim=0.3,
-                # rightlim=0.7#,
-                # #x_intercept=0.5
+                subdir,#the subdirectory where the plots will be saved
+                leftlim=-0.1,
+                rightlim=0.1,
+                x_intercept=0
 )
   
 
