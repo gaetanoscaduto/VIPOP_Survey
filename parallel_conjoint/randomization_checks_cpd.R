@@ -192,3 +192,7 @@ data$cpd_profile_number = as.factor(data$cpd_profile_number)
 
 #se non ci sono differenze significative rispetto alla zero, non c'è preferenza 
 #particolare per il profilo a destra
+
+
+
+### Attribute order effects conjoint

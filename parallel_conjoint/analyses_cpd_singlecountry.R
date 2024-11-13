@@ -244,10 +244,10 @@ full_analysis = function(data,
 #depending on the experimental arm selected)
 full_match_effects = function(data, 
                               formula, 
-                              exparm = c("natural", "mediated")){
+                              exparm = c("natural", "mediated"),
+                              typeofmodel){
   
   exparm=match.arg(exparm)
-  
   
   filtered_data = data |>
     filter(cpd_exparm == exparm)|> 
@@ -255,7 +255,7 @@ full_match_effects = function(data,
            cpd_gender, cpd_age, cpd_educ, cpd_regionfeel, 
            cpd_consc, cpd_ope,
            cpd_diet, cpd_animal, cpd_holiday, cpd_ideology,
-           respid)
+           respid, respondent_task)
   
   
   filtered_data$respid = as.factor(filtered_data$respid)
@@ -286,20 +286,20 @@ full_match_effects = function(data,
     geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +  # Add error bars
     labs(
       x = "Number of attribute matches",
-      y = "Marginal effect on the probability of choosing the profile",
+      y = "Effect on the probability of engaging conversation",
       title = ""
     )+
     scale_y_continuous(breaks=seq(0,1, by=0.1))+
-    scale_x_continuous(breaks=seq(1,nattr, by=1))
+    scale_x_continuous(breaks=seq(0,nattr, by=1))
   
   ggsave(paste0(output_wd,"estimations/", 
-                subdir, "singlecountry_", exparm, ".png"), 
+                subdir, "singlecountry_", exparm, typeofmodel, ".png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd,"estimations/", 
-                           subdir, "singlecountry_", exparm, ".rds"))
+                           subdir, "singlecountry_", exparm, typeofmodel, ".rds"))
   
 }
 
@@ -794,20 +794,6 @@ formula_nominal = cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel
 
 
 
-formula_natural_nmatches = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday +
-  (1+cpd_n_matches | respid)
-
-
-formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday+
-  cpd_ideology +
-  (1+cpd_n_matches | respid)
-
 #############################################################
 
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
@@ -1055,13 +1041,83 @@ subdir = "MatchesEffects/"
 # 
 # #now i call the function to draw the effects in the model with the actual controls
 # 
-full_match_effects(data,
-                   formula_natural_nmatches,
-                   exparm="natural")
+
+# i generate the variable to include respondent_task effects
+
+data$respondent_task = factor(paste0(data$respid, data$cpd_task_number))
+
+
+# formula_natural_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+#   cpd_consc + cpd_ope +
+#   cpd_diet + cpd_animal + cpd_holiday +
+#   (1+cpd_n_matches | respid)
+# 
+# 
+# full_match_effects(data,
+#                    formula_natural_nmatches_randslopes,
+#                    exparm="natural",
+#                    typeofmodel = "randslopes")
+
+formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday + 
+  #respondent_task+ #this variable adds me fixed effect of the respondent_task level
+  (1 | respid) #random effects of respid
 
 full_match_effects(data,
-                    formula_mediated_nmatches,
-                    "mediated")
+                   formula_natural_nmatches_randintercept,
+                   exparm="natural",
+                   typeofmodel ="randintecepts_withouttasklevel")
+
+
+formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday + 
+  respondent_task+ #this variable adds me fixed effect of the respondent_task level
+  (1 | respid) #random effects of respid
+
+full_match_effects(data,
+                   formula_natural_nmatches_randintercept,
+                   exparm="natural",
+                   typeofmodel ="randintecepts_wtasklevel")
+
+
+# formula_mediated_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+#   cpd_consc + cpd_ope +
+#   cpd_diet + cpd_animal + cpd_holiday+
+#   cpd_ideology +
+#   (1+cpd_n_matches | respid)
+# 
+# 
+# full_match_effects(data,
+#                    formula_mediated_nmatches_randslopes,
+#                    "mediated",
+#                    typeofmodel = "randslopes")
+
+
+formula_mediated_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday+
+  cpd_ideology +
+  (1 | respid)
+
+full_match_effects(data,
+                   formula_mediated_nmatches_randintercept,
+                   "mediated",
+                   typeofmodel = "randintercept")
+
+
+
+
+
+
+
+
 # 
 # 
 
