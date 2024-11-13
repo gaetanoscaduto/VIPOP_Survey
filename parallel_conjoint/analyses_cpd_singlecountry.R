@@ -9,10 +9,10 @@
 #############################################################
 
 # pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot, 
-#   MASS, cjoint, corrplot, dplyr, 
-#   forcats, ggplot2, gt, gtools, 
-#   gtsummary, margins, openxlsx, 
+#   cregg, dplyr, ggpubr, cowplot,
+#   MASS, cjoint, corrplot, dplyr,
+#   forcats, ggplot2, gt, gtools,
+#   gtsummary, margins, openxlsx,
 #   patchwork, rio, texreg, tools,
 #   lme4, ggeffects
 # )
@@ -248,16 +248,13 @@ full_match_effects = function(data,
   
   exparm=match.arg(exparm)
   
-  exparm="natural"
-  formula=formula_natural_nmatches
-  
   
   filtered_data = data |>
     filter(cpd_exparm == exparm)|> 
     select(cpd_chosen, cpd_n_matches,
-           cpd_match_gender, cpd_match_age, cpd_match_educ, cpd_match_regionfeel, 
-           cpd_match_consc, cpd_match_ope,
-           cpd_match_diet, cpd_match_animal, cpd_match_holiday,
+           cpd_gender, cpd_age, cpd_educ, cpd_regionfeel, 
+           cpd_consc, cpd_ope,
+           cpd_diet, cpd_animal, cpd_holiday, cpd_ideology,
            respid)
   
   
@@ -265,13 +262,10 @@ full_match_effects = function(data,
   typeof(data$cpd_chosen)
   typeof(filtered_data$respid)
   
-  model =  glmer(cpd_chosen ~ cpd_n_matches +
-                   cpd_match_gender + cpd_match_age + cpd_match_educ + cpd_match_regionfeel +
-                   cpd_match_consc + cpd_match_ope +
-                   cpd_match_diet + cpd_match_animal + cpd_match_holiday +
-                   (cpd_n_matches | respid),  # Random intercept for each respondent
-                 data = filtered_data,
-                 family = binomial(link="logit"))
+  
+  model =  glmer(formula,  # Random intercept for each respondent
+                   data = filtered_data,
+                   family = binomial(link="logit"))
   
   predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
   
@@ -284,6 +278,8 @@ full_match_effects = function(data,
     upper = predictions$conf.high  # Upper bound of confidence intervals
   )
   
+  nattr = ifelse(exparm == "natural", 9, 9+1)
+  
   # Create caterpillar plot
   p = ggplot(effect_df, aes(x = x, y = fit)) +
     geom_point() +  # Add points for the fitted values
@@ -292,7 +288,9 @@ full_match_effects = function(data,
       x = "Number of attribute matches",
       y = "Marginal effect on the probability of choosing the profile",
       title = ""
-    )
+    )+
+    scale_y_continuous(breaks=seq(0,1, by=0.1))+
+    scale_x_continuous(breaks=seq(1,nattr, by=1))
   
   ggsave(paste0(output_wd,"estimations/", 
                 subdir, "singlecountry_", exparm, ".png"), 
@@ -799,13 +797,16 @@ formula_nominal = cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel
 formula_natural_nmatches = cpd_chosen~cpd_n_matches+
   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
   cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday
+  cpd_diet + cpd_animal + cpd_holiday +
+  (1+cpd_n_matches | respid)
+
 
 formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
   cpd_consc + cpd_ope +
   cpd_diet + cpd_animal + cpd_holiday+
-  cpd_ideology
+  cpd_ideology +
+  (1+cpd_n_matches | respid)
 
 #############################################################
 
@@ -1057,14 +1058,8 @@ subdir = "MatchesEffects/"
 full_match_effects(data,
                    formula_natural_nmatches,
                    exparm="natural")
-# 
-# 
-# 
-export(filtered_data, "C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/upload.csv")
 
-# 
-# 
- full_match_effects(data,
+full_match_effects(data,
                     formula_mediated_nmatches,
                     "mediated")
 # 

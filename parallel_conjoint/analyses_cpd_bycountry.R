@@ -998,8 +998,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "natural",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=0.35,
+              rightlim=0.65,
               subdir)
 
 
@@ -1012,8 +1012,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "natural",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.15,
+              rightlim=0.15,
               subdir)
 
 
@@ -1029,8 +1029,8 @@ full_analysis_bycountry(data,
               "nominal",
               "mm",
               "natural",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=0.35,
+              rightlim=0.65,
               subdir)
 
 
@@ -1044,8 +1044,8 @@ full_analysis_bycountry(data,
               "nominal",
               "amce",
               "natural",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.15,
+              rightlim=0.15,
               subdir = subdir)
 
 
@@ -1078,8 +1078,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_match",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=0.4,
+              rightlim=0.6,
               subdir)
 
 
@@ -1097,8 +1097,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_mismatch",
-              leftlim=0.3,
-              rightlim=0.7,
+              leftlim=0.4,
+              rightlim=0.6,
               subdir)
 
 ######################################
@@ -1113,8 +1113,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_match",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.1,
+              rightlim=0.1,
               subdir)
 
 ############################################################################
@@ -1129,8 +1129,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_mismatch",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.1,
+              rightlim=0.1,
               subdir)
 
 
@@ -1157,8 +1157,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_match",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.2,
+              rightlim=0.2,
               subdir)
 
 
@@ -1172,8 +1172,8 @@ full_analysis_bycountry(data,
               "match",
               "mm",
               "ideology_mismatch",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.2,
+              rightlim=0.2,
               subdir)
 
 
@@ -1187,8 +1187,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_match",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.2,
+              rightlim=0.2,
               subdir)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MISMATCH
@@ -1201,8 +1201,8 @@ full_analysis_bycountry(data,
               "match",
               "amce",
               "ideology_mismatch",
-              leftlim=-0.5,
-              rightlim=0.5,
+              leftlim=-0.2,
+              rightlim=0.2,
               subdir)
 
 
@@ -1241,8 +1241,8 @@ plots_match = compare_effects_bycountry(data,
                           arm="ideology_match", #manipulated mediation arm with ideological match, 
                           #or manipulated mediation arm with ideological mismatch
                           subdir,#the subdirectory where the plots will be saved
-                          leftlim=0,
-                          rightlim=1#,
+                          leftlim=0.35,
+                          rightlim=0.65#,
                           #x_intercept=0.5
                           )
 
@@ -1259,8 +1259,8 @@ plots_mismatch = compare_effects_bycountry(data,
                           arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                           #or manipulated mediation arm with ideological mismatch
                           subdir,#the subdirectory where the plots will be saved
-                          leftlim=0,
-                          rightlim=1#,
+                          leftlim=0.35,
+                          rightlim=0.65#,
                           #x_intercept=0.5
                           )
 
