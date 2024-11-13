@@ -98,38 +98,41 @@ draw_plot_effects = function(effects,
 full_interaction_effects = function(data, 
                                     formula,
                                     type_of_interaction,
+                                    estimator,
                                     leftlim = 999,
-                                    rightlim = 999){
+                                    rightlim = 999,
+                                    intercept = 999){
   
   effects <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = "mm")
+       estimate = estimator)
   
   if(leftlim == 999)
   {
     leftlim = min(effects$lower)-0.05
     rightlim = max(effects$upper)+0.05
+    intercept = ifelse(estimator=="mm", 0.5, 0)
   }
   
   
   p=ggplot(effects)+
-    geom_vline(aes(xintercept=0.5), col="black", alpha=1/4)+
+    geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
                         y=fct_reorder(level, desc(estimate)), col=feature))+
-    labs(y="",x="Marginal Mean")+
+    labs(y="",x="Estimate")+
     xlim(leftlim,rightlim)+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
   
-  ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, ".png"), 
+  ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, estimator, ".png"), 
          p, 
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
-
+  saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, estimator, ".rds"))
+  
   saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
   
 }
@@ -427,19 +430,6 @@ attributes= c("Gender", "Gender", "Gender",
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
 
-#Remove those that did attention_check 2 wrong
-data = data[data$attention_check2 == "eucomm", ]
-
-#Remove speeders
-data = data[data$time_diff_mins>5.2, ]
-
-#Remove laggards
-data = data[data$time_diff_mins<35, ]
-
-#Remove those that received non-binary attribute level
-#data = data[data$ccd_gender != "Non-Binary", ]
-
-
 
 #The continuous outcome should only be used for profile A, which is the one to the left
 data_continuous = data[data$ccd_profile_number == 1, ]
@@ -518,7 +508,7 @@ if(outcome == "ideology")
 
 ################# ACIEs (interaction effects) #####################
 
-subdir = "Interactions/"
+subdir = "Interactions/MMs/"
 
 ###sociodemos
 
@@ -536,7 +526,12 @@ if(outcome == "populism")
 }
 
 
-full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_religionage")
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "mm",
+                         leftlim = 0.35,
+                         rightlim = 0.65,
+                         intercept = 0.5,
+                         "sociodemos_religionage")
 
 #job and age
 
@@ -552,7 +547,12 @@ if(outcome == "populism")
   formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
 }
 
-full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobage")
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "mm",
+                         leftlim = 0.35,
+                         rightlim = 0.65,
+                         intercept = 0.5,
+                         "sociodemos_jobage")
 
 ### job and religion
 
@@ -569,11 +569,16 @@ if(outcome == "populism")
   formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
 }
 
-full_interaction_effects(data, formula_interaction_sociodemos, "sociodemos_jobreligion")
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "mm",
+                         leftlim = 0.35,
+                         rightlim = 0.65,
+                         intercept = 0.5,
+                         "sociodemos_jobreligion")
 
 #psycho
 
-data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep =" ")
+data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep ="\n")
 
 if(outcome == "ideology")
 {
@@ -585,11 +590,16 @@ if(outcome == "populism")
   formula_interaction_psycho = ccd_populism ~ interacted_psycho
 }
 
-full_interaction_effects(data, formula_interaction_psycho, "psycho")
+full_interaction_effects(data, formula_interaction_psycho,
+                         estimator = "mm",
+                         leftlim = 0.35,
+                         rightlim = 0.65,
+                         intercept = 0.5,
+                         "psycho")
 
 #cultural
 
-data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep =" ")
+data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep ="\n")
 
 if(outcome == "ideology")
 {
@@ -603,8 +613,128 @@ if(outcome == "populism")
 
 formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
 
-full_interaction_effects(data, formula_interaction_cultural, "cultural")
+full_interaction_effects(data, formula_interaction_cultural,
+                         estimator = "mm",
+                         leftlim = 0.35,
+                         rightlim = 0.65,
+                         intercept = 0.5,
+                         "cultural")
 
+
+
+########## Same but with AMCEs
+
+subdir = "Interactions/AMCEs/"
+
+###sociodemos
+
+# age and religion
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "amce",
+                         leftlim = -0.15,
+                         rightlim = 0.15,
+                         intercept = 0,
+                         "sociodemos_religionage")
+
+#job and age
+
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_job, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "amce",
+                         leftlim = -0.15,
+                         rightlim = 0.15,
+                         intercept = 0,
+                         "sociodemos_jobage")
+
+### job and religion
+
+
+data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_job, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "amce",
+                         leftlim = -0.15,
+                         rightlim = 0.15,
+                         intercept = 0,
+                         "sociodemos_jobreligion")
+
+#psycho
+
+data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep ="\n")
+
+if(outcome == "ideology")
+{
+  formula_interaction_psycho = ccd_chosen_rw ~ interacted_psycho
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_psycho = ccd_populism ~ interacted_psycho
+}
+
+full_interaction_effects(data, formula_interaction_psycho,
+                         estimator = "amce",
+                         leftlim = -0.15,
+                         rightlim = 0.15,
+                         intercept = 0,
+                         "psycho")
+
+#cultural
+
+data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep ="\n")
+
+if(outcome == "ideology")
+{
+  formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_cultural = ccd_populism ~ interacted_cultural
+}
+
+formula_interaction_cultural = ccd_chosen_rw ~ interacted_cultural
+
+full_interaction_effects(data, formula_interaction_cultural,
+                         estimator = "amce",
+                         leftlim = -0.15,
+                         rightlim = 0.15,
+                         intercept = 0,
+                         "cultural")
 
 
 

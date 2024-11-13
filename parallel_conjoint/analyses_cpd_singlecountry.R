@@ -8,14 +8,14 @@
 #LIBRARY CALLS
 #############################################################
 
-# pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot,
-#   MASS, cjoint, corrplot, dplyr,
-#   forcats, ggplot2, gt, gtools,
-#   gtsummary, margins, openxlsx,
-#   patchwork, rio, texreg, tools,
-#   lme4, ggeffects
-# )
+pacman::p_load(
+  cregg, dplyr, ggpubr, cowplot,
+  MASS, cjoint, corrplot, dplyr,
+  forcats, ggplot2, gt, gtools,
+  gtsummary, margins, openxlsx,
+  patchwork, rio, texreg, tools,
+  lme4, ggeffects
+)
 
 #############################################################
 # DEFINING FUNCTIONS
@@ -1046,7 +1046,6 @@ subdir = "MatchesEffects/"
 
 data$respondent_task = factor(paste0(data$respid, data$cpd_task_number))
 
-
 # formula_natural_nmatches_randslopes = cpd_chosen~cpd_n_matches+
 #   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
 #   cpd_consc + cpd_ope +
@@ -1072,17 +1071,17 @@ full_match_effects(data,
                    typeofmodel ="randintecepts_withouttasklevel")
 
 
-formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday + 
-  respondent_task+ #this variable adds me fixed effect of the respondent_task level
-  (1 | respid) #random effects of respid
-
-full_match_effects(data,
-                   formula_natural_nmatches_randintercept,
-                   exparm="natural",
-                   typeofmodel ="randintecepts_wtasklevel")
+# formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+#   cpd_consc + cpd_ope +
+#   cpd_diet + cpd_animal + cpd_holiday + 
+#   respondent_task+ #this variable adds me fixed effect of the respondent_task level
+#   (1 | respid) #random effects of respid
+# 
+# full_match_effects(data,
+#                    formula_natural_nmatches_randintercept,
+#                    exparm="natural",
+#                    typeofmodel ="randintecepts_wtasklevel")
 
 
 # formula_mediated_nmatches_randslopes = cpd_chosen~cpd_n_matches+

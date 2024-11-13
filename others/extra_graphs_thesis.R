@@ -476,3 +476,46 @@ ggsave(paste0(output_wd,"amces_interacted_cultural.png"), p,
        width = 8,
        create.dir = T)
 
+
+
+
+
+
+
+################### Rearrange the graph for the ACIEs in the classic conjoint
+
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_sociodemos_jobagemm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_sociodemos_jobreligionmm.rds"))
+plot3 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_sociodemos_religionagemm.rds"))
+
+plot1=plot1+ylab("Interaction between age and job")
+plot2=plot2+ylab("Interaction between religion and job")
+plot3=plot3+ylab("Interaction between religion and age")
+
+p = plot1/plot3/plot2
+
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/for_thesis_gaetano/")
+
+ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_Sociodemos.png"), p, 
+       height = 12, 
+       width = 8,
+       create.dir = T)
+
+
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_psychomm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_culturalmm.rds"))
+
+plot1=plot1+ylab("Interaction between psychological attributes")
+plot2=plot2+ylab("Interaction between favorite restaurant and transportation")
+
+p = plot1/plot2
+
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/for_thesis_gaetano/")
+
+ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_PsychoandLifestyle.png"), p, 
+       height = 12, 
+       width = 8,
+       create.dir = T)
+
+
+

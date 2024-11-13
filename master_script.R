@@ -7,7 +7,8 @@ pacman::p_load(
   dplyr,forcats, ggplot2, gt, 
   gtools, gtsummary, margins, 
   openxlsx, patchwork, rio, texreg,
-  tools,lme4, ggeffects, wesanderson
+  tools,lme4, ggeffects, wesanderson,
+  tidyr
 )
 
 
