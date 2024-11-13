@@ -250,7 +250,7 @@ full_match_effects = function(data,
   exparm=match.arg(exparm)
   
   filtered_data = data |>
-    filter(cpd_exparm == exparm)|> 
+    filter(cpd_exparm == exparm) |> 
     select(cpd_chosen, cpd_n_matches,
            cpd_gender, cpd_age, cpd_educ, cpd_regionfeel, 
            cpd_consc, cpd_ope,

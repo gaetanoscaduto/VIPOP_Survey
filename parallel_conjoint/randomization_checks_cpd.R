@@ -3,10 +3,10 @@
 ###############################################################################
 
 # pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot, 
-#   MASS, cjoint, corrplot, dplyr, 
-#   forcats, ggplot2, gt, gtools, 
-#   gtsummary, margins, openxlsx, 
+#   cregg, dplyr, ggpubr, cowplot,
+#   MASS, cjoint, corrplot, dplyr,
+#   forcats, ggplot2, gt, gtools,
+#   gtsummary, margins, openxlsx,
 #   patchwork, rio, texreg, tools
 # )
 
@@ -196,3 +196,143 @@ data$cpd_profile_number = as.factor(data$cpd_profile_number)
 
 
 ### Attribute order effects conjoint
+
+# Function to clean and split attribute positions into a list
+
+
+remove_left_square = gsub("\\[", "", data$C1_ATT_ORDER)
+remove_right_square = gsub("\\]", "", remove_left_square)
+
+positions_list = strsplit(remove_right_square, "-")
+
+# create null variables for the position
+
+number_of_attributes = 10
+
+for(i in 1:number_of_attributes)
+{
+  data[,  paste0("attribute_",i,"_position")] = NA
+}
+
+for(attribute_number in 1:number_of_attributes)
+{
+  for(i in 1:nrow(data))
+  {
+    data[i, paste0("attribute_",attribute_number,"_position")] = which(positions_list[[i]]==attribute_number)
+  }
+}
+
+#make the attribute position variables factors
+for(i in 1:number_of_attributes)
+{
+  data[,  paste0("attribute_",i,"_position")] = factor(data[,  paste0("attribute_",i,"_position")],
+                                                       levels = c("1","2","3",
+                                                                  "4","5","6",
+                                                                  "7","8","9",
+                                                                  "10"))
+}
+
+#Check if everything is good
+# data$C1_ATT_ORDER[1] 
+# data$attribute_1_position[1]
+# data$attribute_10_position[1]
+# data$attribute_2_position[1]
+# data$attribute_5_position[1]
+
+p1 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_gender, 
+               id = ~respid,
+               by = ~attribute_1_position,
+               estimate = "mm"), 
+     group = "attribute_1_position", 
+     vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p2 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_age, 
+                    id = ~respid,
+                    by = ~attribute_2_position,
+                    estimate = "mm"), 
+          group = "attribute_2_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p3 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_educ, 
+                    id = ~respid,
+                    by = ~attribute_3_position,
+                    estimate = "mm"), 
+          group = "attribute_3_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p4 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_regionfeel, 
+                    id = ~respid,
+                    by = ~attribute_4_position,
+                    estimate = "mm"), 
+          group = "attribute_4_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p5 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_consc, 
+                    id = ~respid,
+                    by = ~attribute_5_position,
+                    estimate = "mm"), 
+          group = "attribute_5_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p6 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_ope, 
+                    id = ~respid,
+                    by = ~attribute_6_position,
+                    estimate = "mm"), 
+          group = "attribute_6_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p7 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_diet, 
+                    id = ~respid,
+                    by = ~attribute_7_position,
+                    estimate = "mm"), 
+          group = "attribute_7_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  theme(legend.position = "none")
+
+p8 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_animal, 
+                    id = ~respid,
+                    by = ~attribute_8_position,
+                    estimate = "mm"), 
+          group = "attribute_8_position", 
+          vline = 0.5)+
+  theme(text = element_text(size=10),
+        legend.title = element_blank())
+
+p9 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_holiday, 
+                    id = ~respid,
+                    by = ~attribute_9_position,
+                    estimate = "mm"), 
+          group = "attribute_9_position", 
+          vline = 0.5)+ 
+  xlab("")+
+  labs(caption = "Colors represent the position of the attribute")+
+  theme(legend.position = "none")
+
+# p10 = plot(
+#   data |>
+#     filter(cpd_exparm != "natural") |>
+#     cregg::cj(cpd_chosen ~ cpd_match_ideology, 
+#                     id = ~respid,
+#                     by = ~attribute_10_position,
+#                     estimate = "mm"), 
+#           group = "attribute_10_position", 
+#           vline = 0.5)+ 
+#   theme(text = element_text(size=10))
+
+p=(p1|p2|p3)/(p4|p5|p6)/(p7|p8|p9)
+
+ggsave(paste0(output_wd,  "attribute_order_check.png"),
+       p, height = 12, width = 12, create.dir = T)
