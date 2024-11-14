@@ -127,9 +127,13 @@ draw_plot_effects = function(effects,
     
   }
   
-  if(for_comparison == F)
+  if(for_comparison == F & type =="match")
   {
-    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1)
+    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1, heights = c(4,2,3))
+  }
+  if(for_comparison == F & type =="nominal")
+  {
+    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1, heights = c(5,3,5))
   }
   if(for_comparison == T)
   {

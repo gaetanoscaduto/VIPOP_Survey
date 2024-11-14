@@ -72,7 +72,7 @@ for(attribute in unique(attributes))
     ylab(attribute)+
     xlab("\n")+
     xlim(leftlim,rightlim)+
-    #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+    scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
     scale_color_manual(
       values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                  "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
