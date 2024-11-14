@@ -88,7 +88,9 @@ draw_plot_effects = function(effects,
     v[["Gender"]] = v[["Gender"]]+xlim(0.3,0.7)
   }
   
-  p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+  p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+  p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+  p=p1|p2
   
   return(p)
 }
@@ -291,7 +293,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
                                                      
@@ -389,7 +393,7 @@ y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
                       openness=c("Open", "Rigid"),
                       neuroticism=c("Anxious", "Calm"),
                       restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
-                      transport=c("Bycicle","Public Transport","SUV"),
+                      transport=c("Bicycle","Public Transport","SUV"),
                       animal=c("Cat","Large dog","No pets","Small dog")
 )
 

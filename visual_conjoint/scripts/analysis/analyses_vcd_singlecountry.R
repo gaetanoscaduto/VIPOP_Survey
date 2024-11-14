@@ -11,10 +11,10 @@
 #############################################################
 
 # pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot, 
-#   MASS, cjoint, corrplot, dplyr, 
-#   forcats, ggplot2, gt, gtools, 
-#   gtsummary, margins, openxlsx, 
+#   cregg, dplyr, ggpubr, cowplot,
+#   MASS, cjoint, corrplot, dplyr,
+#   forcats, ggplot2, gt, gtools,
+#   gtsummary, margins, openxlsx,
 #   patchwork, rio, texreg, tools,
 #   wesanderson
 # )
@@ -77,7 +77,7 @@ v=list()
       ylab(attribute)+
       xlab("\n")+
       xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+      #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
       theme(legend.position = "none",
             axis.text.y = element_text(size=10),
             axis.title.y = element_text(size=12))
@@ -85,7 +85,9 @@ v=list()
    v[[attribute]] = p
   }
   
-  p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+  p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
+  p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+  p=p1|p2
   
   return_list= list(plot = p, 
                     effects_data=effects)
@@ -175,7 +177,7 @@ full_subgroup_analysis = function(data,
         ylab(attribute)+
         xlab("\n")+
         xlim(leftlim,rightlim)+
-        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -183,7 +185,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
+    p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
     
@@ -235,7 +239,7 @@ full_subgroup_analysis = function(data,
         ylab(attribute)+
         xlab("\n")+
         xlim(leftlim,rightlim)+
-        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -243,7 +247,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
+    p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
     
@@ -295,9 +301,9 @@ full_interaction_effects = function(data,
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(effects$level, desc(effects$estimate)), col=feature))+
+                        y=fct_reorder(level, desc(estimate)), col=feature))+
     labs(y="",x="Marginal Mean")+
-    xlim(leftlim-0.1,rightlim+0.01)+
+    xlim(leftlim,rightlim)+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
@@ -369,8 +375,8 @@ y_labels_plots = list(ethnicity=c("Black","White"),
                       issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
                       nostalgia=c("Future1","Future2","Past1","Past2"),
                       valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                      animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
                       food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                      animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
                       crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
                       )
 
@@ -510,7 +516,13 @@ estimator="mm"
 
 return_list = full_interaction_effects(data, 
                              formula_interaction_sociodemos,
-                             estimator)
+                             estimator,
+                             leftlim=0.2,
+                             rightlim=0.8)
+
+plot(cj(data, formula_interaction_sociodemos, 
+        id = ~respid,
+        estimate = estimator), vline = 0.5)
 
 p=return_list$plot
 
@@ -529,7 +541,9 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_so
 
 return_list = full_interaction_effects(data, 
                              formula_interaction_cultural,
-                             estimator)
+                             estimator,
+                             leftlim=0.2,
+                             rightlim=0.8)
 
 p=return_list$plot
 
@@ -549,7 +563,9 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cu
 
 return_list = full_interaction_effects(data, 
                              formula_interaction_political,
-                             estimator)
+                             estimator,
+                             leftlim=0.2,
+                             rightlim=0.8)
 
 p=return_list$plot
 

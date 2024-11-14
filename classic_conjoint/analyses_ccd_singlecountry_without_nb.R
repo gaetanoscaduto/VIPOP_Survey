@@ -392,7 +392,7 @@ y_labels_plots = list(gender=c("Female", "Male"),
                       openness=c("Open", "Rigid"),
                       neuroticism=c("Anxious", "Calm"),
                       restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
-                      transport=c("Bycicle","Public Transport","SUV"),
+                      transport=c("Bicycle","Public Transport","SUV"),
                       animal=c("Cat","Large dog","No pets","Small dog")
 )
 
