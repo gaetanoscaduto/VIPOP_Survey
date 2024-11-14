@@ -111,12 +111,12 @@ draw_plot_effects = function(effects,
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
       theme(legend.position = "none")
     
-    if(for_comparison == T)
-    {
-      p= p+ 
-        theme(legend.position = "none",
-              axis.text.y = element_text(angle = 90, hjust = 0.5, vjust=0.5))
-    }
+    # if(for_comparison == T)
+    # {
+    #   p= p+ 
+    #     theme(legend.position = "none",
+    #           axis.text.y = element_text(angle = 90, hjust = 0.5, vjust=0.5))
+    # }
     if(for_comparison==F)
     {
       p= p+ 
@@ -560,8 +560,7 @@ y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
                                         "Ope Mismatch", "Ope Match"),
                       Lifestyle =c("Diet Mismatch", "Diet Match",
                                    "Animal Mismatch", "Animal Match",
-                                   "Holiday Mismatch", "Holiday Match"
-                      ),
+                                   "Holiday Mismatch", "Holiday Match"),
                       Political = c("Ideology Mismatch",
                                     "Ideology Match"))
 
