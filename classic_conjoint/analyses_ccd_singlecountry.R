@@ -876,10 +876,9 @@ full_subgroup_analysis(data,
 ######### 
 ######### Ideology
 ######### 
-plot(cj(data, ccd_chosen_rw ~ ccd_gender+
-         ccd_age+ccd_religion+ccd_citysize+ccd_job+
-         ccd_consc+ccd_ope+ccd_neu+
-         ccd_restaurant+ccd_transport+ccd_animal, id = ~respid, estimate = "mm", by = ~temp_subgroup))
+
+plot(cj(data, formula_outcome,
+        id = ~respid, estimate = "mm", by = ~temp_subgroup))
 
 
 
@@ -890,10 +889,7 @@ data$temp_subgroup = factor(data[, "ideology_r"])
 estimator = "mm"
   
     effects_pooled <- data |>
-      cj(ccd_chosen_rw ~ ccd_gender+
-           ccd_age+ccd_religion+ccd_citysize+ccd_job+
-           ccd_consc+ccd_ope+ccd_neu+
-           ccd_restaurant+ccd_transport+ccd_animal, 
+      cj(formula_outcome, 
          id = ~respid,
          by = ~temp_subgroup,
          estimate = estimator)

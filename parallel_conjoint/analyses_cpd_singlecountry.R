@@ -847,8 +847,8 @@ full_analysis(data,
               "amce",
               "natural",
               subdir,
-              leftlim=-0.15,
-              rightlim=0.15)
+              leftlim=-0.25,
+              rightlim=0.25)
 
 ############ ATEs (nominal value)
 
@@ -876,8 +876,8 @@ full_analysis(data,
               "amce",
               "natural",
               subdir,
-              leftlim=-0.15,
-              rightlim=0.15)
+              leftlim=-0.25,
+              rightlim=0.25)
 
 ########################################
 ############ ADCEs (MATCH/MISMATCH)#####
@@ -1119,11 +1119,6 @@ full_analysis(data,
 # 
 
 
-
-
-
-# 
-# 
 
 
 

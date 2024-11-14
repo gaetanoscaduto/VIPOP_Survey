@@ -763,3 +763,136 @@ full_subgroup_analysis(data,
 )
 
 
+
+######### 
+######### Ideology
+######### 
+
+
+data$temp_subgroup = factor(data[, "ideology_r"])
+
+
+plot(cj(data, formula_outcome,
+        id = ~respid, estimate = "mm", by = ~temp_subgroup))
+
+
+
+
+estimator = "mm"
+
+effects_pooled <- data |>
+  cj(formula_outcome, 
+     id = ~respid,
+     by = ~temp_subgroup,
+     estimate = estimator)
+
+effects_pooled = set_categories_and_levels(effects_pooled,
+                                           attributes = attributes)
+
+
+effects_subgroup1 = effects_pooled |>
+  filter(temp_subgroup == "Left-wing")
+
+effects_subgroup2 = effects_pooled |>
+  filter(temp_subgroup == "Center")
+
+effects_subgroup3 = effects_pooled |>
+  filter(temp_subgroup == "Right-wing")
+
+effects_subgroup4 = effects_pooled |>
+  filter(temp_subgroup == "Not collocated")
+
+leftlim=0.3
+rightlim=0.7
+
+for(attribute in unique(attributes))
+{
+  
+  p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
+    geom_vline(aes(xintercept=intercept), 
+               col="black", 
+               alpha=1/4)+
+    geom_pointrange(aes(x=estimate, 
+                        xmin=lower, 
+                        xmax=upper,
+                        y=level), 
+                    col=wesanderson::wes_palettes$Darjeeling1[1],
+                    shape=19,
+                    position = position_nudge(y = +3/16),
+                    show.legend = T)+
+    geom_pointrange(data=effects_subgroup2[effects_subgroup2$feature==attribute, ],
+                    aes(x=estimate,
+                        xmin=lower,
+                        xmax=upper,
+                        y=level), 
+                    col=wesanderson::wes_palettes$Darjeeling1[2],
+                    shape=17,
+                    position = position_nudge(y = 1/16),
+                    show.legend = T)+
+    geom_pointrange(data=effects_subgroup3[effects_subgroup3$feature==attribute, ],
+                    aes(x=estimate,
+                        xmin=lower,
+                        xmax=upper,
+                        y=level), 
+                    col=wesanderson::wes_palettes$Darjeeling1[3],
+                    shape=18,
+                    position = position_nudge(y = -1/16),
+                    show.legend = T)+
+    geom_pointrange(data=effects_subgroup2[effects_subgroup4$feature==attribute, ],
+                    aes(x=estimate,
+                        xmin=lower,
+                        xmax=upper,
+                        y=level), 
+                    col=wesanderson::wes_palettes$Darjeeling1[4],
+                    shape=15,
+                    position = position_nudge(y = -3/16),
+                    show.legend = T)+
+    ylab(attribute)+
+    xlab("\n")+
+    xlim(leftlim,rightlim)+
+    #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+    theme(legend.position = "right",
+          axis.text.y = element_text(size=10),
+          axis.title.y = element_text(size=12))
+  
+  v[[attribute]] = p
+}
+
+p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
+p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+p=p1|p2
+
+p = p+patchwork::plot_annotation(caption= paste0("Circle = Left-wing, Triangle = Center\n Diamond = Right-wing, Square = Not collocated"))
+
+
+ggsave(paste0(output_wd, subdir,"ideology_singlecountry.png"), 
+       p, 
+       height = 12, 
+       width = 10, create.dir = T)
+
+
+### test of significance differences between left and right
+
+data1 = data |>
+  filter(ideology_r == "Right-wing" | ideology_r == "Left-wing")
+
+# data1 = data1 |>
+#   filter(ccd_gender != "Non-Binary")
+# 
+# data1$ccd_gender = factor(data1$ccd_gender, levels = c("Female", "Male"))
+data1$ideology_r = factor(data1$ideology_r, levels =c("Left-wing", "Right-wing"))
+
+full_subgroup_analysis(data1,
+                       formula=formula_outcome,
+                       estimator="mm_differences",
+                       y_labels=y_labels_plots,
+                       subdir,
+                       leftlim=-0.15,
+                       rightlim=0.15,
+                       subgroup_variable = "ideology_r",
+                       subgroup_name = "Political Ideology",
+                       subgroup1 = "Left",
+                       subgroup2 = "Right"  #the name of the second subgroup (variable level)
+)
+
+
