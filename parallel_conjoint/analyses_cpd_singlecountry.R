@@ -400,8 +400,8 @@ compare_effects = function(data,
                             categories=categories,
                             estimator=estimator,
                             y_labels=y_labels_plots,
-                            leftlim=leftlim,
-                            rightlim=rightlim,
+                            leftlim=-0.2,
+                            rightlim=0.2,
                             x_intercept = x_intercept,
                             for_comparison = T)
   
@@ -410,8 +410,8 @@ compare_effects = function(data,
                              categories=categories,
                              estimator=estimator,
                              y_labels=y_labels_plots,
-                             leftlim=leftlim,
-                             rightlim=rightlim,
+                             leftlim=-0.2,
+                             rightlim=0.2,
                              x_intercept = x_intercept,
                              for_comparison = T)
   
@@ -420,25 +420,23 @@ compare_effects = function(data,
                            categories=categories,
                            estimator=estimator,
                            y_labels=y_labels_plots,
-                           leftlim=-0.1,
-                           rightlim=0.1,
+                           leftlim=-0.2,
+                           rightlim=0.2,
                            x_intercept = 0,
                            for_comparison = T)
   
   #Now I assemble three plots (for each category) so that they are easy to compare
   
-  p_socio = pates[["Sociodemographics"]]+pacdes[["Sociodemographics"]]+pees[["Sociodemographics"]]
+  p_socio = (pates[["Sociodemographics"]]+labs(title = "ATEs"))/(pacdes[["Sociodemographics"]]+labs(title = "ACDEs"))/(pees[["Sociodemographics"]]+labs(title = "EEs"))
   
-  p_psycho = pates[["Psychological"]]+pacdes[["Psychological"]]+pees[["Psychological"]]
+  p_psycho = (pates[["Psychological"]]+labs(title = "ATEs"))/(pacdes[["Psychological"]]+labs(title = "ACDEs"))/(pees[["Psychological"]]+labs(title = "EEs"))
   
-  p_lifestyle = pates[["Lifestyle"]]+pacdes[["Lifestyle"]]+pees[["Lifestyle"]]
+  p_lifestyle = (pates[["Lifestyle"]]+labs(title = "ATEs"))/(pacdes[["Lifestyle"]]+labs(title = "ACDEs"))/(pees[["Lifestyle"]]+labs(title = "EEs"))
   
   
   #I save the three plots
   
-  # p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
-  #                                caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
-  # 
+
   ggsave(paste0(output_wd,"estimations/", subdir, "socio_singlecountry.png"), 
          p_socio, 
          height = 10, 
