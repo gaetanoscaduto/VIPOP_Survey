@@ -612,6 +612,27 @@ data = data |>
 
 #table(data$ideology)
 
+#ideology four categories
+
+data = data |>
+  mutate(ideology_r = recode(ideology,
+                           "0" = "Left-wing",
+                           "1" = "Left-wing",
+                           "2" = "Left-wing",
+                           "3" = "Left-wing",
+                           "4" = "Center",
+                           "5" = "Center",
+                           "6" = "Center",
+                           "7" = "Right-wing",
+                           "8" = "Right-wing",
+                           "9" = "Right-wing",
+                           "10" = "Right-wing",
+                           "notplaced" = "Not collocated",
+                           .missing = "NA",
+                           .default = "default"
+  ) 
+  )
+
 # ideology for cpd match
 
 
