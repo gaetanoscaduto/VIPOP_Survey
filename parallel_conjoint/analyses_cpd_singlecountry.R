@@ -8,14 +8,14 @@
 #LIBRARY CALLS
 #############################################################
 
-pacman::p_load(
-  cregg, dplyr, ggpubr, cowplot,
-  MASS, cjoint, corrplot, dplyr,
-  forcats, ggplot2, gt, gtools,
-  gtsummary, margins, openxlsx,
-  patchwork, rio, texreg, tools,
-  lme4, ggeffects
-)
+# pacman::p_load(
+#   cregg, dplyr, ggpubr, cowplot,
+#   MASS, cjoint, corrplot, dplyr,
+#   forcats, ggplot2, gt, gtools,
+#   gtsummary, margins, openxlsx,
+#   patchwork, rio, texreg, tools,
+#   lme4, ggeffects
+# )
 
 #############################################################
 # DEFINING FUNCTIONS
@@ -846,7 +846,9 @@ full_analysis(data,
               "match",
               "amce",
               "natural",
-              subdir)
+              subdir,
+              leftlim=-0.15,
+              rightlim=0.15)
 
 ############ ATEs (nominal value)
 
@@ -873,7 +875,9 @@ full_analysis(data,
               "nominal",
               "amce",
               "natural",
-              subdir)
+              subdir,
+              leftlim=-0.15,
+              rightlim=0.15)
 
 ########################################
 ############ ADCEs (MATCH/MISMATCH)#####
