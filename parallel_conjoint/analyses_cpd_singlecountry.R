@@ -1037,85 +1037,85 @@ full_analysis(data,
 
 ### Analyses on the effects of multiple matches
 
-subdir = "MatchesEffects/"
-
-#model with just the number of matches predicting the probability of being chosen
-# summary(glm(data$cpd_chosen~data$cpd_n_matches, family = 
-# #               "binomial"))
+# subdir = "MatchesEffects/"
 # 
-# #now i call the function to draw the effects in the model with the actual controls
+# #model with just the number of matches predicting the probability of being chosen
+# # summary(glm(data$cpd_chosen~data$cpd_n_matches, family = 
+# # #               "binomial"))
+# # 
+# # #now i call the function to draw the effects in the model with the actual controls
+# # 
 # 
-
-# i generate the variable to include respondent_task effects
-
-data$respondent_task = factor(paste0(data$respid, data$cpd_task_number))
-
-# formula_natural_nmatches_randslopes = cpd_chosen~cpd_n_matches+
-#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-#   cpd_consc + cpd_ope +
-#   cpd_diet + cpd_animal + cpd_holiday +
-#   (1+cpd_n_matches | respid)
+# # i generate the variable to include respondent_task effects
 # 
+# data$respondent_task = factor(paste0(data$respid, data$cpd_task_number))
 # 
-# full_match_effects(data,
-#                    formula_natural_nmatches_randslopes,
-#                    exparm="natural",
-#                    typeofmodel = "randslopes")
-
-formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday + 
-  #respondent_task+ #this variable adds me fixed effect of the respondent_task level
-  (1 | respid) #random effects of respid
-
-full_match_effects(data,
-                   formula_natural_nmatches_randintercept,
-                   exparm="natural",
-                   typeofmodel ="randintecepts_withouttasklevel")
-
-
+# # formula_natural_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+# #   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+# #   cpd_consc + cpd_ope +
+# #   cpd_diet + cpd_animal + cpd_holiday +
+# #   (1+cpd_n_matches | respid)
+# # 
+# # 
+# # full_match_effects(data,
+# #                    formula_natural_nmatches_randslopes,
+# #                    exparm="natural",
+# #                    typeofmodel = "randslopes")
+# 
 # formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
 #   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
 #   cpd_consc + cpd_ope +
 #   cpd_diet + cpd_animal + cpd_holiday + 
-#   respondent_task+ #this variable adds me fixed effect of the respondent_task level
+#   #respondent_task+ #this variable adds me fixed effect of the respondent_task level
 #   (1 | respid) #random effects of respid
 # 
 # full_match_effects(data,
 #                    formula_natural_nmatches_randintercept,
 #                    exparm="natural",
-#                    typeofmodel ="randintecepts_wtasklevel")
-
-
-# formula_mediated_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+#                    typeofmodel ="randintecepts_withouttasklevel")
+# 
+# 
+# # formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+# #   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+# #   cpd_consc + cpd_ope +
+# #   cpd_diet + cpd_animal + cpd_holiday + 
+# #   respondent_task+ #this variable adds me fixed effect of the respondent_task level
+# #   (1 | respid) #random effects of respid
+# # 
+# # full_match_effects(data,
+# #                    formula_natural_nmatches_randintercept,
+# #                    exparm="natural",
+# #                    typeofmodel ="randintecepts_wtasklevel")
+# 
+# 
+# # formula_mediated_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+# #   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+# #   cpd_consc + cpd_ope +
+# #   cpd_diet + cpd_animal + cpd_holiday+
+# #   cpd_ideology +
+# #   (1+cpd_n_matches | respid)
+# # 
+# # 
+# # full_match_effects(data,
+# #                    formula_mediated_nmatches_randslopes,
+# #                    "mediated",
+# #                    typeofmodel = "randslopes")
+# 
+# 
+# formula_mediated_nmatches_randintercept = cpd_chosen~cpd_n_matches+
 #   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
 #   cpd_consc + cpd_ope +
 #   cpd_diet + cpd_animal + cpd_holiday+
 #   cpd_ideology +
-#   (1+cpd_n_matches | respid)
-# 
+#   (1 | respid)
 # 
 # full_match_effects(data,
-#                    formula_mediated_nmatches_randslopes,
+#                    formula_mediated_nmatches_randintercept,
 #                    "mediated",
-#                    typeofmodel = "randslopes")
-
-
-formula_mediated_nmatches_randintercept = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday+
-  cpd_ideology +
-  (1 | respid)
-
-full_match_effects(data,
-                   formula_mediated_nmatches_randintercept,
-                   "mediated",
-                   typeofmodel = "randintercept")
-
-
-
+#                    typeofmodel = "randintercept")
+# 
+# 
+# 
 
 
 
