@@ -914,6 +914,9 @@ estimator = "mm"
     
     leftlim=0.3
     rightlim=0.7
+    intercept=0.5
+    
+    v=list()
     
     for(attribute in unique(attributes))
     {
@@ -987,10 +990,7 @@ estimator = "mm"
     data1 = data |>
       filter(ideology_r == "Right-wing" | ideology_r == "Left-wing")
     
-    # data1 = data1 |>
-    #   filter(ccd_gender != "Non-Binary")
-    # 
-    # data1$ccd_gender = factor(data1$ccd_gender, levels = c("Female", "Male"))
+   
     data1$ideology_r = factor(data1$ideology_r, levels =c("Left-wing", "Right-wing"))
     
     full_subgroup_analysis(data1,

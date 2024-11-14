@@ -786,7 +786,7 @@ effects_pooled <- data |>
      by = ~temp_subgroup,
      estimate = estimator)
 
-effects_pooled = set_categories_and_levels(effects_pooled,
+effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                            attributes = attributes)
 
 
@@ -804,6 +804,9 @@ effects_subgroup4 = effects_pooled |>
 
 leftlim=0.3
 rightlim=0.7
+intercept=0.5
+
+v=list()
 
 for(attribute in unique(attributes))
 {
