@@ -1072,7 +1072,7 @@ if(clean == T)
 
  if(clean == T)
  {
-   writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data)), con = paste0("nrow_clean_",context,".txt")) 
+   writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data)), con = paste0(dataset_rep, "nrow_clean_",context,".txt")) 
  }
 
 #export the recoded and clean dataset 

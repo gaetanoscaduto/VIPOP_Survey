@@ -35,12 +35,13 @@ for(context in contexts)
   
 }
 #generate pooled dataset
-source("others/rbind_country_datasets.R")
+#source("others/rbind_country_datasets.R")
 
 
 #recoding pooled dataset
 #source("others/recodings/recoding_demo.R")
 
+#contexts = c("IT", "FR", "CZ", "SW", "POOL")
 for(context in contexts)
 {
   #descriptives script
@@ -81,6 +82,10 @@ for(context in contexts)
   source("parallel_conjoint/analyses_cpd_singlecountry.R")
   print(paste("Ok cpd analyses", context, Sys.time()))
   
+  if(context == "IT")
+  {
+    source("others/extra_graph_thesis")
+  }
 }
 
 
