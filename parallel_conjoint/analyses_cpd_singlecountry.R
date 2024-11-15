@@ -427,11 +427,11 @@ compare_effects = function(data,
   
   #Now I assemble three plots (for each category) so that they are easy to compare
   
-  p_socio = (pates[["Sociodemographics"]]+labs(title = "ATEs"))/(pacdes[["Sociodemographics"]]+labs(title = "ACDEs"))/(pees[["Sociodemographics"]]+labs(title = "EEs"))
+  p_socio = (pates[["Sociodemographics"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Sociodemographics"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Sociodemographics"]]+labs(title = "Eliminated Effects (EEs)"))
   
-  p_psycho = (pates[["Psychological"]]+labs(title = "ATEs"))/(pacdes[["Psychological"]]+labs(title = "ACDEs"))/(pees[["Psychological"]]+labs(title = "EEs"))
+  p_psycho = (pates[["Psychological"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Psychological"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Psychological"]]+labs(title = "Eliminated Effects (EEs)"))
   
-  p_lifestyle = (pates[["Lifestyle"]]+labs(title = "ATEs"))/(pacdes[["Lifestyle"]]+labs(title = "ACDEs"))/(pees[["Lifestyle"]]+labs(title = "EEs"))
+  p_lifestyle = (pates[["Lifestyle"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Lifestyle"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Lifestyle"]]+labs(title = "Eliminated Effects (EEs)"))
   
   
   #I save the three plots

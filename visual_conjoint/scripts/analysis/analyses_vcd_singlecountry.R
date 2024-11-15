@@ -668,6 +668,8 @@ full_subgroup_analysis(data,
                        y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "gender_r",
+                       leftlim = -0.2,
+                       rightlim = 0.2,
                        subgroup_name = "Gender",
                        subgroup1 = "Female",
                        subgroup2 = "Male" #the name of the second subgroup (variable level)
@@ -698,6 +700,8 @@ full_subgroup_analysis(data,
                        subdir,
                        subgroup_variable = "educ_r",
                        subgroup_name = "Education level",
+                       leftlim = -0.2,
+                       rightlim = 0.2,
                        subgroup1 = "College",
                        subgroup2 = "No College" #the name of the second subgroup (variable level)
 )
@@ -727,6 +731,8 @@ full_subgroup_analysis(data,
                        subdir,
                        subgroup_variable = "interest_r",
                        subgroup_name = "Political Interest",
+                       leftlim = -0.2,
+                       rightlim = 0.2,
                        subgroup1 = "Low",
                        subgroup2 = "High"    #the name of the second subgroup (variable level)
 )
@@ -758,6 +764,8 @@ full_subgroup_analysis(data,
                        subdir,
                        subgroup_variable = "exposure_r",
                        subgroup_name = "News media Exposure",
+                       leftlim = -0.2,
+                       rightlim = 0.2,
                        subgroup1 = "Low",
                        subgroup2 = "High" #the name of the second subgroup (variable level)
 )
@@ -868,7 +876,7 @@ p=p1|p2
 p = p+patchwork::plot_annotation(caption= paste0("Circle = Left-wing, Triangle = Center\n Diamond = Right-wing, Square = Not collocated"))
 
 
-ggsave(paste0(output_wd, subdir,"ideology_singlecountry.png"), 
+ggsave(paste0(output_wd, subdir,"Political ideology", estimator, ".png"), 
        p, 
        height = 12, 
        width = 10, create.dir = T)
@@ -890,8 +898,8 @@ full_subgroup_analysis(data1,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
-                       leftlim=-0.15,
-                       rightlim=0.15,
+                       leftlim=-0.2,
+                       rightlim=0.2,
                        subgroup_variable = "ideology_r",
                        subgroup_name = "Political Ideology",
                        subgroup1 = "Left",

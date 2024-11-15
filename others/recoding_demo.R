@@ -1066,4 +1066,14 @@ if(clean == T)
   
 }
 
+
+
+### generate a file saying the total N to me
+
+ if(clean == T)
+ {
+   writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data)), con = paste0("nrow_clean_",context,".txt")) 
+ }
+
+#export the recoded and clean dataset 
 export(data, paste0(dataset_rep, "data_recoded_", context, ".RDS"))
