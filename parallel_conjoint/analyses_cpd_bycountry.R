@@ -539,13 +539,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
   )
   
   return(full_plot_list)
-}
-
-
-
-
-
-
+} 
 #function to draw and save the plots related to the effect of the number of matches
 # (regardless of the actual attribute displayed) into the probaility of 
 #selecting someone as their conversation partners (with and without politics,
@@ -680,13 +674,6 @@ full_match_effects_bycountry = function(data,
   
   
 }
-
-
-
-
-
-
-
 
 
 
@@ -946,18 +933,6 @@ formula_nominal = cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel
   cpd_consc + cpd_ope +
   cpd_diet + cpd_animal + cpd_holiday
 
-
-formula_natural_nmatches = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday
-
-formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
-  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-  cpd_consc + cpd_ope +
-  cpd_diet + cpd_animal + cpd_holiday+
-  cpd_ideology
-
 #############################################################
 
 
@@ -967,13 +942,6 @@ formula_mediated_nmatches = cpd_chosen~cpd_n_matches+
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/")
 
 data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_cpd_POOL.RDS"))
-
-#genero fake dataset per provare, cancella quando arrivano dati definitivi
-# data=rbind(data, data, data, data)
-# data=rbind(data, data, data, data)
-# data=rbind(data, data, data, data)
-# 
-# data$cpd_country=factor(sample(c("IT", "FR", "SW","CZ"), nrow(data), T))
 
 
 #############################################################
@@ -1204,27 +1172,6 @@ full_analysis_bycountry(data,
               leftlim=-0.2,
               rightlim=0.2,
               subdir)
-
-
-
-### Analyses on the effects of multiple matches
-
-subdir = "MatchesEffects/"
-
-#model with just the number of matches predicting the probability of being chosen
-# summary(glm(data$cpd_chosen~data$cpd_n_matches, family =
-#               "binomial"))
-
-#now i call the function to draw the effects in the model with the actual controls
-#
-full_match_effects_bycountry(data=data,
-                   formula=formula_natural_nmatches,
-                   exparm="natural")
-
-full_match_effects_bycountry(data,
-                   formula_mediated_nmatches,
-                   "mediated")
-
 
 
 
