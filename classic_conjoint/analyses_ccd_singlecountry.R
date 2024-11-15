@@ -877,12 +877,14 @@ full_subgroup_analysis(data,
 ######### Ideology
 ######### 
 
+data$temp_subgroup = factor(data[, "ideology_r"])
+
 plot(cj(data, formula_outcome,
         id = ~respid, estimate = "mm", by = ~temp_subgroup))
 
 
 
-data$temp_subgroup = factor(data[, "ideology_r"])
+
 
 
 
