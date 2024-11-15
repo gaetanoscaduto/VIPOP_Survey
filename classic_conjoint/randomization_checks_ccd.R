@@ -3,10 +3,10 @@
 ###############################################################################
 # 
 # pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot, 
-#   MASS, cjoint, corrplot, dplyr, 
-#   forcats, ggplot2, gt, gtools, 
-#   gtsummary, margins, openxlsx, 
+#   cregg, dplyr, ggpubr, cowplot,
+#   MASS, cjoint, corrplot, dplyr,
+#   forcats, ggplot2, gt, gtools,
+#   gtsummary, margins, openxlsx,
 #   patchwork, rio, texreg, tools
 # )
 
@@ -33,15 +33,27 @@ names(data)
 #### DIAGNOSTICS ####
 ###################
 
+
 plot(cj_freqs(data, ccd_chosen_rw ~ ccd_gender+
                 ccd_age+ccd_religion+ccd_citysize+ccd_job+
                 ccd_consc+ccd_ope+ ccd_neu+
-                ccd_restaurant+ccd_transport+ccd_animal,
-              id = ~respid), col="grey")
+                ccd_restaurant+ccd_transport+ccd_animal, 
+              feature_labels = list(ccd_gender="Gender",
+                                      ccd_age="Age",
+                                    ccd_religion="Religion",
+                                    ccd_citysize="City size",
+                                    ccd_job= "Job",
+                                    ccd_consc= "Conscientiousness",
+                                    ccd_ope="Openness",
+                                    ccd_neu="Neuroticism",
+                                    ccd_restaurant="Favorite Restaurant",
+                                    ccd_transport="Mean of transportation",
+                                    ccd_animal="Pet"),
+              id = ~respid), col="grey")+theme(legend.position = "none")
 
 
 ggsave(paste0(output_wd, "diagnostic_randomization.png"), 
-       height = 15, width = 8, create.dir = T)
+       height = 14, width = 10, create.dir = T)
 
 
 # With ggplot
@@ -162,10 +174,19 @@ for(i in 1:number_of_attributes)
 # data$attribute_2_position[1]
 # data$attribute_5_position[1]
 
-p1 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_gender, 
+
+#not enough power for non-binary, I remove it
+
+data1 = data[data$ccd_gender != "Non-Binary", ]
+
+data1$ccd_gender = factor(data1$ccd_gender, levels = c("Female", "Male"))
+
+
+p1 = plot(cregg::cj(data1, ccd_chosen_rw ~ ccd_gender, 
                     id = ~respid,
                     by = ~attribute_1_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_1_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -174,7 +195,8 @@ p1 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_gender,
 p2 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_age, 
                     id = ~respid,
                     by = ~attribute_2_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_2_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -183,7 +205,8 @@ p2 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_age,
 p3 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_religion, 
                     id = ~respid,
                     by = ~attribute_3_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_3_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -192,7 +215,8 @@ p3 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_religion,
 p4 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_citysize, 
                     id = ~respid,
                     by = ~attribute_4_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_4_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -201,7 +225,8 @@ p4 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_citysize,
 p5 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_job, 
                     id = ~respid,
                     by = ~attribute_5_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_5_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -210,7 +235,8 @@ p5 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_job,
 p6 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_consc, 
                     id = ~respid,
                     by = ~attribute_6_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_6_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -219,7 +245,8 @@ p6 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_consc,
 p7 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_ope, 
                     id = ~respid,
                     by = ~attribute_7_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_7_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -228,7 +255,8 @@ p7 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_ope,
 p8 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_neu, 
                     id = ~respid,
                     by = ~attribute_8_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_8_position", 
           vline = 0.5)+
   xlab("")+
@@ -238,7 +266,8 @@ p8 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_neu,
 p9 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_restaurant, 
                     id = ~respid,
                     by = ~attribute_8_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_8_position", 
           vline = 0.5)+
   xlab("")+
@@ -248,7 +277,8 @@ p9 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_restaurant,
 p10 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_transport, 
                     id = ~respid,
                     by = ~attribute_8_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_8_position", 
           vline = 0.5)+
   theme(text = element_text(size=10),
@@ -258,7 +288,8 @@ p10 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_transport,
 p11 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_animal, 
                     id = ~respid,
                     by = ~attribute_9_position,
-                    estimate = "mm"), 
+                    estimate = "mm",
+                    alpha=0.01), 
           group = "attribute_9_position", 
           vline = 0.5)+ 
   xlab("")+
@@ -269,4 +300,4 @@ p11 = plot(cregg::cj(data, ccd_chosen_rw ~ ccd_animal,
 p=(p1|p2|p3)/(p4|p5|p6)/(p7|p8|p9)/(p10|p11)
 
 ggsave(paste0(output_wd,  "attribute_order_check.png"),
-       p, height = 12, width = 12, create.dir = T)
+       p, height = 16, width = 12, create.dir = T)

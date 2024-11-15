@@ -1072,7 +1072,9 @@ if(clean == T)
 
  if(clean == T)
  {
-   writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data)), con = paste0(dataset_rep, "nrow_clean_",context,".txt")) 
+   writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data), 
+                     "\n Mean time for completion: ", mean(data$time_diff_mins)),
+              con = paste0(dataset_rep, "nrow_clean_",context,".txt")) 
  }
 
 #export the recoded and clean dataset 
