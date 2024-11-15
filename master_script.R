@@ -21,9 +21,12 @@ dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
 #If you want the dataset cleansed by laggards, speeders, and people who fail 
 #attention checks, clean must be true. Otherwise set it to false
+
+#contexts = c("IT", "FR", "CZ", "SW")
+contexts = c("IT")
 clean = T
 
-for(context in c("IT", "FR", "CZ", "SW"))
+for(context in contexts)
 {
   ## recoding script
   source("others/recoding_demo.R")
@@ -38,7 +41,7 @@ source("others/rbind_country_datasets.R")
 #recoding pooled dataset
 #source("others/recodings/recoding_demo.R")
 
-for(context in c("IT", "FR", "CZ", "SW", "POOL"))
+for(context in contexts)
 {
   #descriptives script
   source("others/descriptives_internal.R")
