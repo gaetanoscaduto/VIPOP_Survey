@@ -400,8 +400,8 @@ compare_effects = function(data,
                             categories=categories,
                             estimator=estimator,
                             y_labels=y_labels_plots,
-                            leftlim=-0.2,
-                            rightlim=0.2,
+                            leftlim=leftlim,
+                            rightlim=rightlim,
                             x_intercept = x_intercept,
                             for_comparison = T)
   
@@ -410,8 +410,8 @@ compare_effects = function(data,
                              categories=categories,
                              estimator=estimator,
                              y_labels=y_labels_plots,
-                             leftlim=-0.2,
-                             rightlim=0.2,
+                             leftlim=leftlim,
+                             rightlim=rightlim,
                              x_intercept = x_intercept,
                              for_comparison = T)
   
@@ -1182,8 +1182,8 @@ plots_match = compare_effects(data,
                 arm="ideology_match", #manipulated mediation arm with ideological match, 
                 #or manipulated mediation arm with ideological mismatch
                 subdir,#the subdirectory where the plots will be saved
-                leftlim=-0.1,
-                rightlim=0.1,
+                leftlim=-0.2,
+                rightlim=0.2,
                 x_intercept=0
                 )
 
@@ -1199,8 +1199,8 @@ plots_mismatch = compare_effects(data,
                 arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                 #or manipulated mediation arm with ideological mismatch
                 subdir,#the subdirectory where the plots will be saved
-                leftlim=-0.1,
-                rightlim=0.1,
+                leftlim=-0.2,
+                rightlim=0.2,
                 x_intercept=0
 )
   
