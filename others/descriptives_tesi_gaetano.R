@@ -32,13 +32,13 @@ setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dotto
 data |> filter(country=="IT")
 
 descriptive <- data |> 
-  select(gender, age, education, region, citysize, socialposition) |>
+  select(gender, age_r, education, region, citysize, socialposition) |>
   tbl_summary(
     missing = "ifany",
     digits = everything() ~ 1, 
     label = list(
       gender ~ "Gender",
-      age ~ "Age",
+      age_r ~ "Age",
       education ~ "Education",
       region ~ "Macroegion",
       citysize ~ "Size of the city",
