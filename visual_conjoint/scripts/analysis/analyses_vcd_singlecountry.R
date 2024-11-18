@@ -9,7 +9,7 @@
 #############################################################
 #LIBRARY CALLS
 #############################################################
-
+# 
 # pacman::p_load(
 #   cregg, dplyr, ggpubr, cowplot,
 #   MASS, cjoint, corrplot, dplyr,
@@ -647,7 +647,7 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_po
 
 subdir = "Subgroup Analyses/"
 
-data$gender_r = factor(ifelse(data$gender == "nonbinary", NA, toTitleCase(data$gender)))
+data$gender_r = factor(ifelse(data$gender == "nonbinary" | data$gender == "notsay", NA, toTitleCase(data$gender)), levels = c("Female", "Male"))
 
 full_subgroup_analysis(data,
                        formula=formula_outcome,
