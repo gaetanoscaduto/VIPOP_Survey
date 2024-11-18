@@ -139,6 +139,9 @@ draw_plot_effects = function(effects,
   {
     p=v
   }
+  
+  saveRDS(effects, paste0(output_wd,"estimations/", subdir, "singlecountry_data.rds"))
+  
   return(p)
 }
 
