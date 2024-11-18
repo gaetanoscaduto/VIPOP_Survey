@@ -519,7 +519,7 @@ if(context == "IT")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 30", "Between 30 and 59","Over 60",
+                   "Under 35", "Between 35 and 59","Over 60",
                    "Degree","No degree",
                    "Central Italy","Northern Italy","Southern Italy",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -529,7 +529,7 @@ if(context == "IT")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Under 35", "Between 35 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Central Italy","Northern Italy","Southern Italy"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -558,7 +558,7 @@ if(context=="FR")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 30", "Between 30 and 59","Over 60",
+                   "Under 35", "Between 35 and 59","Over 60",
                    "Degree","No degree",
                    "No Paris","Paris",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -568,7 +568,7 @@ if(context=="FR")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Under 35", "Between 35 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "No Paris","Paris"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -598,7 +598,7 @@ if(context == "CZ")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 30", "Between 30 and 59","Over 60",
+                   "Under 35", "Between 35 and 59","Over 60",
                    "Degree","No degree",
                    "Cechia","Moravia","Prague",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -608,7 +608,7 @@ if(context == "CZ")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Under 35", "Between 35 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Cechia","Moravia","Prague"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -637,7 +637,7 @@ if(context == "SW")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 30", "Between 30 and 59","Over 60",
+                   "Under 35", "Between 35 and 59","Over 60",
                    "Degree","No degree",
                    "Gotland","Norrland","Svealand",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -647,7 +647,7 @@ if(context == "SW")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Under 35", "Between 35 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Gotland","Norrland","Svealand"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -679,7 +679,7 @@ if(context=="POOL")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 30", "Between 30 and 59","Over 60",
+                   "Under 35", "Between 35 and 59","Over 60",
                    "Degree","No degree",
                    "Cechia (CZ)","Center (IT)", "Gotland (SW)",
                    "Moravia (CZ)", "No Paris (FR)", "North (IT)",
@@ -692,7 +692,7 @@ if(context=="POOL")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Under 35", "Between 35 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Cechia (CZ)","Center (IT)", "Gotland (SW)",
                                                 "Moravia (CZ)", "No Paris (FR)", "North (IT)",

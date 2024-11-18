@@ -885,7 +885,7 @@ nominal_attributes= c("Gender", "Gender",
                         "Holiday","Holiday","Holiday")
   
 levels_vector= c("Female", "Male",
-                   "Under 30", "Between 30 and 59","Over 60",
+                   "Under 35", "Between 35 and 59","Over 60",
                    "Degree","No degree",
                    "Cechia (CZ)","Center (IT)", "Gotland (SW)",
                    "Moravia (CZ)", "No Paris (FR)", "North (IT)",
@@ -898,7 +898,7 @@ levels_vector= c("Female", "Male",
                    "City","Outdoor","Relax")
   
 y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 30", "Between 30 and 59","Over 60",
+                                                "Under 35", "Between 35 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Cechia (CZ)","Center (IT)", "Gotland (SW)",
                                                 "Moravia (CZ)", "No Paris (FR)", "North (IT)",

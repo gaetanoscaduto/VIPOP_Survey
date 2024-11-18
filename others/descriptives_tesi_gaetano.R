@@ -57,7 +57,7 @@ descriptive |>
   select(gender, AGE_GROUP, EDU_LEVEL, region_feel, 
          TIPI_CON_REC, TIPI_OPE_REC,
          diet, animal, holiday,
-         ideology)
+         ideology_r)
 
 data1 <- data1 %>%
   mutate(across(everything(), ~ str_to_title(as.character(.))))
@@ -68,7 +68,7 @@ descriptive <- data1 |>
   select(gender, AGE_GROUP, EDU_LEVEL, region_feel, 
          TIPI_CON_REC, TIPI_OPE_REC,
          diet, animal, holiday,
-         ideology) |>
+         ideology_r) |>
   tbl_summary(
     missing = "ifany",
     digits = everything() ~ 1, 
@@ -82,7 +82,7 @@ descriptive <- data1 |>
       diet ~ "Diet", 
       animal ~ "Favorite pet",
       holiday ~ "Favorite holiday",
-      ideology ~ "Political ideology"
+      ideology_r ~ "Political ideology"
     )
   )
 
@@ -90,3 +90,61 @@ descriptive <- data1 |>
 descriptive |>
   as_gt() |>
   gtsave(filename ="Descriptive_parallel.docx")
+
+
+data = readRDS(paste0(dataset_rep, "cjdata_cpd_", context, ".RDS"))
+
+
+descriptive <- data |> 
+  select(cpd_match_gender, cpd_match_age, cpd_match_educ, cpd_match_regionfeel, 
+         cpd_match_consc, cpd_match_ope,
+         cpd_match_diet, cpd_match_animal, cpd_match_holiday,
+         cpd_match_ideology) |>
+  tbl_summary(
+    missing = "ifany",
+    digits = everything() ~ 1, 
+    # label = list(
+    #   # gender ~ "Gender",
+    #   # AGE_GROUP ~ "Age group",
+    #   # EDU_LEVEL ~ "Has a university degree",
+    #   # region_feel ~ "Region felt the closest to",
+    #   # TIPI_CON_REC ~ "Conscientiousness",
+    #   # TIPI_OPE_REC ~ "Openness",
+    #   # diet ~ "Diet", 
+    #   # animal ~ "Favorite pet",
+    #   # holiday ~ "Favorite holiday",
+    #   # ideology_r ~ "Political ideology"
+    # )
+  )
+
+
+descriptive |>
+  as_gt() |>
+  gtsave(filename ="Descriptive_match.docx")
+
+descriptive <- data |> 
+  select(cpd_gender, cpd_age, cpd_educ, cpd_regionfeel, 
+         cpd_consc, cpd_ope,
+         cpd_diet, cpd_animal, cpd_holiday,
+         cpd_ideology) |>
+  tbl_summary(
+    missing = "ifany",
+    digits = everything() ~ 1, 
+    # label = list(
+    #   # gender ~ "Gender",
+    #   # AGE_GROUP ~ "Age group",
+    #   # EDU_LEVEL ~ "Has a university degree",
+    #   # region_feel ~ "Region felt the closest to",
+    #   # TIPI_CON_REC ~ "Conscientiousness",
+    #   # TIPI_OPE_REC ~ "Openness",
+    #   # diet ~ "Diet", 
+    #   # animal ~ "Favorite pet",
+    #   # holiday ~ "Favorite holiday",
+    #   # ideology_r ~ "Political ideology"
+    # )
+  )
+
+
+descriptive |>
+  as_gt() |>
+  gtsave(filename ="Descriptive_cpd_attributes.docx")
