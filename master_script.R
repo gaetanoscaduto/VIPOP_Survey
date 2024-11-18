@@ -23,7 +23,7 @@ dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 #attention checks, clean must be true. Otherwise set it to false
 
 #contexts = c("IT", "FR", "CZ", "SW")
-contexts = c("IT")
+contexts = c("IT", "FR")
 clean = T
 
 for(context in contexts)
@@ -84,7 +84,7 @@ for(context in contexts)
   
   if(context == "IT")
   {
-    source("others/extra_graph_thesis")
+    source("others/extra_graphs_thesis.R")
   }
 }
 
