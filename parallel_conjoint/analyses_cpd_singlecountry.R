@@ -107,8 +107,10 @@ draw_plot_effects = function(effects,
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature))+
       ylab("")+
       xlab(category)+
-      xlim(leftlim,rightlim)+
+      #xlim(leftlim,rightlim)+
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
+      scale_x_continuous(limits = c(leftlim, rightlim), 
+                         breaks = round(seq(leftlim, rightlim, length.out = 9), digits=3))+
       theme(legend.position = "none")
     
     # if(for_comparison == T)
@@ -230,7 +232,7 @@ full_analysis = function(data,
                         leftlim=leftlim,
                         rightlim=rightlim)
   
-  p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
+  p=p+patchwork::plot_annotation(#title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
                                  caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
   
   ggsave(paste0(output_wd,"estimations/", subdir, "singlecountry.png"), 
@@ -815,8 +817,8 @@ full_analysis(data,
               "amce",
               "natural",
               subdir,
-              leftlim=-0.25,
-              rightlim=0.25)
+              leftlim=-0.18,
+              rightlim=0.18)
 
 ########################################
 ############ ADCEs (MATCH/MISMATCH)#####
