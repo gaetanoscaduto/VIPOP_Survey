@@ -232,7 +232,8 @@ full_analysis = function(data,
                         rightlim=rightlim)
   
   p=p+patchwork::plot_annotation(#title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
-    caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
+    #caption= paste0(toupper(estimator), "s of the", arm, " mediation arm")
+    )
   
   ggsave(paste0(output_wd,"estimations/", subdir, "singlecountry.png"), 
          p, 
