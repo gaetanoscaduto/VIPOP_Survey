@@ -552,6 +552,7 @@ data = data |>
          ) 
   )
 
+#they are coded differently the tipi ope con from the profile variables, do not worry it is not a mistake!
 
 cpd_con_names = names(data)[grepl("C1",names(data)) & grepl("A5_", names(data))]
 
@@ -581,8 +582,10 @@ data = data |>
          ) 
   )
 
+#they are coded differently the tipi ope rec from the profile variables, do not worry it is not a mistake!
 
 cpd_ope_names = names(data)[grepl("C1",names(data)) & grepl("A6_", names(data))]
+
 for(var in cpd_ope_names)
 {
   data = data |>
