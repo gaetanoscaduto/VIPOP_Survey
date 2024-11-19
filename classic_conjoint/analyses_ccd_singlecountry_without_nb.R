@@ -450,8 +450,8 @@ attributes= c("Gender", "Gender",
 #outcome = "ideology"
 #outcome = "populism"
 
-# gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
-# dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
+gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/Without NB/")
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
