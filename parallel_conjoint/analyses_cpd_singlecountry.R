@@ -903,6 +903,42 @@ full_analysis(data,
               rightlim=0.1)
 
 
+
+
+################# Testing a thing don't mind me
+
+# 
+# subdir = "ACDEs/nominal/id_match/AMCEs/"
+# 
+# full_analysis(data,
+#               formula_nominal,
+#               "ACDEs",
+#               type="nominal",
+#               "amce",
+#               "ideology_match",
+#               subdir,
+#               leftlim=-0.1,
+#               rightlim=0.1)
+# 
+# ############################################################################
+# ################ ACDEs for ideological mismatch with AMCE################### 
+# ############################################################################
+# 
+# subdir = "ACDEs/nominal/id_mismatch/AMCEs/"
+# 
+# 
+# full_analysis(data,
+#               formula_nominal,
+#               "ACDEs",
+#               "nominal",
+#               "amce",
+#               "ideology_mismatch",
+#               subdir,
+#               leftlim=-0.1,
+#               rightlim=0.1)
+# 
+
+
 ############################################################################
 ########################## ELIMINATED EFFECTS ##############################
 ############################################################################
@@ -976,6 +1012,46 @@ full_analysis(data,
               subdir)
 
 
+
+
+
+######################################################################
+#### Just the pure effect of IDEOLOGY in the manipulated mediation arm
+######################################################################
+
+
+subdir = "Ideology_effect_raw/"
+
+formula_match_w_ideo = cpd_chosen ~  cpd_ideology + cpd_match_ideology
+
+data1=data
+
+data1$cpd_ideology = factor(data1$cpd_ideology, levels=c("center","notplaced","right","left"))
+
+
+ideology_data <- data1 |>
+  filter(cpd_exparm == "mediated") |>
+  cj(formula_match_w_ideo,
+     id = ~respid,
+     estimate = "amce", 
+     feature_labels = list(cpd_ideology = "Ideology (as shown)",
+                           cpd_match_ideology = "Ideological\n(similarity)"),
+     level_order = "descending")
+
+p = plot(ideology_data)+
+  xlab("")+
+  scale_x_continuous(limits = c(-0.12, 0.12), 
+                     breaks = round(seq(-0.12, 0.12, length.out = 9), digits=2))+
+  scale_y_discrete(labels = rev(c("Ideology (as shown)", "Center", "Not collocated", "Right", "Left",
+                                  "Ideological similarity", "Ideology Mismatch", "Idelogy Match")))+
+  theme_gray()+
+  theme(legend.position = "none")
+
+
+ggsave(paste0(output_wd,"estimations/", subdir,  "ideology.png"), 
+       p, 
+       height = 4, 
+       width = 6, create.dir = T)
 
 
 
