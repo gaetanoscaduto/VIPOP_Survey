@@ -105,8 +105,8 @@ draw_plot_effects = function(effects,
     p = ggplot(effects[effects$category == category, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature))+
-      ylab("")+
-      xlab(category)+
+      ylab(category)+
+      xlab("")+
       #xlim(leftlim,rightlim)+
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
       scale_x_continuous(limits = c(leftlim, rightlim), 
@@ -383,7 +383,7 @@ compare_effects = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "socio_singlecountry.rds"))
+  saveRDS(p_socio, file = paste0(output_wd,"estimations/", subdir, "socio_singlecountry.rds"))
   
   
   ggsave(paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.png"), 
@@ -391,7 +391,7 @@ compare_effects = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.rds"))
+  saveRDS(p_psycho, file = paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.rds"))
   
   
   ggsave(paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.png"), 
@@ -399,7 +399,7 @@ compare_effects = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.rds"))
+  saveRDS(p_lifestyle, file = paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.rds"))
   
   
   
@@ -1070,10 +1070,6 @@ subdir="CompareEffects/ATES_vs_EEs/AMCEs/"
 plot_compare_effects(plots_match,
                      plots_mismatch, 
                      subdir)
-
-
-
-
 
 
 
