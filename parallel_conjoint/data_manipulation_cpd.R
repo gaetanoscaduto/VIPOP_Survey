@@ -250,8 +250,8 @@ for(i in 1:ncol(cjdata))
 }
 
 #the following factors needs to be reordered
-cjdata[, "cpd_age"] = factor(cjdata[, "cpd_age"], levels = c("under30",
-                                                             "between30and59",
+cjdata[, "cpd_age"] = factor(cjdata[, "cpd_age"], levels = c("under35",
+                                                             "between35and59",
                                                              "over60"))
 
 cjdata[, "cpd_consc"] = factor(cjdata[, "cpd_consc"], levels = c("con_agree",
