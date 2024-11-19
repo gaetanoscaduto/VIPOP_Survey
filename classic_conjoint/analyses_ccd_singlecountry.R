@@ -76,7 +76,7 @@ draw_plot_effects = function(effects,
       xlab("\n")+
       scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]]))+
       scale_x_continuous(limits = c(leftlim, rightlim), 
-                         breaks = round(seq(leftlim, rightlim, length.out = 9), digits=2))+
+                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       theme(legend.position = "none",
             axis.text.y = element_text(size=10),
             axis.title.y = element_text(size=12))
@@ -97,7 +97,7 @@ draw_plot_effects = function(effects,
       rightlim=0.2
     }
     v[["Gender"]] = v[["Gender"]]+scale_x_continuous(limits = c(leftlim, rightlim), 
-                                                    breaks = round(seq(leftlim, rightlim, length.out = 9), digits=2))
+                                                    breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))
   }
   
   p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
@@ -136,7 +136,7 @@ full_interaction_effects = function(data,
                         y=fct_reorder(level, desc(estimate)), col=feature))+
     labs(y="",x="Estimate")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
-                       breaks = round(seq(leftlim, rightlim, length.out = 9), digits=2))+
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
@@ -241,7 +241,7 @@ full_subgroup_analysis = function(data,
         xlab("\n")+
         scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
         scale_x_continuous(limits = c(leftlim, rightlim), 
-                           breaks = round(seq(leftlim, rightlim, length.out = 9), digits=2))+
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -306,7 +306,7 @@ full_subgroup_analysis = function(data,
         ylab(attribute)+
         xlab("\n")+
         scale_x_continuous(limits = c(leftlim, rightlim), 
-                           breaks = round(seq(leftlim, rightlim, length.out = 9), digits=2))+
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
