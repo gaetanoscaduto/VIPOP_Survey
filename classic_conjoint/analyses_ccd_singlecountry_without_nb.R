@@ -1,4 +1,3 @@
-
 # DA RICONTROLLARE
 
 
@@ -75,8 +74,9 @@ draw_plot_effects = function(effects,
                           y=level, col=feature))+
       ylab(attribute)+
       xlab("\n")+
-      xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]]))+
+      scale_x_continuous(limits = c(leftlim, rightlim), 
+                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       theme(legend.position = "none",
             axis.text.y = element_text(size=10),
             axis.title.y = element_text(size=12))
@@ -86,10 +86,23 @@ draw_plot_effects = function(effects,
   
   if(continuous == F) #outcome not continuous
   {
-    v[["Gender"]] = v[["Gender"]]+xlim(0.3,0.7)
+    if(estimator == "mm")
+    {
+      leftlim=0.3
+      rightlim=0.7
+    }
+    if(estimator == "amce")
+    {
+      leftlim=-0.2
+      rightlim=0.2
+    }
+    v[["Gender"]] = v[["Gender"]]+scale_x_continuous(limits = c(leftlim, rightlim), 
+                                                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))
   }
   
-  p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+  p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+  p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+  p=p1|p2
   
   return(p)
 }
@@ -122,7 +135,8 @@ full_interaction_effects = function(data,
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
                         y=fct_reorder(level, desc(estimate)), col=feature))+
     labs(y="",x="Estimate")+
-    xlim(leftlim,rightlim)+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
@@ -137,8 +151,6 @@ full_interaction_effects = function(data,
   saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
   
 }
-
-
 
 
 
@@ -193,6 +205,8 @@ full_subgroup_analysis = function(data,
     
     v=list()
     
+    effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
+    
     effects_subgroup1 = effects_pooled |>
       filter(temp_subgroup == subgroup1)
     
@@ -225,8 +239,9 @@ full_subgroup_analysis = function(data,
                         show.legend = T)+
         ylab(attribute)+
         xlab("\n")+
-        xlim(leftlim,rightlim)+
         scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        scale_x_continuous(limits = c(leftlim, rightlim), 
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -234,7 +249,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
     
@@ -251,6 +268,9 @@ full_subgroup_analysis = function(data,
     
     effects_pooled = set_categories_and_levels(effects_pooled,
                                                attributes = attributes)
+    
+    
+    effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
     
     
     
@@ -285,8 +305,8 @@ full_subgroup_analysis = function(data,
                         shape=19)+
         ylab(attribute)+
         xlab("\n")+
-        xlim(leftlim,rightlim)+
-        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        scale_x_continuous(limits = c(leftlim, rightlim), 
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -294,7 +314,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))|(v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
     
@@ -365,7 +387,8 @@ full_analysis = function(data,
   }
   
   p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Classic Conjoint Experiment"),
-                                 caption= toupper(estimator))
+                                 #caption= toupper(estimator)
+  )
   
   ggsave(paste0(output_wd, subdir,"singlecountry.png"), 
          p, 
@@ -443,7 +466,6 @@ data$ccd_gender = factor(data$ccd_gender, levels = c("Female", "Male"))
 #The continuous outcome should only be used for profile A, which is the one to the left
 data_continuous = data[data$ccd_profile_number == 1, ]
 
-
 if(outcome == "ideology")
 {
   formula_outcome = ccd_chosen_rw ~ ccd_gender+
@@ -516,7 +538,6 @@ if(outcome == "ideology")
 
 
 ################# ACIEs (interaction effects) #####################
-
 
 subdir = "Interactions/MMs/"
 
@@ -747,6 +768,7 @@ full_interaction_effects(data, formula_interaction_cultural,
                          "cultural")
 
 
+
 ################################################################
 ################ SUBGROUP ANALYSES #############################
 ################################################################
@@ -868,21 +890,21 @@ full_subgroup_analysis(data,
                        subgroup2 = "High"  #the name of the second subgroup (variable level)
 )
 
-### altre da aggiungere
 
+
+### altre da aggiungere
 ######### 
 ######### Ideology
 ######### 
 
-
-plot(cj(data, ccd_chosen_rw ~ ccd_gender+
-          ccd_age+ccd_religion+ccd_citysize+ccd_job+
-          ccd_consc+ccd_ope+ccd_neu+
-          ccd_restaurant+ccd_transport+ccd_animal, id = ~respid, estimate = "mm", by = ~temp_subgroup))
-
-
-
 data$temp_subgroup = factor(data[, "ideology_r"])
+
+plot(cj(data, formula_outcome,
+        id = ~respid, estimate = "mm", by = ~temp_subgroup))
+
+
+
+
 
 
 
@@ -898,6 +920,8 @@ effects_pooled = set_categories_and_levels(effects_pooled,
                                            attributes = attributes)
 
 
+effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
+
 effects_subgroup1 = effects_pooled |>
   filter(temp_subgroup == "Left-wing")
 
@@ -912,6 +936,9 @@ effects_subgroup4 = effects_pooled |>
 
 leftlim=0.3
 rightlim=0.7
+intercept=0.5
+
+v=list()
 
 for(attribute in unique(attributes))
 {
@@ -985,10 +1012,7 @@ ggsave(paste0(output_wd, subdir,"ideology_singlecountry.png"),
 data1 = data |>
   filter(ideology_r == "Right-wing" | ideology_r == "Left-wing")
 
-# data1 = data1 |>
-#   filter(ccd_gender != "Non-Binary")
-# 
-# data1$ccd_gender = factor(data1$ccd_gender, levels = c("Female", "Male"))
+
 data1$ideology_r = factor(data1$ideology_r, levels =c("Left-wing", "Right-wing"))
 
 full_subgroup_analysis(data1,
