@@ -559,9 +559,9 @@ for(var in cpd_con_names)
 {
   data = data |>
     mutate(!!var := case_when(
-      !!sym(var) == "1" ~ "con_disagree",
+      !!sym(var) == "1" ~ "con_agree",
       !!sym(var) == "2" ~ "con_neither",
-      !!sym(var) == "3" ~ "con_agree",
+      !!sym(var) == "3" ~ "con_disagree",
       is.na(!!sym(var)) ~ NA
     ) 
     )
@@ -587,9 +587,9 @@ for(var in cpd_ope_names)
 {
   data = data |>
     mutate(!!var := case_when(
-      !!sym(var) == "1" ~ "ope_disagree",
+      !!sym(var) == "1" ~ "ope_agree",
       !!sym(var) == "2" ~ "ope_neither",
-      !!sym(var) == "3" ~ "ope_agree",
+      !!sym(var) == "3" ~ "ope_disagree",
       is.na(!!sym(var)) ~ NA
     ) 
     )

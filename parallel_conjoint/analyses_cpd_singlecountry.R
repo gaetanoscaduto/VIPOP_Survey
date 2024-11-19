@@ -8,14 +8,14 @@
 #LIBRARY CALLS
 #############################################################
 
-# pacman::p_load(
-#   cregg, dplyr, ggpubr, cowplot,
-#   MASS, cjoint, corrplot, dplyr,
-#   forcats, ggplot2, gt, gtools,
-#   gtsummary, margins, openxlsx,
-#   patchwork, rio, texreg, tools,
-#   lme4, ggeffects
-# )
+pacman::p_load(
+  cregg, dplyr, ggpubr, cowplot,
+  MASS, cjoint, corrplot, dplyr,
+  forcats, ggplot2, gt, gtools,
+  gtsummary, margins, openxlsx,
+  patchwork, rio, texreg, tools,
+  lme4, ggeffects
+)
 
 #############################################################
 # DEFINING FUNCTIONS
@@ -105,20 +105,18 @@ draw_plot_effects = function(effects,
     p = ggplot(effects[effects$category == category, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper, y=level, col=feature))+
-      ylab(category)+
-      xlab("")+
-      #xlim(leftlim,rightlim)+
+      ylab("")+
+      xlab(category)+
+      xlim(leftlim,rightlim)+
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
-      scale_x_continuous(limits = c(leftlim, rightlim), 
-                         breaks = round(seq(leftlim, rightlim, length.out = 9), digits=3))+
       theme(legend.position = "none")
     
-    # if(for_comparison == T)
-    # {
-    #   p= p+ 
-    #     theme(legend.position = "none",
-    #           axis.text.y = element_text(angle = 90, hjust = 0.5, vjust=0.5))
-    # }
+    if(for_comparison == T)
+    {
+      p= p+ 
+        theme(legend.position = "none",
+              axis.text.y = element_text(angle = 90, hjust = 0.5, vjust=0.5))
+    }
     if(for_comparison==F)
     {
       p= p+ 
@@ -129,21 +127,14 @@ draw_plot_effects = function(effects,
     
   }
   
-  if(for_comparison == F & type =="match")
+  if(for_comparison == F)
   {
-    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1, heights = c(4,2,3))
-  }
-  if(for_comparison == F & type =="nominal")
-  {
-    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1, heights = c(5,3,5))
+    p = patchwork::wrap_plots(v[["Sociodemographics"]],v[["Psychological"]],v[["Lifestyle"]], ncol=1)
   }
   if(for_comparison == T)
   {
     p=v
   }
-  
-  saveRDS(effects, paste0(output_wd,"estimations/", subdir, "singlecountry_data.rds"))
-  
   return(p)
 }
 
@@ -232,7 +223,7 @@ full_analysis = function(data,
                         leftlim=leftlim,
                         rightlim=rightlim)
   
-  p=p+patchwork::plot_annotation(#title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
+  p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
                                  caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
   
   ggsave(paste0(output_wd,"estimations/", subdir, "singlecountry.png"), 
@@ -247,6 +238,70 @@ full_analysis = function(data,
 
 
 
+#function to draw and save the plots related to the effect of the number of matches
+# (regardless of the actual attribute displayed) into the probaility of 
+#selecting someone as their conversation partners (with and without politics,
+#depending on the experimental arm selected)
+full_match_effects = function(data, 
+                              formula, 
+                              exparm = c("natural", "mediated"),
+                              typeofmodel){
+  
+  exparm=match.arg(exparm)
+  
+  filtered_data = data |>
+    filter(cpd_exparm == exparm) |> 
+    select(cpd_chosen, cpd_n_matches,
+           cpd_gender, cpd_age, cpd_educ, cpd_regionfeel, 
+           cpd_consc, cpd_ope,
+           cpd_diet, cpd_animal, cpd_holiday, cpd_ideology,
+           respid, respondent_task)
+  
+  
+  filtered_data$respid = as.factor(filtered_data$respid)
+  typeof(data$cpd_chosen)
+  typeof(filtered_data$respid)
+  
+  
+  model =  glmer(formula,  # Random intercept for each respondent
+                   data = filtered_data,
+                   family = binomial(link="logit"))
+  
+  predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
+  
+  
+  # Convert effect object to a data frame
+  effect_df <- data.frame(
+    x = predictions$x,  # The levels of the predictor
+    fit = predictions$predicted,   # Fitted values (predicted)
+    lower = predictions$conf.low, # Lower bound of confidence intervals
+    upper = predictions$conf.high  # Upper bound of confidence intervals
+  )
+  
+  nattr = ifelse(exparm == "natural", 9, 9+1)
+  
+  # Create caterpillar plot
+  p = ggplot(effect_df, aes(x = x, y = fit)) +
+    geom_point() +  # Add points for the fitted values
+    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +  # Add error bars
+    labs(
+      x = "Number of attribute matches",
+      y = "Effect on the probability of engaging conversation",
+      title = ""
+    )+
+    scale_y_continuous(breaks=seq(0,1, by=0.1))+
+    scale_x_continuous(breaks=seq(0,nattr, by=1))
+  
+  ggsave(paste0(output_wd,"estimations/", 
+                subdir, "singlecountry_", exparm, typeofmodel, ".png"), 
+         p, 
+         height = 10, 
+         width = 10, create.dir = T)
+  
+  saveRDS(p, file = paste0(output_wd,"estimations/", 
+                           subdir, "singlecountry_", exparm, typeofmodel, ".rds"))
+  
+}
 
 
 compare_effects = function(data,
@@ -361,29 +416,31 @@ compare_effects = function(data,
                            categories=categories,
                            estimator=estimator,
                            y_labels=y_labels_plots,
-                           leftlim=-0.2,
-                           rightlim=0.2,
+                           leftlim=-0.1,
+                           rightlim=0.1,
                            x_intercept = 0,
                            for_comparison = T)
   
   #Now I assemble three plots (for each category) so that they are easy to compare
   
-  p_socio = (pates[["Sociodemographics"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Sociodemographics"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Sociodemographics"]]+labs(title = "Eliminated Effects (EEs)"))
+  p_socio = pates[["Sociodemographics"]]+pacdes[["Sociodemographics"]]+pees[["Sociodemographics"]]
   
-  p_psycho = (pates[["Psychological"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Psychological"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Psychological"]]+labs(title = "Eliminated Effects (EEs)"))
+  p_psycho = pates[["Psychological"]]+pacdes[["Psychological"]]+pees[["Psychological"]]
   
-  p_lifestyle = (pates[["Lifestyle"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Lifestyle"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Lifestyle"]]+labs(title = "Eliminated Effects (EEs)"))
+  p_lifestyle = pates[["Lifestyle"]]+pacdes[["Lifestyle"]]+pees[["Lifestyle"]]
   
   
   #I save the three plots
   
-
+  # p=p+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", arm),
+  #                                caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
+  # 
   ggsave(paste0(output_wd,"estimations/", subdir, "socio_singlecountry.png"), 
          p_socio, 
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p_socio, file = paste0(output_wd,"estimations/", subdir, "socio_singlecountry.rds"))
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "socio_singlecountry.rds"))
   
   
   ggsave(paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.png"), 
@@ -391,7 +448,7 @@ compare_effects = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p_psycho, file = paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.rds"))
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "psycho_singlecountry.rds"))
   
   
   ggsave(paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.png"), 
@@ -399,7 +456,7 @@ compare_effects = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p_lifestyle, file = paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.rds"))
+  saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "lifestyle_singlecountry.rds"))
   
   
   
@@ -501,7 +558,8 @@ y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
                                         "Ope Mismatch", "Ope Match"),
                       Lifestyle =c("Diet Mismatch", "Diet Match",
                                    "Animal Mismatch", "Animal Match",
-                                   "Holiday Mismatch", "Holiday Match"),
+                                   "Holiday Mismatch", "Holiday Match"
+                      ),
                       Political = c("Ideology Mismatch",
                                     "Ideology Match"))
 
@@ -524,7 +582,7 @@ if(context == "IT")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 35", "Between 35 and 59","Over 60",
+                   "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
                    "Central Italy","Northern Italy","Southern Italy",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -534,7 +592,7 @@ if(context == "IT")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 35", "Between 35 and 59","Over 60",
+                                                "Under 30", "Between 30 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Central Italy","Northern Italy","Southern Italy"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -563,7 +621,7 @@ if(context=="FR")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 35", "Between 35 and 59","Over 60",
+                   "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
                    "No Paris","Paris",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -573,7 +631,7 @@ if(context=="FR")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 35", "Between 35 and 59","Over 60",
+                                                "Under 30", "Between 30 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "No Paris","Paris"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -603,7 +661,7 @@ if(context == "CZ")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 35", "Between 35 and 59","Over 60",
+                   "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
                    "Cechia","Moravia","Prague",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -613,7 +671,7 @@ if(context == "CZ")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 35", "Between 35 and 59","Over 60",
+                                                "Under 30", "Between 30 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Cechia","Moravia","Prague"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -642,7 +700,7 @@ if(context == "SW")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 35", "Between 35 and 59","Over 60",
+                   "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
                    "Gotland","Norrland","Svealand",
                    "High Consc.","Med. Consc.","Low Consc.",
@@ -652,7 +710,7 @@ if(context == "SW")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 35", "Between 35 and 59","Over 60",
+                                                "Under 30", "Between 30 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Gotland","Norrland","Svealand"),
                           Psychological = c("High Consc.","Med. Consc.","Low Consc.",
@@ -684,7 +742,7 @@ if(context=="POOL")
                         "Holiday","Holiday","Holiday")
   
   levels_vector= c("Female", "Male",
-                   "Under 35", "Between 35 and 59","Over 60",
+                   "Under 30", "Between 30 and 59","Over 60",
                    "Degree","No degree",
                    "Cechia (CZ)","Center (IT)", "Gotland (SW)",
                    "Moravia (CZ)", "No Paris (FR)", "North (IT)",
@@ -697,7 +755,7 @@ if(context=="POOL")
                    "City","Outdoor","Relax")
   
   y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 35", "Between 35 and 59","Over 60",
+                                                "Under 30", "Between 30 and 59","Over 60",
                                                 "Degree","No degree",
                                                 "Cechia (CZ)","Center (IT)", "Gotland (SW)",
                                                 "Moravia (CZ)", "No Paris (FR)", "North (IT)",
@@ -787,9 +845,7 @@ full_analysis(data,
               "match",
               "amce",
               "natural",
-              subdir,
-              leftlim=-0.25,
-              rightlim=0.25)
+              subdir)
 
 ############ ATEs (nominal value)
 
@@ -816,9 +872,7 @@ full_analysis(data,
               "nominal",
               "amce",
               "natural",
-              subdir,
-              leftlim=-0.18,
-              rightlim=0.18)
+              subdir)
 
 ########################################
 ############ ADCEs (MATCH/MISMATCH)#####
@@ -903,42 +957,6 @@ full_analysis(data,
               rightlim=0.1)
 
 
-
-
-################# Testing a thing don't mind me
-
-# 
-# subdir = "ACDEs/nominal/id_match/AMCEs/"
-# 
-# full_analysis(data,
-#               formula_nominal,
-#               "ACDEs",
-#               type="nominal",
-#               "amce",
-#               "ideology_match",
-#               subdir,
-#               leftlim=-0.1,
-#               rightlim=0.1)
-# 
-# ############################################################################
-# ################ ACDEs for ideological mismatch with AMCE################### 
-# ############################################################################
-# 
-# subdir = "ACDEs/nominal/id_mismatch/AMCEs/"
-# 
-# 
-# full_analysis(data,
-#               formula_nominal,
-#               "ACDEs",
-#               "nominal",
-#               "amce",
-#               "ideology_mismatch",
-#               subdir,
-#               leftlim=-0.1,
-#               rightlim=0.1)
-# 
-
-
 ############################################################################
 ########################## ELIMINATED EFFECTS ##############################
 ############################################################################
@@ -1013,45 +1031,95 @@ full_analysis(data,
 
 
 
+### Analyses on the effects of multiple matches
+
+subdir = "MatchesEffects/"
+
+#model with just the number of matches predicting the probability of being chosen
+# summary(glm(data$cpd_chosen~data$cpd_n_matches, family = 
+# #               "binomial"))
+# 
+# #now i call the function to draw the effects in the model with the actual controls
+# 
+
+# i generate the variable to include respondent_task effects
+
+data$respondent_task = factor(paste0(data$respid, data$cpd_task_number))
+
+# formula_natural_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+#   cpd_consc + cpd_ope +
+#   cpd_diet + cpd_animal + cpd_holiday +
+#   (1+cpd_n_matches | respid)
+# 
+# 
+# full_match_effects(data,
+#                    formula_natural_nmatches_randslopes,
+#                    exparm="natural",
+#                    typeofmodel = "randslopes")
+
+formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday + 
+  #respondent_task+ #this variable adds me fixed effect of the respondent_task level
+  (1 | respid) #random effects of respid
+
+full_match_effects(data,
+                   formula_natural_nmatches_randintercept,
+                   exparm="natural",
+                   typeofmodel ="randintecepts_withouttasklevel")
 
 
-######################################################################
-#### Just the pure effect of IDEOLOGY in the manipulated mediation arm
-######################################################################
+# formula_natural_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+#   cpd_consc + cpd_ope +
+#   cpd_diet + cpd_animal + cpd_holiday + 
+#   respondent_task+ #this variable adds me fixed effect of the respondent_task level
+#   (1 | respid) #random effects of respid
+# 
+# full_match_effects(data,
+#                    formula_natural_nmatches_randintercept,
+#                    exparm="natural",
+#                    typeofmodel ="randintecepts_wtasklevel")
 
 
-subdir = "Ideology_effect_raw/"
-
-formula_match_w_ideo = cpd_chosen ~  cpd_ideology + cpd_match_ideology
-
-data1=data
-
-data1$cpd_ideology = factor(data1$cpd_ideology, levels=c("center","notplaced","right","left"))
-
-
-ideology_data <- data1 |>
-  filter(cpd_exparm == "mediated") |>
-  cj(formula_match_w_ideo,
-     id = ~respid,
-     estimate = "amce", 
-     feature_labels = list(cpd_ideology = "Ideology (as shown)",
-                           cpd_match_ideology = "Ideological\n(similarity)"),
-     level_order = "descending")
-
-p = plot(ideology_data)+
-  xlab("")+
-  scale_x_continuous(limits = c(-0.12, 0.12), 
-                     breaks = round(seq(-0.12, 0.12, length.out = 9), digits=2))+
-  scale_y_discrete(labels = rev(c("Ideology (as shown)", "Center", "Not collocated", "Right", "Left",
-                                  "Ideological similarity", "Ideology Mismatch", "Idelogy Match")))+
-  theme_gray()+
-  theme(legend.position = "none")
+# formula_mediated_nmatches_randslopes = cpd_chosen~cpd_n_matches+
+#   cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+#   cpd_consc + cpd_ope +
+#   cpd_diet + cpd_animal + cpd_holiday+
+#   cpd_ideology +
+#   (1+cpd_n_matches | respid)
+# 
+# 
+# full_match_effects(data,
+#                    formula_mediated_nmatches_randslopes,
+#                    "mediated",
+#                    typeofmodel = "randslopes")
 
 
-ggsave(paste0(output_wd,"estimations/", subdir,  "ideology.png"), 
-       p, 
-       height = 4, 
-       width = 6, create.dir = T)
+formula_mediated_nmatches_randintercept = cpd_chosen~cpd_n_matches+
+  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
+  cpd_consc + cpd_ope +
+  cpd_diet + cpd_animal + cpd_holiday+
+  cpd_ideology +
+  (1 | respid)
+
+full_match_effects(data,
+                   formula_mediated_nmatches_randintercept,
+                   "mediated",
+                   typeofmodel = "randintercept")
+
+
+
+
+
+
+
+
+# 
+# 
+
 
 
 
@@ -1114,8 +1182,8 @@ plots_match = compare_effects(data,
                 arm="ideology_match", #manipulated mediation arm with ideological match, 
                 #or manipulated mediation arm with ideological mismatch
                 subdir,#the subdirectory where the plots will be saved
-                leftlim=-0.2,
-                rightlim=0.2,
+                leftlim=-0.1,
+                rightlim=0.1,
                 x_intercept=0
                 )
 
@@ -1131,8 +1199,8 @@ plots_mismatch = compare_effects(data,
                 arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                 #or manipulated mediation arm with ideological mismatch
                 subdir,#the subdirectory where the plots will be saved
-                leftlim=-0.2,
-                rightlim=0.2,
+                leftlim=-0.1,
+                rightlim=0.1,
                 x_intercept=0
 )
   
@@ -1146,6 +1214,10 @@ subdir="CompareEffects/ATES_vs_EEs/AMCEs/"
 plot_compare_effects(plots_match,
                      plots_mismatch, 
                      subdir)
+
+
+
+
 
 
 
