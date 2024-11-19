@@ -7,7 +7,7 @@ library(dplyr)
 #context = "IT"
 #context = "FR"
 #context = "CZ"
-#context = "SW"
+# context = "SW"
 #context = "POOL"
 
 # dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
@@ -20,6 +20,7 @@ if(context !="POOL")
 {
   data$country = context
 }
+#View(data)
 
 table(data$vce_validation, useNA = "always")
 
@@ -30,6 +31,9 @@ table(data$vce_validation, useNA = "always")
 data$pilot = ifelse(is.na(data$vce_validation), 1, 0)
 
 table(data$pilot)
+
+
+
 
 # - gender (dovrebbe essere categoriale con etichette indicate nel master, non numerica)
 
@@ -60,11 +64,18 @@ for(var in cpd_gender_names)
 } 
 
 
+# age (it is coded as n of years between year of bith and 1923)
+
+data$age_r = 2024-(data$age+1923)
+
+
 # age group
 
 data = data |>
   mutate(AGE_GROUP, 
          AGE_GROUP = case_when(
+           AGE_GROUP == "1" ~ "under35",
+           AGE_GROUP == "2" ~ "between35and59",
            AGE_GROUP == "3" ~ "over60",
            is.na(AGE_GROUP) ~ NA
          ) 
@@ -77,11 +88,13 @@ for(var in cpd_age_names)
 {
   data = data |>
     mutate(!!var := case_when(
+      !!sym(var) == "1" ~ "under35",
+      !!sym(var) == "2" ~ "between35and59",
       !!sym(var) == "3" ~ "over60",
       is.na(!!sym(var)) ~ NA
-      )
     )
-      
+    )
+  
 } 
 # - education (che è country-dependent, e quindi vorremmo venga lasciata la modalità di risposta senza ricodifica)
 
@@ -294,6 +307,9 @@ if(context == "IT")
 {
   data <- data |>
     mutate(region_feel = case_when(
+      region_feel == 1 ~ "nord",
+      region_feel == 2 ~ "centro",
+      region_feel == 3 ~ "sud",
       TRUE ~ as.character(region_feel)  # Keeps any values not in the list as they are
     )
     )
@@ -303,17 +319,20 @@ if(context == "IT")
   {
     data = data |>
       mutate(!!var := case_when(
+        !!sym(var) == "1" ~ "nord",
+        !!sym(var) == "2" ~ "centro",
+        !!sym(var) == "3" ~ "sud",
         is.na(!!sym(var)) ~ NA
-        )
+      )
       )
   }
-
+  
 }
 
 
 if(context == "FR")
 {
-
+  
   data <- data |>
     mutate(region_feel = case_when(
       region_feel == 1 ~ "paris",
@@ -333,12 +352,12 @@ if(context == "FR")
       )
       )
   }
-
+  
 }
 
 if(context == "CZ")
 {
-
+  
   data <- data |>
     mutate(region_feel = case_when(
       region_feel == 1 ~ "cechia",
@@ -364,7 +383,7 @@ if(context == "CZ")
 
 if(context == "SW")
 {
-
+  
   data <- data |>
     mutate(region_feel = case_when(
       region_feel == 1 ~ "gotland",
@@ -385,7 +404,7 @@ if(context == "SW")
       )
       )
   }
-
+  
 }
 
 
@@ -447,8 +466,8 @@ data = data |>
                          "3" = "none",
                          .missing = "NA",
                          .default = "default"
-                         )
-         )
+  )
+  )
 
 # cpd animal
 
@@ -477,8 +496,8 @@ data = data |>
                           "3" = "relax",
                           .missing = "NA",
                           .default = "default"
-                          )
-         )
+  )
+  )
 
 #holiday cpd
 
@@ -597,29 +616,27 @@ data = data |>
                            "13" = "notplaced",
                            .missing = "NA",
                            .default = "default"
-                           ) 
-         )
+  ) 
+  )
 
 #table(data$ideology)
 
-#ideology four categories
-
 data = data |>
   mutate(ideology_r = recode(ideology,
-                           "0" = "Left-wing",
-                           "1" = "Left-wing",
-                           "2" = "Left-wing",
-                           "3" = "Left-wing",
-                           "4" = "Center",
-                           "5" = "Center",
-                           "6" = "Center",
-                           "7" = "Right-wing",
-                           "8" = "Right-wing",
-                           "9" = "Right-wing",
-                           "10" = "Right-wing",
-                           "notplaced" = "Not collocated",
-                           .missing = "NA",
-                           .default = "default"
+                             "0" = "Left-wing",
+                             "1" = "Left-wing",
+                             "2" = "Left-wing",
+                             "3" = "Left-wing",
+                             "4" = "Center",
+                             "5" = "Center",
+                             "6" = "Center",
+                             "7" = "Right-wing",
+                             "8" = "Right-wing",
+                             "9" = "Right-wing",
+                             "10" = "Right-wing",
+                             "notplaced" = "Not collocated",
+                             .missing = "NA",
+                             .default = "default"
   ) 
   )
 
@@ -660,12 +677,16 @@ for(var in cpd_ideo_names)
 
 #sns_use - recode
 table(data$sns_use)
-#                               "3" = "at_least_once_a_week",
-#                               "4" = "at_least_once_a_day",
-#                               "5" = "more_than_once_per_day",
-#   ) 
-#   )
 
+data = data |>
+  mutate(sns_use_rec = recode(sns_use,
+                              "1" = "nev_hardev",
+                              "2" = "lessthan10",
+                              "3" = "between10and30",
+                              "4" = "between30and60",
+                              "5" = "morethan60",
+  ) 
+  )
 
 #table(data$sns_use_rec)
 
@@ -678,9 +699,8 @@ data = data |>
                                 "3" = "rarely",
                                 "4" = "often",
                                 "5" = "often",
-                                ) 
-         )
-
+  ) 
+  )
 
 #table(data$sns_use_dummy)
 ##
@@ -696,8 +716,8 @@ data = data |>
                                "3" = "average",
                                "4" = "quite",
                                "5" = "very",
-                               ) 
-         )
+  ) 
+  )
 
 #table(data$interest_rec)
 
@@ -709,8 +729,8 @@ data = data |>
                                  "3" = "no_interest",
                                  "4" = "yes_interest",
                                  "5" = "yes_interest",
-                                 ) 
-         )
+  ) 
+  )
 
 #exposure - recode
 
@@ -741,7 +761,7 @@ data = data |>
                                  "5" = "more10min",
                                  "6" = "more10min",
                                  "7" = "more10min")
-         )
+  )
 ##
 
 
@@ -772,7 +792,7 @@ ccd_varnames=list(gender=c(""),
                   restaurant=c(""),
                   transport=c(""),
                   animal=c("")
-                  )
+)
 
 
 # i put in ccd_varnames[attribute] the names of the variables that in the dataset
@@ -787,7 +807,7 @@ for(attribute in conjattr_full)
 
 # Define the list with label mappings for each variable
 label_list <- list(gender=c("Female", "Male", "Non-binary"),
-                   age=c("25 years old","45 years old","65 years old"),
+                   age=c("25 years old","45 years old","65 years old"), 
                    religion=c("Practitioner","Non practitioner", "Non believer"),
                    citysize=c("Big", "Small", "Medium"), #ricorda di correggere l'ordine di sti factor
                    job=c("Entrepreneur", "Teacher", "Waiter", "Lawyer"),
@@ -795,7 +815,7 @@ label_list <- list(gender=c("Female", "Male", "Non-binary"),
                    ope=c("Open", "Rigid"),
                    neu=c("Calm", "Anxious"),
                    restaurant=c("Traditional", "Vegan","Asian","Steakhouse"),
-                   transport=c("Bicycle","Public Transport","SUV"),
+                   transport=c("Bycicle","Public Transport","SUV"),
                    animal=c("Large dog","Small dog","Cat", "No pets")
 )
 
@@ -835,8 +855,8 @@ data = data |>
                                    "4" = "med",
                                    .missing = "NA",
                                    .default = "default"
-                                   ) 
-         )
+  ) 
+  )
 
 #table(data$attention_check1)
 
@@ -874,9 +894,6 @@ if(context=="FR")
       votechoice == 6 ~ "LE - EELV - Les Écologistes - Europe Ecologie Les Verts",
       votechoice == 7 ~ "Coalition La France fière (Reconquête!, Centre national des indépendants et paysans)",
       votechoice == 8 ~ "Autre",
-      votechoice == 9 ~ "Je n'ai pas voté/je me suis abstenu(e)",
-      votechoice == 10 ~ "Bulletin blanc/nul",
-      votechoice == 11 ~ "Je préfère ne pas répondre",
       TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
 }
@@ -896,9 +913,6 @@ if(context=="CZ")
       votechoice == 10 ~ "Svobodní - Strana svobodných občanů",
       votechoice == 11 ~ "Zelení - Strana zelených",
       votechoice == 12 ~ "Jinou stranu",
-      votechoice == 13 ~ "Nehlasoval jsem/zdržel jsem se hlasování",
-      votechoice == 14 ~ "Prázdný/neplatný hlasovací lístek",
-      votechoice == 15 ~ "Raději jsem neodpověděl(a)",
       TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
@@ -916,9 +930,6 @@ if(context=="SW")
       votechoice == 7 ~ "KD - Kristdemokraterna",
       votechoice == 8 ~ "L - Liberalerna",
       votechoice == 9 ~ "Övriga parter",
-      votechoice == 10 ~ "Jag röstade inte/avstod från att rösta",
-      votechoice == 11 ~ "Blank/Null röstsedel",
-      votechoice == 12 ~ "Jag föredrar att inte svara ",
       TRUE ~ as.character(votechoice)  # Keeps any values not in the list as they are
     ))
   
@@ -939,8 +950,8 @@ data = data |>
                                    "4" = "uspres",
                                    .missing = "NA",
                                    .default = "default"
-                                   )
-         )
+  )
+  )
 
 #table(data$attention_check2)
 
@@ -1015,6 +1026,7 @@ data <- data %>%
 names(data)[which(grepl("populism",names(data)))]
 
 
+
 # I create more usable time variables
 data$start_r <- as.POSIXct(data$start_, format = "%Y-%m-%d %H:%M:%S")
 data$end_r <- as.POSIXct(data$end_, format = "%Y-%m-%d %H:%M:%S")
@@ -1037,6 +1049,15 @@ if(clean == T)
   #Remove laggards
   data = data[data$time_diff_mins<35, ]
   
+}
+
+
+if(clean == T)
+{
+  writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data)), con = paste0(dataset_rep, "nrow_clean_",context,".txt")) 
+  writeLines(paste0("Total N respondent clean dataset ", context, " ", nrow(data), 
+                    "\n Mean time for completion: ", mean(data$time_diff_mins)),
+             con = paste0(dataset_rep, "nrow_clean_",context,".txt")) 
 }
 
 export(data, paste0(dataset_rep, "data_recoded_", context, ".RDS"))
