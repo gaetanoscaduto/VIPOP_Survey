@@ -71,7 +71,8 @@ for(attribute in unique(attributes))
                         show.legend = F)+
     ylab(attribute)+
     xlab("\n")+
-    xlim(leftlim,rightlim)+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
     scale_color_manual(
       values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
@@ -94,8 +95,9 @@ for(attribute in unique(attributes))
   
   v[[attribute]] = p
 }
-
-p1 = ((v[["Ethnicity"]]+xlim(0.3,0.7))/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
+0.7
+p1 = ((v[["Ethnicity"]]+scale_x_continuous(limits = c(0.3, 0.7),
+                                          breaks = round(seq(0.3, 0.7, length.out = 7), digits=3)))/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
 p2= (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
 p=p1|p2
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing\nTriangle=Populism\nMarginal means, 95% C.I.")
@@ -135,7 +137,8 @@ for(attribute in unique(attributes))
                     show.legend = F)+
     ylab(attribute)+
     xlab("\n")+
-    xlim(leftlim,rightlim)+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
     scale_color_manual(
       values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
@@ -159,7 +162,8 @@ for(attribute in unique(attributes))
   v[[attribute]] = p
 }
 
-p = ((v[["Ethnicity"]]+xlim(-0.2,0.2))/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+p = ((v[["Ethnicity"]]+scale_x_continuous(limits = c(-0.2, 0.2), 
+                                          breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3)))/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing\nTriangle=Populism\nAMCEs, 95% C.I.")
 
 p
@@ -204,7 +208,8 @@ p_politics = ggplot()+
                   position = position_nudge(y = -1/10),
                   show.legend = T)+
   labs(y="",x="")+
-  xlim(leftlim,rightlim)+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
   scale_color_manual(
     values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
@@ -318,7 +323,8 @@ p_sociodemo = ggplot()+
                   position = position_nudge(y = -1/10),
                   show.legend = T)+
   labs(y="",x="")+
-  xlim(leftlim,rightlim)+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
   scale_color_manual(
     values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
@@ -434,7 +440,8 @@ p_cultural = ggplot()+
                   position = position_nudge(y = -1/10),
                   show.legend = T)+
   labs(y="",x="Marginal Mean")+
-  xlim(leftlim,rightlim)+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
   scale_color_manual(
     values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
