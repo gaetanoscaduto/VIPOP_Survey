@@ -190,8 +190,8 @@ pop_data_politics$level = gsub("\n"," ", pop_data_politics$level)
 
 
 intercept = 0.5
-leftlim = 0.2
-rightlim = 0.8
+leftlim = 0.35
+rightlim = 0.65
 
 p_politics = ggplot()+
   geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -422,8 +422,8 @@ pop_data_cultural$level = gsub("\n"," ", pop_data_cultural$level)
 
 
 intercept = 0.5
-leftlim = 0.2
-rightlim = 0.8
+leftlim = 0.4
+rightlim = 0.6
 
 p_cultural = ggplot()+
   geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -522,6 +522,25 @@ p_cultural
 ##################################  
 ################# ACIES graphs for thesis
 ################# #################
+
+
+ggsave(paste0(output_wd,"ACIEs_interacted_politics_mm.png"), 
+       p_politics,
+       height = 10,
+       width = 8,
+       create.dir = T)
+
+ggsave(paste0(output_wd,"ACIEs_interacted_sociodemo_mm.png"), 
+       p_sociodemo,
+       height = 10,
+       width = 8,
+       create.dir = T)
+
+ggsave(paste0(output_wd,"ACIEs_interacted_cultural_mm.png"), 
+       p_cultural,
+       height = 10,
+       width = 8,
+       create.dir = T)
 
 
 p= p_politics/p_sociodemo/p_cultural+plot_layout(heights = c(2, 1, 2))
