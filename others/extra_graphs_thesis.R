@@ -105,7 +105,7 @@ p = p+patchwork::plot_annotation(caption= "Circle = Right-wing\nTriangle=Populis
 p
 
 ggsave(paste0(output_wd,"mms_main.png"), p, 
-       height = 12, 
+       height = 10, 
        width = 8,
        create.dir = T)
 
@@ -169,7 +169,7 @@ p = p+patchwork::plot_annotation(caption= "Circle = Right-wing\nTriangle=Populis
 p
 
 ggsave(paste0(output_wd,"amces_main.png"), p, 
-       height = 12, 
+       height = 10, 
        width = 8,
        create.dir = T)
 
@@ -535,9 +535,9 @@ ggsave(paste0(output_wd,"mms_ACIEs_full.png"), p,
 
 ################### Rearrange the graph for the ACIEs in the classic conjoint
 
-plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_sociodemos_jobagemm.rds"))
-plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_sociodemos_jobreligionmm.rds"))
-plot3 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_sociodemos_religionagemm.rds"))
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobagemm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobreligionmm.rds"))
+plot3 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_religionagemm.rds"))
 
 plot1=plot1+labs(y="Interaction between age and job", x="")
 plot2=plot2+labs(y="Interaction between religion and job")
@@ -554,8 +554,8 @@ ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_Sociodemos.png"), p,
        create.dir = T)
 
 
-plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_psychomm.rds"))
-plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Without NB/Interactions/MMs/interacted_culturalmm.rds"))
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_psychomm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_culturalmm.rds"))
 
 plot1=plot1+labs(y="Interaction between psychological attributes", x="")
 plot2=plot2+labs(y="Interaction between favorite restaurant and transportation")
@@ -579,6 +579,8 @@ ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_PsychoandLifestyle.png"), p,
 data = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/MMs/_data_singlecountry.rds"))
 
 
+leftlim=0.33
+rightlim=0.6
 p = ggplot(data)+
   geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
   geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
@@ -592,10 +594,10 @@ p = ggplot(data)+
         axis.text.y = element_text(size=10),
         axis.title.y = element_text(size=12))
 
-
+p
 ggsave(paste0(output_wd,"MMs_ccd_ordered.png"), 
        p, 
-       height = 14, 
+       height = 10, 
        width = 8,
        create.dir = T)
 

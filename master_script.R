@@ -60,12 +60,12 @@ for(context in contexts)
       withoutNB=F
       source("classic_conjoint/analyses_ccd_singlecountry.R")
       print(paste("Ok ccd analyses", outcome, context, "WithNB", Sys.time()))
-    if(outcome == "ideology") 
-    {
-      withoutNB = T
-      source("classic_conjoint/analyses_ccd_singlecountry.R")
-      print(paste("Ok ccd analyses", outcome, context, "WithoutNB", Sys.time()))
-    }
+    # if(outcome == "ideology") 
+    # {
+    #   withoutNB = T
+    #   source("classic_conjoint/analyses_ccd_singlecountry.R")
+    #   print(paste("Ok ccd analyses", outcome, context, "WithoutNB", Sys.time()))
+    # }
   }
   
   #visual conjoint scripts

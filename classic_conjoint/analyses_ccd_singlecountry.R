@@ -145,11 +145,11 @@ full_interaction_effects = function(data,
   ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, estimator, ".png"), 
          p, 
          height = 10, 
-         width = 10, create.dir = T)
+         width = 8, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, estimator, ".rds"))
   
-  saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, "_data.rds"))
+  saveRDS(effects, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, estimator, "_data.rds"))
   
 }
 
@@ -327,8 +327,8 @@ full_subgroup_analysis = function(data,
   
   ggsave(paste0(output_wd, subdir, subgroup_name, estimator, ".png"), 
          p, 
-         height = 14, 
-         width = 12, create.dir = T)
+         height = 10, 
+         width = 8, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
   
@@ -395,7 +395,7 @@ full_analysis = function(data,
   ggsave(paste0(output_wd, subdir,"singlecountry.png"), 
          p, 
          height = 10, 
-         width = 10, create.dir = T)
+         width = 8, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.rds"))
 
@@ -658,6 +658,28 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          intercept = 0.5,
                          "sociodemos_jobreligion")
 
+
+### try with all three together
+
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_job, sep = ", ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "mm",
+                         leftlim = 0.3,
+                         rightlim = 0.7,
+                         intercept = 0.5,
+                         "sociodemos_jobreligionage")
+
 #psycho
 
 data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep ="\n")
@@ -773,6 +795,29 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          rightlim = 0.15,
                          intercept = 0,
                          "sociodemos_jobreligion")
+
+
+### all three the sociodemos together let's see what happens here
+
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_job, sep = ", ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "amce",
+                         leftlim = -0.2,
+                         rightlim = 0.2,
+                         intercept = 0,
+                         "sociodemos_jobreligionage")
+
 
 #psycho
 
@@ -1063,8 +1108,8 @@ estimator = "mm"
 
     ggsave(paste0(output_wd, subdir,"ideology_singlecountry.png"), 
            p, 
-           height = 12, 
-           width = 10, create.dir = T)
+           height = 10, 
+           width = 8, create.dir = T)
 
     
     ### test of significance differences between left and right

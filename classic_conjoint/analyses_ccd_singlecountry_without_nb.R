@@ -71,7 +71,7 @@ draw_plot_effects = function(effects,
     p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                          y=level, col=feature))+
+                          y=level), col= wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
       scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]]))+
@@ -133,7 +133,7 @@ full_interaction_effects = function(data,
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(level, desc(estimate)), col=feature))+
+                        y=fct_reorder(level, desc(estimate)), col=wesanderson::wes_palettes$Darjeeling1[1]))+
     labs(y="",x="Estimate")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
                        breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
