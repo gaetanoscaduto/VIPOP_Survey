@@ -571,3 +571,31 @@ ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_PsychoandLifestyle.png"), p,
 
 
 
+##################################  ##########################################
+################# Ordered overall MM graph for between attribute  ###########
+################# confrontation in the classic conjoint #####################  
+################# ################# ########################################  
+
+data = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/MMs/_data_singlecountry.rds"))
+
+
+p = ggplot(data)+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, estimate, .desc = T)), 
+                  col = wesanderson::wes_palettes$Darjeeling1[1])+
+  ylab("Attribute Level")+
+  xlab("Effect (MM)")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+  theme(legend.position = "none",
+        axis.text.y = element_text(size=10),
+        axis.title.y = element_text(size=12))
+
+
+ggsave(paste0(output_wd,"MMs_ccd_ordered.png"), 
+       p, 
+       height = 14, 
+       width = 8,
+       create.dir = T)
+

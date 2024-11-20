@@ -818,7 +818,7 @@ label_list <- list(gender=c("Female", "Male", "Non-binary"),
                    ope=c("Open", "Rigid"),
                    neu=c("Calm", "Anxious"),
                    restaurant=c("Traditional", "Vegan","Asian","Steakhouse"),
-                   transport=c("Bycicle","Public Transport","SUV"),
+                   transport=c("Bicycle","Public Transport","SUV"),
                    animal=c("Large dog","Small dog","Cat", "No pets")
 )
 

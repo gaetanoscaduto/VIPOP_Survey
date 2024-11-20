@@ -23,7 +23,7 @@ dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 #attention checks, clean must be true. Otherwise set it to false
 
 #contexts = c("IT", "FR", "CZ", "SW")
-contexts = c("IT", "FR")
+contexts = c("IT")#, "FR")
 clean = T
 
 for(context in contexts)
@@ -57,8 +57,15 @@ for(context in contexts)
   
   for(outcome in c("ideology", "populism"))
   {
-    source("classic_conjoint/analyses_ccd_singlecountry.R")
-    print(paste("Ok ccd analyses", outcome, context, Sys.time()))
+      withoutNB=F
+      source("classic_conjoint/analyses_ccd_singlecountry.R")
+      print(paste("Ok ccd analyses", outcome, context, "WithNB", Sys.time()))
+    if(outcome == "ideology") 
+    {
+      withoutNB = T
+      source("classic_conjoint/analyses_ccd_singlecountry.R")
+      print(paste("Ok ccd analyses", outcome, context, "WithoutNB", Sys.time()))
+    }
   }
   
   #visual conjoint scripts

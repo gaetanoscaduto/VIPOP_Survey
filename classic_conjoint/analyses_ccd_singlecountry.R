@@ -71,7 +71,7 @@ draw_plot_effects = function(effects,
     p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                          y=level, col=feature))+
+                          y=level), col = wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
       scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]]))+
@@ -133,7 +133,8 @@ full_interaction_effects = function(data,
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(level, desc(estimate)), col=feature))+
+                        y=fct_reorder(level, desc(estimate))),
+                    col=wesanderson::wes_palettes$Darjeeling1[1])+
     labs(y="",x="Estimate")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
                        breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
@@ -182,7 +183,8 @@ full_subgroup_analysis = function(data,
       cj(formula, 
          id = ~respid,
          by = ~temp_subgroup,
-         estimate = estimator)
+         estimate = estimator,
+          alpha=0.01)
     
     effects_pooled = set_categories_and_levels(effects_pooled,
                                                attributes = attributes)
@@ -325,7 +327,7 @@ full_subgroup_analysis = function(data,
   
   ggsave(paste0(output_wd, subdir, subgroup_name, estimator, ".png"), 
          p, 
-         height = 12, 
+         height = 14, 
          width = 12, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
@@ -403,37 +405,6 @@ full_analysis = function(data,
   
 }
 
-#Our levels regarding match and mismatches (for labeling)
-
-
-y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
-                      age=c("25 years old","45 years old","65 years old"),
-                      religion=c("Non believer","Non practitioner", "Practitioner"),
-                      citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
-                      job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
-                      conscientiousness=c("Disorganized", "Reliable"),
-                      openness=c("Open", "Rigid"),
-                      neuroticism=c("Anxious", "Calm"),
-                      restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
-                      transport=c("Bicycle","Public Transport","SUV"),
-                      animal=c("Cat","Large dog","No pets","Small dog")
-)
-
-
-levels_vector= unlist(y_labels_plots, use.names = F)
-
-attributes= c("Gender", "Gender", "Gender",
-              "Age","Age","Age",
-              "Religion","Religion","Religion",
-              "Citysize","Citysize","Citysize",
-              "Job","Job","Job","Job",
-              "Conscientiousness","Conscientiousness",
-              "Openness","Openness",
-              "Neuroticism","Neuroticism",
-              "Restaurant","Restaurant","Restaurant","Restaurant",
-              "Transport","Transport","Transport",
-              "Animal","Animal","Animal","Animal"
-)
 
 
 
@@ -453,8 +424,93 @@ attributes= c("Gender", "Gender", "Gender",
 # gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/")
+#withoutNB=F
+
+#Our levels regarding match and mismatches (for labeling)
+
+
+if(withoutNB==F)
+{
+  y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
+                        age=c("25 years old","45 years old","65 years old"),
+                        religion=c("Non believer","Non practitioner", "Practitioner"),
+                        citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
+                        job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
+                        conscientiousness=c("Disorganized", "Reliable"),
+                        openness=c("Open", "Rigid"),
+                        neuroticism=c("Anxious", "Calm"),
+                        restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
+                        transport=c("Bicycle","Public Transport","SUV"),
+                        animal=c("Cat","Large dog","No pets","Small dog")
+  )
+                        
+  levels_vector= unlist(y_labels_plots, use.names = F)
+  
+  attributes= c("Gender", "Gender", "Gender",
+                "Age","Age","Age",
+                "Religion","Religion","Religion",
+                "Citysize","Citysize","Citysize",
+                "Job","Job","Job","Job",
+                "Conscientiousness","Conscientiousness",
+                "Openness","Openness",
+                "Neuroticism","Neuroticism",
+                "Restaurant","Restaurant","Restaurant","Restaurant",
+                "Transport","Transport","Transport",
+                "Animal","Animal","Animal","Animal"
+                )
+}
+
+if(withoutNB==T)
+{
+  y_labels_plots = list(gender=c("Female", "Male"),
+                        age=c("25 years old","45 years old","65 years old"),
+                        religion=c("Non believer","Non practitioner", "Practitioner"),
+                        citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
+                        job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
+                        conscientiousness=c("Disorganized", "Reliable"),
+                        openness=c("Open", "Rigid"),
+                        neuroticism=c("Anxious", "Calm"),
+                        restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
+                        transport=c("Bicycle","Public Transport","SUV"),
+                        animal=c("Cat","Large dog","No pets","Small dog")
+                        )
+  levels_vector= unlist(y_labels_plots, use.names = F)
+  
+  attributes= c("Gender", "Gender",
+                "Age","Age","Age",
+                "Religion","Religion","Religion",
+                "Citysize","Citysize","Citysize",
+                "Job","Job","Job","Job",
+                "Conscientiousness","Conscientiousness",
+                "Openness","Openness",
+                "Neuroticism","Neuroticism",
+                "Restaurant","Restaurant","Restaurant","Restaurant",
+                "Transport","Transport","Transport",
+                "Animal","Animal","Animal","Animal"
+  )
+}
+
+
+if(withoutNB==F)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/") 
+}
+
+if(withoutNB==T)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/", outcome,"/", context, "/Without NB/")
+}
+
 data = readRDS(paste0(dataset_rep, "cjdata_ccd_", context, ".RDS"))
+
+if(withoutNB==T)
+{
+  #Remove those that received non-binary attribute level
+  data = data |> 
+    filter(ccd_gender != "Non-Binary")
+  
+  data$ccd_gender = factor(data$ccd_gender, levels = c("Female", "Male"))
+}
 
 
 #The continuous outcome should only be used for profile A, which is the one to the left
@@ -790,6 +846,8 @@ full_subgroup_analysis(data,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
+                       leftlim = -0.1,
+                       rightlim = 0.1,
                        subgroup_variable = "gender_r",
                        subgroup_name = "Gender",
                        subgroup1 = "Female",
@@ -819,6 +877,8 @@ full_subgroup_analysis(data,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
+                       leftlim = -0.1,
+                       rightlim = 0.1,
                        subgroup_variable = "educ_r",
                        subgroup_name = "Education level",
                        subgroup1 = "College",
@@ -849,6 +909,8 @@ full_subgroup_analysis(data,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
+                       leftlim = -0.1,
+                       rightlim = 0.1,
                        subgroup_variable = "interest_r",
                        subgroup_name = "Political Interest",
                        subgroup1 = "Low",
@@ -879,6 +941,8 @@ full_subgroup_analysis(data,
                        estimator="mm_differences",
                        y_labels=y_labels_plots,
                        subdir,
+                       leftlim = -0.1,
+                       rightlim = 0.1,
                        subgroup_variable = "exposure_r",
                        subgroup_name = "News media Exposure",
                        subgroup1 = "Low",
@@ -909,7 +973,8 @@ estimator = "mm"
       cj(formula_outcome, 
          id = ~respid,
          by = ~temp_subgroup,
-         estimate = estimator)
+         estimate = estimator,
+         alpha=0.01)
     
     effects_pooled = set_categories_and_levels(effects_pooled,
                                                attributes = attributes)
@@ -1015,8 +1080,8 @@ estimator = "mm"
                            estimator="mm_differences",
                            y_labels=y_labels_plots,
                            subdir,
-                           leftlim=-0.15,
-                           rightlim=0.15,
+                           leftlim = -0.1,
+                           rightlim = 0.1,
                            subgroup_variable = "ideology_r",
                            subgroup_name = "Political Ideology",
                            subgroup1 = "Left",
