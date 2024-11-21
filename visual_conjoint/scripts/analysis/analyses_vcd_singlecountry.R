@@ -212,8 +212,9 @@ full_subgroup_analysis = function(data,
          id = ~respid,
          by = ~temp_subgroup,
          estimate = estimator,
-         alpha=0.01,
-         h0=h_0)
+         alpha=0.01#,
+         #h0=h_0
+         )
     
     effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                attributes = attributes)
@@ -312,8 +313,9 @@ full_interaction_effects = function(data,
   effects <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = estimator,
-       h0=h_0)
+       estimate = estimator#,
+       #h0=h_0
+       )
   
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -358,8 +360,9 @@ full_analysis = function(data,
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = estimator,
-       h0=h_0)
+       estimate = estimator#,
+       #h0=h_0
+       )
   
   effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                     attributes = attributes)
@@ -860,8 +863,9 @@ effects_pooled <- data |>
   cj(formula_outcome, 
      id = ~respid,
      by = ~temp_subgroup,
-     estimate = estimator,
-     h0=h_0)
+     estimate = estimator#,
+     #h0=h_0
+     )
 
 effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                            attributes = attributes)
