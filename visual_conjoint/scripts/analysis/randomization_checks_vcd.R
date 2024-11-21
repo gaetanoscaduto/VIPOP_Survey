@@ -18,9 +18,9 @@
 #context = "SW"
 #context = "POOL"
 
-#outcome=ideology
-#outcome=populism
-#outcome=trust
+#outcome="ideology"
+#outcome="populism"
+#outcome="trust"
 
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
@@ -187,51 +187,91 @@ ggsave(paste0(output_wd, "effect based on whether the profile is on the right.pn
 data$vcd_sociodemo = factor(paste0(data$vcd_gender, "_", data$vcd_ethnicity))
 
 
-p = plot(cj(data, 
+cj = cj(data, 
         vcd_outcome ~ vcd_sociodemo + vcd_name,  
             id = ~respid,
         estimate = "mm",
         alpha=0.01,
         feature_labels = list(vcd_sociodemo="Interaction of gender,\nand ethnicty\n",
-                              vcd_surname ="Names")),
-     vline = 0.5)
+                              vcd_name ="Names"))
   
+cj = cj |>
+  filter(feature == "Names") |>
+  arrange(desc(estimate))
+
+
+p = plot(cj,vline=0.5)+
+  labs(caption = "99% C.I.")+
+  theme_gray()+
+  theme(legend.position="none")
+
+
+p
 
 ggsave(paste0(output_wd, "no_name_effects.png"),
-       p, height = 12, width = 8, create.dir = T)
+       p, height = 10, width = 8, create.dir = T)
 
 # Controlling that surnames have no effects beyond gender ethinicity and age
 
-p = plot(cj(data, 
+cj = cj(data, 
         vcd_outcome ~ vcd_sociodemo + vcd_surname,  
         # vcd_surname + vcd_identifier,
         id = ~respid,
         estimate = "mm",
         alpha=0.01,
         feature_labels = list(vcd_sociodemo="Interaction of gender,\nand ethnicty\n",
-                           vcd_surname ="Surnames")),
-        vline = 0.5)+
-  labs(caption = "99% C.I.")
+                           vcd_surname= "Surnames"))
+
+cj = cj |>
+  filter(feature == "Surnames") |>
+  arrange(desc(estimate))
+
+
+p = plot(cj,vline=0.5)+
+  labs(caption = "99% C.I.")+
+  theme_gray()+
+  theme(legend.position="none")
+
+
+p
+
 
 ggsave(paste0(output_wd, "no_surname_effect.png"),
-       p, height = 12, width = 8, create.dir = T)
+       p, height = 10, width = 8, create.dir = T)
 
 #Controlling that the specif photo has no effect beside their gender/age/ethnicity combination
 
 data$vcd_sociodemo = factor(paste0(data$vcd_gender, "_", data$vcd_age, "_", data$vcd_ethnicity))
 
-data$vcd_specific_photo = factor(paste0(data$vcd_gender, "_", data$vcd_age, "_", data$vcd_ethnicity, "_", data$vcd_photo))
+data$vcd_specific_photo = factor(paste0(data$vcd_gender, "_",
+                                        data$vcd_age, "_", 
+                                        data$vcd_ethnicity, "_", data$vcd_photo))
 
-p = plot(cj(data, 
+
+cj = cj(data, 
         vcd_outcome ~ vcd_sociodemo + vcd_specific_photo,  
         # vcd_surname + vcd_identifier,
         id = ~respid,
         estimate = "mm",
         alpha=0.01,
-        feature_labels = list(vcd_sociodemo="Interaction of gender,\nage, and ethnicty\n",
-                              vcd_surname ="Specific profile\npicture\n")),
+        level_order = "ascending",
+        feature_labels = list(vcd_sociodemo="Interaction of gender,\nage, and ethnicity\n",
+                              vcd_specific_photo ="Specific profile\npicture\n"))
+
+cj = cj |>
+  filter(feature == "Specific profile\npicture\n") |>
+  arrange(desc(estimate))
+
+
+
+p = plot(cj,
      vline = 0.5)+
-  labs(caption = "99% C.I.")
+  labs(caption = "99% C.I.")+
+  theme_gray()+
+  theme(legend.position="none")
+
+p
 
 ggsave(paste0(output_wd, "no_photo_effect.png"),
-       p, height = 12, width = 8, create.dir = T)
+       p, height = 10, width = 8, create.dir = T)
+
