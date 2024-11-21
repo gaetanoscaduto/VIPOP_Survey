@@ -159,12 +159,14 @@ full_interaction_effects_bycountry = function(data,
     cj(formula, 
        id = ~respid,
        estimate = "mm",
-       by=~vcd_country)
+       by=~vcd_country,
+       h0=0.5)
   
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = "mm")
+       estimate = "mm",
+       h0=0.5)
   
   effects_pooled$vcd_country = "POOL"
   effects_pooled$BY = "POOL"
@@ -268,17 +270,22 @@ full_analysis_bycountry = function(data,
 
   estimator=match.arg(estimator)
   
+  
+  h_0 = ifelse(estimator == "mm", 0.5, 0)
+  
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = estimator
+       estimate = estimator,
+       h0=h_0
        )
   
   effects_bycountry <- data |>
     cj(formula, 
        id = ~respid, 
        by = ~vcd_country,
-       estimate = estimator
+       estimate = estimator,
+       h0=h_0
        )
   
 

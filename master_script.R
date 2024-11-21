@@ -72,7 +72,8 @@ for(context in contexts)
   source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
   print(paste("Ok vcd data man", context, Sys.time()))
   
-  for(outcome in c("ideology", "trust", "populism"))
+  for(outcome in c("ideology", #"trust",
+                   "populism"))
   {
     source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")
     print(paste("Ok vcd randcheck", outcome, context, Sys.time()))

@@ -76,8 +76,8 @@ v=list()
                           y=level, col=feature))+
       ylab(attribute)+
       xlab("\n")+
-      xlim(leftlim,rightlim)+
-      #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+     scale_x_continuous(limits = c(leftlim, rightlim), 
+                        breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       theme(legend.position = "none",
             axis.text.y = element_text(size=10),
             axis.title.y = element_text(size=12))
@@ -85,7 +85,9 @@ v=list()
    v[[attribute]] = p
   }
   
-  p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
+  p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
+                                                           breaks = round(seq(leftlim, rightlim, length.out = 7),
+                                                                          digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
   p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
   p=p1|p2
   
@@ -118,11 +120,16 @@ full_subgroup_analysis = function(data,
   
   if(estimator == "mm" | estimator == "amce")
   {
+    
+    h_0 = ifelse(estimator =="mm", 0.5, 0)
+    
     effects_pooled <- data |>
       cj(formula, 
          id = ~respid,
          by = ~temp_subgroup,
-         estimate = estimator)
+         estimate = estimator,
+         alpha=0.01, 
+         h=h_0)
     
     effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                attributes = attributes)
@@ -176,8 +183,8 @@ full_subgroup_analysis = function(data,
                         show.legend = T)+
         ylab(attribute)+
         xlab("\n")+
-        xlim(leftlim,rightlim)+
-        #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        scale_x_continuous(limits = c(leftlim, rightlim), 
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -185,7 +192,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
+    p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
+                                                             breaks = round(seq(leftlim, rightlim, length.out = 7),
+                                                                            digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
     p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
     p=p1|p2
     
@@ -196,11 +205,15 @@ full_subgroup_analysis = function(data,
   if(estimator == "mm_differences" | estimator == "amce_differences")
     
   {
+    h_0=0 # for hypotheses testing
+    
     effects_pooled <- data |>
       cj(formula, 
          id = ~respid,
          by = ~temp_subgroup,
-         estimate = estimator)
+         estimate = estimator,
+         alpha=0.01,
+         h0=h_0)
     
     effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                attributes = attributes)
@@ -238,8 +251,8 @@ full_subgroup_analysis = function(data,
                         shape=19)+
         ylab(attribute)+
         xlab("\n")+
-        xlim(leftlim,rightlim)+
-        #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+        scale_x_continuous(limits = c(leftlim, rightlim), 
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -247,7 +260,9 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
+    p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
+                                                             breaks = round(seq(leftlim, rightlim, length.out = 7),
+                                                                            digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
     p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
     p=p1|p2
     
@@ -292,11 +307,13 @@ full_interaction_effects = function(data,
     intercept = ifelse(estimator!="mm", 0, 0.5)
   }
   
+  h_0 = ifelse(estimator == "mm", 0.5, 0)
   
   effects <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = estimator)
+       estimate = estimator,
+       h0=h_0)
   
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -336,10 +353,13 @@ full_analysis = function(data,
   
    estimator=match.arg(estimator)
 
+   h_0 = ifelse(estimator == "mm", 0.5, 0)
+   
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = estimator)
+       estimate = estimator,
+       h0=h_0)
   
   effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                                     attributes = attributes)
@@ -473,17 +493,33 @@ full_analysis(data,
 ##### ACIEs
 
 
-data$interacted_sociodemos = interaction(data$vcd_age, data$vcd_ethnicity, data$vcd_gender, sep ="\n")
+data$interacted_sociodemos_full = interaction(data$vcd_age,
+                                              data$vcd_ethnicity, 
+                                              data$vcd_gender,
+                                              data$vcd_job, 
+                                              sep =", ")
 
-data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep ="\n")
+data$interacted_sociodemos = interaction(data$vcd_age,
+                                         data$vcd_ethnicity,
+                                         data$vcd_gender,
+                                         sep ="\n")
 
-data$interacted_political = interaction(data$vcd_issue, data$vcd_valence, sep ="\n")
+
+
+data$interacted_cultural = interaction(data$vcd_food,
+                                       data$vcd_animal,
+                                       sep ="\n")
+
+data$interacted_political = interaction(data$vcd_issue, 
+                                        data$vcd_valence, 
+                                        sep ="\n")
 
 
 
 
 if(outcome=="ideology")
 {
+  formula_interaction_sociodemos_full = vcd_chosen_rw ~ interacted_sociodemos_full
   formula_interaction_sociodemos = vcd_chosen_rw ~ interacted_sociodemos
   formula_interaction_cultural = vcd_chosen_rw ~ interacted_cultural
   formula_interaction_political = vcd_chosen_rw ~ interacted_political
@@ -493,6 +529,7 @@ if(outcome=="ideology")
 
 if(outcome=="trust")
 {
+  formula_interaction_sociodemos_full = vcd_chosen_trust ~ interacted_sociodemos_full
   formula_interaction_sociodemos = vcd_chosen_trust ~ interacted_sociodemos  
   formula_interaction_cultural = vcd_chosen_trust ~ interacted_cultural
   formula_interaction_political = vcd_chosen_trust ~ interacted_political
@@ -502,6 +539,7 @@ if(outcome=="trust")
 
 if(outcome=="populism")
 {
+  formula_interaction_sociodemos_full = vcd_chosen_pop ~ interacted_sociodemos_full
   formula_interaction_sociodemos = vcd_chosen_pop ~ interacted_sociodemos
   formula_interaction_cultural = vcd_chosen_pop ~ interacted_cultural
   formula_interaction_political = vcd_chosen_pop ~ interacted_political
@@ -513,6 +551,34 @@ if(outcome=="populism")
 subdir = "Interactions/MMs/"
 estimator="mm"
 
+return_list = full_interaction_effects(data, 
+                                       formula_interaction_sociodemos_full,
+                                       estimator,
+                                       leftlim=0,
+                                       rightlim=1)
+
+# plot(cj(data, 
+#         formula_interaction_sociodemos_full, 
+#         id = ~respid,
+#         estimate = estimator, 
+#         h0=0.5), 
+#      vline = 0.5)
+
+p=return_list$plot
+
+ggsave(paste0(output_wd, subdir,"interacted_sociodemos_full.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos_full.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_sociodemos_full_data.rds"))
+
+
+
+
+### interacted sociodemos not full
 
 return_list = full_interaction_effects(data, 
                              formula_interaction_sociodemos,
@@ -520,9 +586,9 @@ return_list = full_interaction_effects(data,
                              leftlim=0.2,
                              rightlim=0.8)
 
-plot(cj(data, formula_interaction_sociodemos, 
-        id = ~respid,
-        estimate = estimator), vline = 0.5)
+# plot(cj(data, formula_interaction_sociodemos, 
+#         id = ~respid,
+#         estimate = estimator), vline = 0.5)
 
 p=return_list$plot
 
@@ -788,11 +854,14 @@ plot(cj(data, formula_outcome,
 
 estimator = "mm"
 
+h_0 = ifelse(estimator == "mm", 0.5, 0)
+
 effects_pooled <- data |>
   cj(formula_outcome, 
      id = ~respid,
      by = ~temp_subgroup,
-     estimate = estimator)
+     estimate = estimator,
+     h0=h_0)
 
 effects_pooled = set_categories_and_levels_visual(effects_pooled,
                                            attributes = attributes)
@@ -860,8 +929,8 @@ for(attribute in unique(attributes))
                     show.legend = T)+
     ylab(attribute)+
     xlab("\n")+
-    xlim(leftlim,rightlim)+
-    #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     theme(legend.position = "right",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
