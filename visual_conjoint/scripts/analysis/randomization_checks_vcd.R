@@ -29,7 +29,6 @@ output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/si
 
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
-names(data)
 
 if(outcome == "ideology")
 {
@@ -182,96 +181,159 @@ ggsave(paste0(output_wd, "effect based on whether the profile is on the right.pn
 #se non ci sono differenze significative rispetto alla zero, non c'è preferenza 
 #particolare per il profilo a destra
 
-# Controlling that names have no effects beyond gender ethinicity and age
-
-data$vcd_sociodemo = factor(paste0(data$vcd_gender, "_", data$vcd_ethnicity))
 
 
-cj = cj(data, 
-        vcd_outcome ~ vcd_sociodemo + vcd_name,  
-            id = ~respid,
-        estimate = "mm",
-        alpha=0.01,
-        feature_labels = list(vcd_sociodemo="Interaction of gender,\nand ethnicty\n",
-                              vcd_name ="Names"))
+######################################### 
+############# Check name effect ########
+######################################### 
+data$vcd_ethn_gender = interaction(data$vcd_ethnicity, data$vcd_gender, sep=" ")
+
+v=list()
+
+color_to_plot = ifelse(outcome == "ideology", wesanderson::wes_palettes$Darjeeling1[1],
+                       wesanderson::wes_palettes$Darjeeling1[2])
+
+shape_to_plot = ifelse(outcome == "ideology", 
+                       19, 
+                       17)
+
+for(category in unique(data$vcd_ethn_gender))
+{
+  temp = data |>
+    filter(vcd_ethn_gender == category)
   
-cj = cj |>
-  filter(feature == "Names") |>
-  arrange(desc(estimate))
+  temp$vcd_name = factor(temp$vcd_name, levels = unique(temp$vcd_name))
+  
+  cj = cj(temp, 
+          vcd_outcome ~  vcd_name,  
+          id = ~respid,
+          alpha=0.01,
+          h0=mean(temp$vcd_outcome),
+          estimate="mm",
+          feature_labels = list(vcd_name = "Names"),
+          level_order = "ascending")
+  
+  p = plot(cj,vline=mean(temp$vcd_outcome))+
+    labs(title = category)+
+    theme_gray()+
+    theme(legend.position="none")
+  
+  p=p+geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                          y=level), 
+                      col=color_to_plot,
+                      shape=shape_to_plot)
+  
+  v[[category]] = p
+}
 
+p=(v[["Black Male"]]|v[["Black Female"]])/(v[["White Male"]]|v[["White Female"]])
 
-p = plot(cj,vline=0.5)+
-  labs(caption = "99% C.I.")+
-  theme_gray()+
-  theme(legend.position="none")
-
-
-p
+p=p+plot_annotation(caption = paste0("Vertical lines represent the sub-category's mean; Outcome=", 
+                                     toTitleCase(outcome), 
+                                     "; 99% C.I."))
 
 ggsave(paste0(output_wd, "no_name_effects.png"),
        p, height = 10, width = 8, create.dir = T)
 
-# Controlling that surnames have no effects beyond gender ethinicity and age
 
-cj = cj(data, 
-        vcd_outcome ~ vcd_sociodemo + vcd_surname,  
-        # vcd_surname + vcd_identifier,
-        id = ~respid,
-        estimate = "mm",
-        alpha=0.01,
-        feature_labels = list(vcd_sociodemo="Interaction of gender,\nand ethnicty\n",
-                           vcd_surname= "Surnames"))
+######################################### 
+############# Check surname effect ########
+######################################### 
 
-cj = cj |>
-  filter(feature == "Surnames") |>
-  arrange(desc(estimate))
+v=list()
 
+for(category in unique(data$vcd_ethn_gender))
+{
+  temp = data |>
+    filter(vcd_ethn_gender == category)
+  
+  temp$vcd_surname = factor(temp$vcd_surname, levels = unique(temp$vcd_surname))
+  
+  cj = cj(temp, 
+          vcd_outcome ~ vcd_surname,  
+          id = ~respid,
+          alpha=0.01,
+          h0=mean(temp$vcd_outcome),
+          estimate="mm",
+          feature_labels = list(vcd_surname = "Surames"),
+          level_order = "ascending")
+  
+  p = plot(cj,vline=mean(temp$vcd_outcome))+
+    labs(title = category)+
+    theme_gray()+
+    theme(legend.position="none")
+  
+  p=p+geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                          y=level), 
+                      col=color_to_plot,
+                      shape=shape_to_plot)
+  
+  v[[category]] = p
+}
 
-p = plot(cj,vline=0.5)+
-  labs(caption = "99% C.I.")+
-  theme_gray()+
-  theme(legend.position="none")
+p=(v[["Black Male"]]|v[["Black Female"]])/(v[["White Male"]]|v[["White Female"]])
 
-
-p
-
-
-ggsave(paste0(output_wd, "no_surname_effect.png"),
-       p, height = 10, width = 8, create.dir = T)
-
-#Controlling that the specif photo has no effect beside their gender/age/ethnicity combination
-
-data$vcd_sociodemo = factor(paste0(data$vcd_gender, "_", data$vcd_age, "_", data$vcd_ethnicity))
-
-data$vcd_specific_photo = factor(paste0(data$vcd_gender, "_",
-                                        data$vcd_age, "_", 
-                                        data$vcd_ethnicity, "_", data$vcd_photo))
-
-
-cj = cj(data, 
-        vcd_outcome ~ vcd_sociodemo + vcd_specific_photo,  
-        # vcd_surname + vcd_identifier,
-        id = ~respid,
-        estimate = "mm",
-        alpha=0.01,
-        level_order = "ascending",
-        feature_labels = list(vcd_sociodemo="Interaction of gender,\nage, and ethnicity\n",
-                              vcd_specific_photo ="Specific profile\npicture\n"))
-
-cj = cj |>
-  filter(feature == "Specific profile\npicture\n") |>
-  arrange(desc(estimate))
-
-
-
-p = plot(cj,
-     vline = 0.5)+
-  labs(caption = "99% C.I.")+
-  theme_gray()+
-  theme(legend.position="none")
+p=p+plot_annotation(caption = paste0("Vertical lines represent the sub-category's mean; Outcome=", 
+                                     toTitleCase(outcome), 
+                                     "; 99% C.I."))
 
 p
 
-ggsave(paste0(output_wd, "no_photo_effect.png"),
+ggsave(paste0(output_wd, "no_surname_effects.png"),
        p, height = 10, width = 8, create.dir = T)
 
+
+
+######################################### 
+############# Check photo effect ########
+######################################### 
+data$vcd_sociodemo = interaction(data$vcd_ethnicity,
+                                 data$vcd_gender, 
+                                 data$vcd_age, 
+                                 sep = " ")
+
+
+v=list()
+
+for(category in unique(data$vcd_sociodemo))
+{
+  temp = data |>
+    filter(vcd_sociodemo == category)
+  
+  temp$vcd_photo = factor(temp$vcd_photo, levels = c("5","4","3","2","1"))
+  
+  cj = cj(temp, 
+          vcd_outcome ~ vcd_photo,  
+          id = ~respid,
+          alpha=0.01,
+          h0=mean(temp$vcd_outcome),
+          estimate="mm",
+          feature_labels = list(vcd_photo = "Profile picture"),
+          level_order = "ascending")
+  
+  p = plot(cj,vline=mean(temp$vcd_outcome))+
+    labs(title = category)+
+    theme_gray()+
+    theme(legend.position="none")
+  
+  p=p+geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                          y=level), 
+                      col=color_to_plot,
+                      shape=shape_to_plot)
+  
+  v[[category]] = p
+}
+
+p=(v[["Black Male 35"]]|v[["Black Female 35"]])/
+  (v[["Black Male 70"]]|v[["Black Female 70"]])/
+  (v[["White Male 35"]]|v[["White Female 35"]])/
+  (v[["White Male 70"]]|v[["White Female 70"]])
+
+p=p+plot_annotation(caption = paste0("Vertical lines represent the sub-category's mean; Outcome=", 
+                                     toTitleCase(outcome), 
+                                     "; 99% C.I."))
+
+p
+
+ggsave(paste0(output_wd, "no_photo_effects.png"),
+       p, height = 10, width = 8, create.dir = T)

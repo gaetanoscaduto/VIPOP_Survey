@@ -26,8 +26,6 @@
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/", context, "/randomization_checks/")
 data = readRDS(paste0(dataset_rep, "cjdata_cpd_", context, ".RDS"))
 
-names(data)
-
 
 categories= c("Sociodemographics", "Psychological", "Lifestyle", "Political")
 
@@ -231,107 +229,195 @@ for(i in 1:number_of_attributes)
                                                                   "10"))
 }
 
-#Check if everything is good
-# data$C1_ATT_ORDER[1] 
-# data$attribute_1_position[1]
-# data$attribute_10_position[1]
-# data$attribute_2_position[1]
-# data$attribute_5_position[1]
 
 p1 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_gender, 
                id = ~respid,
                by = ~attribute_1_position,
-               estimate = "mm"), 
-     group = "attribute_1_position", 
-     vline = 0.5)+ 
+               estimate = "mm",
+               alpha=0.01,
+               feature_labels = list(cpd_match_gender = "Gender")), 
+     group = "attribute_1_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_gender == "gender_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_gender == "gender_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p2 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_age, 
                     id = ~respid,
                     by = ~attribute_2_position,
-                    estimate = "mm"), 
-          group = "attribute_2_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_age = "Age")), 
+          group = "attribute_2_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_age == "age_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_age == "age_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p3 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_educ, 
                     id = ~respid,
                     by = ~attribute_3_position,
-                    estimate = "mm"), 
-          group = "attribute_3_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_educ = "Education")), 
+          group = "attribute_3_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_educ == "educ_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_educ == "educ_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+ 
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p4 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_regionfeel, 
                     id = ~respid,
                     by = ~attribute_4_position,
-                    estimate = "mm"), 
-          group = "attribute_4_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_regionfeel = "Regionfeel")), 
+          group = "attribute_4_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_regionfeel == "regionfeel_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_regionfeel == "regionfeel_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+ 
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p5 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_consc, 
                     id = ~respid,
                     by = ~attribute_5_position,
-                    estimate = "mm"), 
-          group = "attribute_5_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_consc = "Consc.")), 
+          group = "attribute_5_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_consc == "consc_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_consc == "consc_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+ 
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p6 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_ope, 
                     id = ~respid,
                     by = ~attribute_6_position,
-                    estimate = "mm"), 
-          group = "attribute_6_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_ope = "Ope.")), 
+          group = "attribute_6_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_ope == "ope_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_ope == "ope_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+ 
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p7 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_diet, 
                     id = ~respid,
                     by = ~attribute_7_position,
-                    estimate = "mm"), 
-          group = "attribute_7_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",    
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_diet = "Diet")), 
+          group = "attribute_7_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_diet == "diet_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_diet == "diet_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+ 
   xlab("")+
+  theme_gray()+
   theme(legend.position = "none")
 
 p8 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_animal, 
                     id = ~respid,
                     by = ~attribute_8_position,
-                    estimate = "mm"), 
-          group = "attribute_8_position", 
-          vline = 0.5)+
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_animal = "Animal")), 
+          group = "attribute_8_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_animal == "animal_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_animal == "animal_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  theme_gray()+
   theme(text = element_text(size=10),
-        legend.title = element_blank())
+        legend.title = element_blank(),
+        legend.position = "right")
 
 p9 = plot(cregg::cj(data, cpd_chosen ~ cpd_match_holiday, 
                     id = ~respid,
                     by = ~attribute_9_position,
-                    estimate = "mm"), 
-          group = "attribute_9_position", 
-          vline = 0.5)+ 
+                    estimate = "mm",
+                    alpha=0.01,
+                    feature_labels = list(cpd_match_holiday = "Holiday")), 
+          group = "attribute_9_position")+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_holiday == "holiday_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data[data$cpd_match_holiday == "holiday_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+ 
   xlab("")+
-  labs(caption = "Colors represent the position of the attribute")+
+  theme_gray()+
   theme(legend.position = "none")
 
-# p10 = plot(
-#   data |>
-#     filter(cpd_exparm != "natural") |>
-#     cregg::cj(cpd_chosen ~ cpd_match_ideology, 
-#                     id = ~respid,
-#                     by = ~attribute_10_position,
-#                     estimate = "mm"), 
-#           group = "attribute_10_position", 
-#           vline = 0.5)+ 
-#   theme(text = element_text(size=10))
 
-p=(p1|p2|p3)/(p4|p5|p6)/(p7|p8|p9)
+data1 = data |>
+  filter(cpd_exparm != "natural")
+
+data1$attribute_10_position = factor(data1$attribute_10_position,
+                                     levels = c("1","3",
+                                                "4","5","6",
+                                                "7","8",
+                                                "10")) #since the attributes
+                                     #are randomixzed by category
+                                     #it jjust never happens that ideology is in
+                                     #position 2 or 9
+
+data1$cpd_match_ideology=factor(data1$cpd_match_ideology, levels = c("ideology_mismatch", "ideology_match"))
+
+p10 = plot(
+    cregg::cj(data1, cpd_chosen ~ cpd_match_ideology,
+                    id = ~respid,
+                    by = ~attribute_10_position,
+                    estimate = "mm",
+              alpha=0.01,
+              feature_labels = list(cpd_match_ideology = "Ideology")),
+          group = "attribute_10_position")+
+  geom_vline(aes(xintercept = mean(data1[data1$cpd_match_ideology == "ideology_match", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  geom_vline(aes(xintercept = mean(data1[data1$cpd_match_ideology == "ideology_mismatch", ]$cpd_chosen)),
+             col="black",
+             alpha= 1/4)+
+  theme_gray()+
+  theme(legend.position = "none")
+
+p=(p1|p2)/(p3|p4)/(p5|p6)/(p7|p9)/(p10|p8)
 
 ggsave(paste0(output_wd,  "attribute_order_check.png"),
-       p, height = 12, width = 12, create.dir = T)
+       p, height = 10, width = 8, create.dir = T)
+

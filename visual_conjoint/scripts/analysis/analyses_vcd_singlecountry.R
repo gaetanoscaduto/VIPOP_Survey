@@ -320,7 +320,8 @@ full_interaction_effects = function(data,
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(level, desc(estimate)), col=feature))+
+                        y=fct_reorder(level, desc(estimate)), 
+                        col=wesanderson::wes_palettes$Darjeeling1[1]))+
     labs(y="",x="Marginal Mean")+
     xlim(leftlim,rightlim)+
     theme(legend.position = "none",

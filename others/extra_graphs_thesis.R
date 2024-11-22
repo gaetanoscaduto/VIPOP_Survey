@@ -112,9 +112,14 @@ ggsave(paste0(output_wd,"mms_main.png"), p,
        create.dir = T)
 
 
+
+
+########################
+#### AMCE, general
+########################
+
 id_data_amce_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/AMCEs/singlecountry_data.rds")
 pop_data_amce_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/AMCEs/singlecountry_data.rds")
-
 
 
 intercept = 0
@@ -164,8 +169,13 @@ for(attribute in unique(attributes))
   v[[attribute]] = p
 }
 
-p = ((v[["Ethnicity"]]+scale_x_continuous(limits = c(-0.2, 0.2), 
-                                          breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3)))/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))|(v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(-0.2, 0.2),
+                                                             breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+scale_x_continuous(limits = c(-0.2, 0.2),
+                                                                                                                                                                               breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3))+xlab("Effect size")))
+
+p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Animal"]]+xlab("Effect size")))
+
+p= (p1+plot_layout(heights = c(1,1,1,2,2)))|p2
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing; Triangle=Populism; AMCEs, 95% C.I.")
 
 p
@@ -710,6 +720,8 @@ ggsave(paste0(output_wd,"MMs_ccd_ordered.png"),
 ################# subgroup analyses differences populism and trust together ##  
 ################# ################# ########################################  
 
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/for_thesis_gaetano/subgroup_analysis/")
+
 subgroups = c("Education level", "News media Exposure", "Gender", "Political Ideology", "Political Interest")
 
 for(subgroup in subgroups)
@@ -799,4 +811,11 @@ for(subgroup in subgroups)
   
   p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
   
+  
+  ggsave(paste0(output_wd, subgroup, "_MMs_differences.png"), 
+         p, 
+         height = 10, 
+         width = 8,
+         create.dir = T)
 }
+
