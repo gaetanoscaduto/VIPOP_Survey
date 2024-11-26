@@ -22,8 +22,7 @@ dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 #If you want the dataset cleansed by laggards, speeders, and people who fail 
 #attention checks, clean must be true. Otherwise set it to false
 
-#contexts = c("IT", "FR", "CZ", "SW")
-contexts = c("IT")#, "FR")
+contexts = c("IT", "FR", "CZ", "SW")
 clean = T
 
 for(context in contexts)
@@ -35,13 +34,14 @@ for(context in contexts)
   
 }
 #generate pooled dataset
-#source("others/rbind_country_datasets.R")
+source("others/rbind_country_datasets.R")
 
 
 #recoding pooled dataset
-#source("others/recodings/recoding_demo.R")
+source("others/recodings/recoding_demo.R")
 
-#contexts = c("IT", "FR", "CZ", "SW", "POOL")
+contexts = c("IT", "FR", "CZ", "SW", "POOL")
+
 for(context in contexts)
 {
   #descriptives script
@@ -52,12 +52,12 @@ for(context in contexts)
   #classic conjoint scripts
   source("classic_conjoint/data_manipulation_ccd.R")
   print(paste("Ok ccd data man", context, Sys.time()))
-  source("classic_conjoint/randomization_checks_ccd.R")
-  print(paste("Ok ccd randcheck", context, Sys.time()))
-  
+
   for(outcome in c("ideology", "populism"))
   {
       withoutNB=F
+      source("classic_conjoint/randomization_checks_ccd.R")
+      print(paste("Ok ccd randcheck", context, Sys.time()))
       source("classic_conjoint/analyses_ccd_singlecountry.R")
       print(paste("Ok ccd analyses", outcome, context, "WithNB", Sys.time()))
     # if(outcome == "ideology") 
