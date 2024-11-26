@@ -108,33 +108,35 @@ ggsave(paste0(output_wd,  "diagnostic_randomization_ggplot2.png"),
 
 
 #### Checking whether there is a preference for the profile shown to the right
-
-data$ccd_profile_number = as.factor(data$ccd_profile_number)
-
-plot(cj(data, 
-        ccd_outcome ~ ccd_gender+
-        ccd_age+ccd_religion+ccd_citysize+ccd_job+
-        ccd_consc+ccd_ope+ ccd_neu+
-        ccd_restaurant+ccd_transport+ccd_animal,
-        id = ~respid,
-        by = ~ccd_profile_number,
-        estimate = "mm_differences"),
-     group = "ccd_profile_number",
-     vline = 0)
-
-### checking it with a different approach: if the effect is significant, 
-# it means that  the effect of a certain attribute varies by whether a
-#profile is on the left or on the right
-
-#DA RICONTROLLARE
- 
-#data$ccd_profile_number = as.numeric(data$ccd_profile_number)
-
-plot(cj(data, 
-        ccd_outcome ~ ccd_profile_number,
-        id = ~respid,
-        estimate = "amce"),
-     vline = 0)
+# 
+# data$ccd_profile_number = as.factor(data$ccd_profile_number)
+# 
+# data$ccd_outcome = factor(data$ccd_outcome)
+# 
+# plot(cj(data, 
+#         ccd_outcome ~ ccd_gender+
+#         ccd_age+ccd_religion+ccd_citysize+ccd_job+
+#         ccd_consc+ccd_ope+ ccd_neu+
+#         ccd_restaurant+ccd_transport+ccd_animal,
+#         id = ~respid,
+#         by = ~ccd_profile_number,
+#         estimate = "mm_differences"),
+#      group = "ccd_profile_number",
+#      vline = 0)
+# 
+# ### checking it with a different approach: if the effect is significant, 
+# # it means that  the effect of a certain attribute varies by whether a
+# #profile is on the left or on the right
+# 
+# #DA RICONTROLLARE
+#  
+# data$ccd_profile_number = as.numeric(data$ccd_profile_number)
+# 
+# plot(cj(data, 
+#         ccd_outcome ~ ccd_profile_number,
+#         id = ~respid,
+#         estimate = "amce"),
+#      vline = 0)
 
 
 
