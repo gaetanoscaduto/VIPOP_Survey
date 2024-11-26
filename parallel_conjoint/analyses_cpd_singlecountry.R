@@ -141,7 +141,7 @@ draw_plot_effects = function(effects,
     p=v
   }
   
-  saveRDS(effects, paste0(output_wd,"estimations/", subdir, "singlecountry_data.rds"))
+  #saveRDS(effects, paste0(output_wd,"estimations/", subdir, "singlecountry_data.rds"))
   
   return(p)
 }
@@ -738,8 +738,8 @@ formula_nominal = cpd_chosen ~  cpd_gender + cpd_age + cpd_educ + cpd_regionfeel
 
 #############################################################
 
-#dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
-#gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
+# dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
+# gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/conjoint_parallel_design/", context, "/")
 
