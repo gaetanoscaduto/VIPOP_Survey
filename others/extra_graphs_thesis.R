@@ -819,3 +819,68 @@ for(subgroup in subgroups)
          create.dir = T)
 }
 
+
+
+##################################  ##########################################
+################# Ordered overall MM graph for between attribute  ###########
+################# confrontation in the VISUAL conjoint #####################  
+################# ################# ########################################  
+
+
+
+id_data_mm_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/MMs/singlecountry_data.rds")
+pop_data_mm_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/MMs/singlecountry_data.rds")
+
+
+intercept = 0.5
+leftlim = 0.3
+rightlim = 0.6
+
+
+  p = ggplot()+
+    geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+    geom_pointrange(data=id_data_mm_it,
+                    aes(x=estimate, xmin=lower, xmax=upper,
+                        y=fct_reorder(level, estimate, .desc = T), 
+                        col="Right-wing", shape = "Right-wing"),
+                    position = position_nudge(y = 1/10),
+                    show.legend = F)+
+    geom_pointrange(data=pop_data_mm_it,
+                    aes(x=estimate, xmin=lower, xmax=upper,
+                        y=fct_reorder(level, id_data_mm_it$estimate, .desc = T), 
+                        col="Populism", shape = "Populism"),
+                    position = position_nudge(y = -1/10),
+                    show.legend = F)+
+    ylab("Attribute levels")+
+    xlab("\n")+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+    #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+    scale_color_manual(
+      values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
+                 "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
+      name = "Inference on",
+      limits = c("Right-wing", "Populism")
+    ) +
+    scale_shape_manual(
+      values = c("Right-wing" = 19, 
+                 "Populism" = 17),
+      name = "Inference on",
+      limits = c("Right-wing", "Populism")
+    ) +
+    theme(
+      legend.position = "right",  # You can change this to "top", "bottom", etc.
+      axis.text.y = element_text(size = 10),
+      axis.title.y = element_text(size = 12)
+    )
+
+
+
+p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
+
+p
+
+ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), p, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
