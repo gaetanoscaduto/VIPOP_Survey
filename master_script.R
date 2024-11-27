@@ -22,8 +22,14 @@ dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 #If you want the dataset cleansed by laggards, speeders, and people who fail 
 #attention checks, clean must be true. Otherwise set it to false
 
-contexts = c("IT", "FR", "CZ", "SW")
+contexts = c("IT", "FR", "CZ", "SW", "POOL")
 clean = T
+
+
+# for(context in contexts)
+# {
+#   source("others/descriptives_internal.R")
+# }
 
 for(context in contexts)
 {

@@ -14,7 +14,7 @@ library(ggplot2)
 
 data = readRDS(paste0(dataset_rep, "data_recoded_", context, ".RDS"))
 
-output_dir = paste0(gdrive_code, "VIPOP_SURVEY/risultati_pilot/")
+output_dir = paste0(gdrive_code, "VIPOP_SURVEY/risultati_pilot/", context, "/")
 #output_dir_s = "/Users/silviadecadri/Library/CloudStorage/GoogleDrive-silviadecadri@gmail.com/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/risultati_pilot" 
 
 
