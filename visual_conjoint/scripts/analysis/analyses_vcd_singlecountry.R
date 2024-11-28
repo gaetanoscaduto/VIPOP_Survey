@@ -82,7 +82,8 @@ v=list()
    p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                          y=level, col=feature))+
+                          y=level), 
+                      col=wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
      scale_x_continuous(limits = c(leftlim, rightlim), 
@@ -97,7 +98,9 @@ v=list()
   p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
                                                            breaks = round(seq(leftlim, rightlim, length.out = 7),
                                                                           digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
+  
   p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+  
   p=p1|p2
   
   return_list= list(plot = p, 
@@ -463,6 +466,54 @@ attributes= c("Ethnicity", "Ethnicity",
 
 output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/", outcome, "/", context, "/")
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
+
+### fedra suggested to treat  corruption, valence and crowd as functional equivalents
+#therefore, here I recode them 
+#If you don't want them recoded anymore, just comment the following lines
+
+
+### recode vcd_valence
+
+data <- data |>
+  mutate(vcd_valence = case_when(
+    vcd_valence == "Corruption1" ~ "Corruption",
+    vcd_valence == "Corruption2" ~ "Corruption",
+    vcd_valence == "Honesty1" ~ "Honesty",
+    vcd_valence == "Honesty2" ~ "Honesty",
+    TRUE ~ as.character(vcd_valence)  # Keeps any values not in the list as they are
+    )
+  )
+
+data$vcd_valence = factor(data$vcd_valence, levels=c("Corruption", "Honesty"))
+
+### recode nostalgia
+
+data <- data |>
+  mutate(vcd_nostalgia = case_when(
+    vcd_nostalgia == "Future1" ~ "Future",
+    vcd_nostalgia == "Future2" ~ "Future",
+    vcd_nostalgia == "Past1" ~ "Past",
+    vcd_nostalgia == "Past2" ~ "Past",
+    TRUE ~ as.character(vcd_nostalgia)  # Keeps any values not in the list as they are
+    )
+  )
+
+data$vcd_nostalgia = factor(data$vcd_nostalgia, levels=c("Future", "Past"))
+
+### recode nostalgia
+
+data <- data |>
+  mutate(vcd_nostalgia = case_when(
+    vcd_nostalgia == "Future1" ~ "Future",
+    vcd_nostalgia == "Future2" ~ "Future",
+    vcd_nostalgia == "Past1" ~ "Past",
+    vcd_nostalgia == "Past2" ~ "Past",
+    TRUE ~ as.character(vcd_nostalgia)  # Keeps any values not in the list as they are
+  )
+  )
+
+data$vcd_nostalgia = factor(data$vcd_nostalgia, levels=c("Future", "Past"))
+
 
 
 if(outcome == "ideology")
