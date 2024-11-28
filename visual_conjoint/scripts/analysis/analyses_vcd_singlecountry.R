@@ -382,7 +382,7 @@ full_analysis = function(data,
   
    estimator=match.arg(estimator)
 
-  browser()
+  #browser()
    h_0 = ifelse(estimator == "mm", 0.5, 0)
    
   effects_pooled <- data |>
