@@ -23,11 +23,16 @@
 # DEFINING FUNCTIONS
 #############################################################
 
-###SET CATEGORIES AND LEVELS
+
+################### 
+################### SET CATEGORIES AND LEVELS
+####################
 
 #Here I define a function to set categories and levels in a neat and presentable 
 #fashion in the mm dataset resulting from the cj function. The
 #functio
+
+
 
 set_categories_and_levels_visual = function(effects, 
                                      attributes=attributes){
@@ -40,6 +45,10 @@ set_categories_and_levels_visual = function(effects,
 }
 
 
+
+################### 
+###################  DRAW PLOTS
+####################
 
 ##Function to draw plots for the effects
 
@@ -97,6 +106,10 @@ v=list()
 }
 
 
+################### 
+################### SUBGROUP ANALYSES
+####################
+
 
 full_subgroup_analysis = function(data,
                                  formula=formula_outcome,
@@ -114,9 +127,9 @@ full_subgroup_analysis = function(data,
   
   estimator=match.arg(estimator)
   
-  # ()
+  #browser()
   
-  data$temp_subgroup = factor(data[[subgroup_variable]])
+  data$temp_subgroup = data[[subgroup_variable]]
   
   if(estimator == "mm" | estimator == "amce")
   {
@@ -261,9 +274,7 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
-                                                             breaks = round(seq(leftlim, rightlim, length.out = 7),
-                                                                            digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
+    p1 = (v[["Gender"]]/v[["Ethnicity"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
     p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
     p=p1|p2
     
@@ -284,6 +295,10 @@ full_subgroup_analysis = function(data,
 }
 
 
+
+################### 
+################### Interaction effects
+####################
 
 
 
@@ -336,6 +351,11 @@ full_interaction_effects = function(data,
 }
 
 
+
+
+################### 
+################### Full Analysis
+####################
 
 full_analysis = function(data,
                          formula, #the conjoint formula
@@ -419,6 +439,10 @@ attributes= c("Ethnicity", "Ethnicity",
 
 
 #############################################################
+
+################### 
+################### PRELIMINARY STUFF
+####################
 
 
 #If you launch this script from the master script, make sure to have the context 
@@ -717,7 +741,9 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_po
 
 subdir = "Subgroup Analyses/"
 
-data$gender_r = factor(ifelse(data$gender == "nonbinary" | data$gender == "notsay", NA, toTitleCase(data$gender)), levels = c("Female", "Male"))
+data$gender_r = factor(ifelse(data$gender == "nonbinary" | data$gender == "notsay", NA, 
+                              toTitleCase(data$gender)), 
+                       levels = c("Female", "Male"))
 
 full_subgroup_analysis(data,
                        formula=formula_outcome,
@@ -745,9 +771,9 @@ full_subgroup_analysis(data,
                        subgroup2 = "Male" #the name of the second subgroup (variable level)
 )
 
-data$educ_r = ifelse(data$EDU_LEVEL =="nocollege", "No college", data$EDU_LEVEL)
+data$educ_r = ifelse(data$EDU_LEVEL =="nocollege", "No university", "University")
                      
-data$educ_r = factor(toTitleCase(data$educ_r))
+data$educ_r = factor(toTitleCase(data$educ_r), levels = c("No University", "University"))
 
 full_subgroup_analysis(data,
                        formula=formula_outcome,
@@ -758,9 +784,9 @@ full_subgroup_analysis(data,
                        rightlim = 0.7,
                        subgroup_variable = "educ_r",
                        subgroup_name = "Education level",
-                       subgroup1 = "College",
-                       subgroup2 = "No College" #the name of the second subgroup (variable level)
-)
+                       subgroup1 = "University",
+                       subgroup2 = "No University" #the name of the second subgroup (variable level)
+                       )
 
 
 full_subgroup_analysis(data,
@@ -772,14 +798,14 @@ full_subgroup_analysis(data,
                        subgroup_name = "Education level",
                        leftlim = -0.2,
                        rightlim = 0.2,
-                       subgroup1 = "College",
-                       subgroup2 = "No College" #the name of the second subgroup (variable level)
+                       subgroup1 = "University",
+                       subgroup2 = "No University" #the name of the second subgroup (variable level)
 )
 
 
 data$interest_r = ifelse(data$interest_dummy =="no_interest", "Low", "High")
 
-data$interest_r = factor(toTitleCase(data$interest_r))
+data$interest_r = factor(toTitleCase(data$interest_r), levels = c("Low", "High"))
 
 
 full_subgroup_analysis(data,
@@ -789,8 +815,8 @@ full_subgroup_analysis(data,
                        subdir,
                        subgroup_variable = "interest_r",
                        subgroup_name = "Political Interest",
-                       subgroup1 = "Low",
-                       subgroup2 = "High" #the name of the second subgroup (variable level) 
+                       subgroup1 = "High",
+                       subgroup2 = "Low" #the name of the second subgroup (variable level) 
 )
 
 
@@ -803,15 +829,15 @@ full_subgroup_analysis(data,
                        subgroup_name = "Political Interest",
                        leftlim = -0.2,
                        rightlim = 0.2,
-                       subgroup1 = "Low",
-                       subgroup2 = "High"    #the name of the second subgroup (variable level)
+                       subgroup1 = "High",
+                       subgroup2 = "Low"    #the name of the second subgroup (variable level)
 )
 
 
 
 data$exposure_r = ifelse(data$exposure_dummy =="less10min", "Low", "High")
 
-data$exposure_r = factor(toTitleCase(data$exposure_r))
+data$exposure_r = factor(toTitleCase(data$exposure_r), levels=c("Low", "High"))
 
 full_subgroup_analysis(data,
                        formula=formula_outcome,
@@ -822,8 +848,8 @@ full_subgroup_analysis(data,
                        rightlim = 0.7,
                        subgroup_variable = "exposure_r",
                        subgroup_name = "News media Exposure",
-                       subgroup1 = "Low",
-                       subgroup2 = "High" #the name of the second subgroup (variable level)
+                       subgroup1 = "High",
+                       subgroup2 = "Low" #the name of the second subgroup (variable level)
 )
 
 
@@ -836,8 +862,8 @@ full_subgroup_analysis(data,
                        subgroup_name = "News media Exposure",
                        leftlim = -0.2,
                        rightlim = 0.2,
-                       subgroup1 = "Low",
-                       subgroup2 = "High" #the name of the second subgroup (variable level)
+                       subgroup1 = "High",
+                       subgroup2 = "Low" #the name of the second subgroup (variable level)
 )
 
 
