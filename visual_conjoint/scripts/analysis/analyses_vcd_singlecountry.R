@@ -490,33 +490,33 @@ if(recoding_functional_equivalents == T)
   
   data$vcd_valence = factor(data$vcd_valence, levels=c("Corruption", "Honesty"))
   
-  ### recode nostalgia
+  ### recode time
   
   data <- data |>
-    mutate(vcd_nostalgia = case_when(
-      vcd_nostalgia == "Future1" ~ "Future",
-      vcd_nostalgia == "Future2" ~ "Future",
-      vcd_nostalgia == "Past1" ~ "Past",
-      vcd_nostalgia == "Past2" ~ "Past",
-      TRUE ~ as.character(vcd_nostalgia)  # Keeps any values not in the list as they are
+    mutate(vcd_time = case_when(
+      vcd_time == "Future1" ~ "Future",
+      vcd_time == "Future2" ~ "Future",
+      vcd_time == "Past1" ~ "Past",
+      vcd_time == "Past2" ~ "Past",
+      TRUE ~ as.character(vcd_time)  # Keeps any values not in the list as they are
     )
     )
   
-  data$vcd_nostalgia = factor(data$vcd_nostalgia, levels=c("Future", "Past"))
+  data$vcd_time = factor(data$vcd_time, levels=c("Future", "Past"))
   
-  ### recode animal
+  ### recode pet
   
   data <- data |>
-    mutate(vcd_animal = case_when(
-      vcd_animal == "Catpoor" ~ "Cat",
-      vcd_animal == "Catrich" ~ "Cat",
-      vcd_animal == "Dogpoor" ~ "Dog",
-      vcd_animal == "Dogrich" ~ "Dog",
-      TRUE ~ as.character(vcd_animal)  # Keeps any values not in the list as they are
+    mutate(vcd_pet = case_when(
+      vcd_pet == "Catpoor" ~ "Cat",
+      vcd_pet == "Catrich" ~ "Cat",
+      vcd_pet == "Dogpoor" ~ "Dog",
+      vcd_pet == "Dogrich" ~ "Dog",
+      TRUE ~ as.character(vcd_pet)  # Keeps any values not in the list as they are
       )
     )
   
-  data$vcd_animal = factor(data$vcd_animal, levels=c("Cat", "Dog"))
+  data$vcd_pet = factor(data$vcd_pet, levels=c("Cat", "Dog"))
   
   
   y_labels_plots = list(ethnicity=c("Black","White"),
@@ -585,23 +585,23 @@ if(outcome == "ideology")
 {
   formula_outcome = vcd_chosen_rw ~  vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 
-    vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_food + vcd_animal + vcd_crowd
+    vcd_issue + vcd_time + vcd_valence +
+    vcd_food + vcd_pet + vcd_crowd
 }
 
 if(outcome == "trust")
 {
   formula_outcome = vcd_chosen_trust ~ vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 
-    vcd_issue + vcd_nostalgia + vcd_valence +
-     vcd_food + vcd_animal+ vcd_crowd
+    vcd_issue + vcd_time + vcd_valence +
+     vcd_food + vcd_pet+ vcd_crowd
 }
 if(outcome == "populism")
 {
   formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 
-    vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_food + vcd_animal+ vcd_crowd
+    vcd_issue + vcd_time + vcd_valence +
+    vcd_food + vcd_pet+ vcd_crowd
 }
 
 ######################################
@@ -654,7 +654,7 @@ data$interacted_sociodemos = interaction(data$vcd_age,
 
 
 data$interacted_cultural = interaction(data$vcd_food,
-                                       data$vcd_animal,
+                                       data$vcd_pet,
                                        sep ="\n")
 
 data$interacted_political = interaction(data$vcd_issue, 
