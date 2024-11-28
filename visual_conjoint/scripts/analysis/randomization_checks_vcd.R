@@ -55,8 +55,8 @@ if(context != "POOL") #When context==POOL, there is a name which is the same of 
   plot(cj_freqs(data, vcd_outcome ~ vcd_ethnicity + 
                   vcd_gender + vcd_age + vcd_photo +
                   vcd_name + vcd_surname +
-                  vcd_job + vcd_issue + vcd_nostalgia+
-                  vcd_animal + vcd_food + vcd_crowd,
+                  vcd_job + vcd_issue + vcd_time+
+                  vcd_pet + vcd_food + vcd_crowd,
                 id = ~respid), col="grey")
 }
 if(context=="POOL")
@@ -64,8 +64,8 @@ if(context=="POOL")
   plot(cj_freqs(data, vcd_outcome ~ vcd_ethnicity + 
                   vcd_gender + vcd_age + vcd_photo +
                   #vcd_name + vcd_surname +
-                  vcd_job + vcd_issue + vcd_nostalgia+
-                  vcd_animal + vcd_food + vcd_crowd,
+                  vcd_job + vcd_issue + vcd_time+
+                  vcd_pet + vcd_food + vcd_crowd,
                 id = ~respid), col="grey")
   
 }
@@ -81,8 +81,8 @@ if(context != "POOL")
   aus = cj_freqs(data, vcd_outcome ~ vcd_ethnicity + 
                    vcd_gender + vcd_age + vcd_photo +
                    vcd_name + vcd_surname + vcd_job + 
-                   vcd_issue + vcd_nostalgia + vcd_valence+
-                   vcd_animal + vcd_food + vcd_crowd,
+                   vcd_issue + vcd_time + vcd_valence+
+                   vcd_pet + vcd_food + vcd_crowd,
                  id = ~respid)
   
 }
@@ -93,8 +93,8 @@ if(context == "POOL")
                    vcd_gender + vcd_age + vcd_photo +
                    #vcd_name + vcd_surname + 
                    vcd_job + 
-                   vcd_issue + vcd_nostalgia + vcd_valence+
-                   vcd_animal + vcd_food + vcd_crowd,
+                   vcd_issue + vcd_time + vcd_valence+
+                   vcd_pet + vcd_food + vcd_crowd,
                  id = ~respid)
   
 }
@@ -148,8 +148,8 @@ data$vcd_profile_number = as.factor(data$vcd_profile_number)
 p = plot(cj(data, 
         vcd_outcome ~ vcd_ethnicity + 
           vcd_gender + vcd_age + vcd_job + 
-          vcd_issue + vcd_nostalgia + vcd_valence + 
-          vcd_animal + vcd_food + vcd_crowd,
+          vcd_issue + vcd_time + vcd_valence + 
+          vcd_pet + vcd_food + vcd_crowd,
         id = ~respid,
         by = ~vcd_profile_number,
         estimate = "mm"),
@@ -168,8 +168,8 @@ data$vcd_profile_number = as.numeric(data$vcd_profile_number)-1
 p = plot(cj(data, 
         vcd_outcome ~ vcd_ethnicity + 
           vcd_gender + vcd_age + vcd_job + 
-          vcd_issue + vcd_nostalgia + vcd_valence +
-          vcd_animal + vcd_food + vcd_crowd,
+          vcd_issue + vcd_time + vcd_valence +
+          vcd_pet + vcd_food + vcd_crowd,
         id = ~respid,
         estimate = "mm"),
      vline = 0.5)

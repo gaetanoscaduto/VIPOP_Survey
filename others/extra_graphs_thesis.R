@@ -41,6 +41,8 @@ if(recoding_functional_equivalents == F)
 id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
 pop_data_mm_it = readRDS(paste0(main_path_vcd,"singlecountry/populism/IT/MMs/singlecountry_data.rds"))
 
+data = id_data_mm_it 
+
 if(recoding_functional_equivalents == T)
 {
   y_labels_plots = list(ethnicity=c("Black","White"),
@@ -48,7 +50,7 @@ if(recoding_functional_equivalents == T)
                         age=c("35", "70"),
                         job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
                         issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        nostalgia=c("Future","Past"),
+                        time=c("Future","Past"),
                         valence=c("Corruption", "Honesty"),
                         food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
                         pet=c("Cat","Dog"),
@@ -60,7 +62,7 @@ if(recoding_functional_equivalents == T)
                 "Age","Age",
                 "Job","Job","Job","Job","Job",
                 "Issue", "Issue", "Issue", "Issue",
-                "Nostalgia", "Nostalgia",
+                "Time", "Time",
                 "Valence","Valence",
                 "Food","Food","Food","Food",
                 "Pet","Pet",
@@ -74,7 +76,7 @@ if(recoding_functional_equivalents == F)
                         age=c("35", "70"),
                         job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
                         issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        nostalgia=c("Future1","Future2","Past1","Past2"),
+                        time=c("Future1","Future2","Past1","Past2"),
                         valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
                         pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
                         food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
@@ -86,7 +88,7 @@ if(recoding_functional_equivalents == F)
                 "Age","Age",
                 "Job","Job","Job","Job","Job",
                 "Issue", "Issue", "Issue", "Issue",
-                "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
+                "Time", "Time", "Time", "Time",
                 "Valence","Valence","Valence","Valence",
                 "Food","Food","Food","Food",
                 "Pet","Pet","Pet","Pet",
@@ -101,7 +103,7 @@ rightlim = 0.6
 
 v=list()
 
-for(attribute in unique(attributes))
+for(attribute in unique(data$feature))
 {
   p = ggplot()+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -144,7 +146,7 @@ for(attribute in unique(attributes))
 
 p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(0.3, 0.7),
                                                          breaks = round(seq(0.3, 0.7, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
-p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
+p2= ((v[["Time"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,2,2,1))
 
 p=p1|p2
 
@@ -166,7 +168,7 @@ ggsave(paste0(output_wd,"mms_main.png"), p,
 
 id_data_amce_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/AMCEs/singlecountry_data.rds"))
 pop_data_amce_it = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/AMCEs/singlecountry_data.rds"))
-
+data=id_data_amce_it 
 
 intercept = 0
 leftlim = -0.1
@@ -174,7 +176,7 @@ rightlim = 0.1
 
 v=list()
 
-for(attribute in unique(attributes))
+for(attribute in unique(data$feature))
 {
   p = ggplot()+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -219,7 +221,7 @@ p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(-0.2, 0.2),
                                                              breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+scale_x_continuous(limits = c(-0.2, 0.2),
                                                                                                                                                                                breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3))+xlab("Effect size")))
 
-p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
+p2= ((v[["Time"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,2,2,1))
 
 p= (p1+plot_layout(heights = c(1,1,1,2,2)))|p2
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing; Triangle=Populism; AMCEs, 95% C.I.")
@@ -863,7 +865,7 @@ for(subgroup in subgroups)
                           age=c("35", "70"),
                           job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
                           issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                          nostalgia=c("Future","Past"),
+                          time=c("Future","Past"),
                           valence=c("Corruption", "Honesty"),
                           food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
                           pet=c("Cat","Dog"),
@@ -875,7 +877,7 @@ for(subgroup in subgroups)
                   "Age","Age",
                   "Job","Job","Job","Job","Job",
                   "Issue", "Issue", "Issue", "Issue",
-                  "Nostalgia", "Nostalgia",
+                  "Time", "Time",
                   "Valence","Valence",
                   "Food","Food","Food","Food",
                   "Pet","Pet",
@@ -889,7 +891,7 @@ for(subgroup in subgroups)
                           age=c("35", "70"),
                           job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
                           issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                          nostalgia=c("Future1","Future2","Past1","Past2"),
+                          time=c("Future1","Future2","Past1","Past2"),
                           valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
                           pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
                           food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
@@ -901,7 +903,7 @@ for(subgroup in subgroups)
                   "Age","Age",
                   "Job","Job","Job","Job","Job",
                   "Issue", "Issue", "Issue", "Issue",
-                  "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
+                  "Time", "Time", "Time", "Time",
                   "Valence","Valence","Valence","Valence",
                   "Food","Food","Food","Food",
                   "Pet","Pet","Pet","Pet",
@@ -956,7 +958,7 @@ for(subgroup in subgroups)
   
   p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3),
                                                            breaks = round(seq(leftlim-0.3, rightlim+0.3, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
-  p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
+  p2= ((v[["Time"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
   
   p=p1|p2
   

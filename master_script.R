@@ -74,16 +74,23 @@ for(context in contexts)
   #source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
   print(paste("Ok vcd data man", context, Sys.time()))
   
-  recoding_functional_equivalents = T #this variable controls if the script
-  #analyses_vcd_singlecountry is run considering functional equivalents
-  #as equivalents (if true)or as distinguished (if false)
+  
   
   for(outcome in c("ideology", "trust", "populism"))
   {
     # source("visual_conjoint/scripts/analysis/randomization_checks_vcd.R")
     # print(paste("Ok vcd randcheck", outcome, context, Sys.time()))
+    recoding_functional_equivalents = T #this variable controls if the script
+    #analyses_vcd_singlecountry is run considering functional equivalents
+    #as equivalents (if true)or as distinguished (if false)
     source("visual_conjoint/scripts/analysis/analyses_vcd_singlecountry.R")
-    print(paste("Ok vcd analyses", outcome, context, Sys.time()))
+    print(paste("Ok vcd analyses recoded", outcome, context, Sys.time()))
+    
+    recoding_functional_equivalents = F #this variable controls if the script
+    #analyses_vcd_singlecountry is run considering functional equivalents
+    #as equivalents (if true)or as distinguished (if false)
+    source("visual_conjoint/scripts/analysis/analyses_vcd_singlecountry.R")
+    print(paste("Ok vcd analyses non recoded", outcome, context, Sys.time()))
   }
   
   
@@ -98,6 +105,8 @@ for(context in contexts)
   if(context == "IT")
   {
     recoding_functional_equivalents = T
+    source("others/extra_graphs_thesis.R")
+    recoding_functional_equivalents = F
     source("others/extra_graphs_thesis.R")
   }
 }
