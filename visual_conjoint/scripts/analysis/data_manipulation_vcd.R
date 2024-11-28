@@ -22,10 +22,10 @@
 # surname
 # job
 # issue
-# nostalgia
+# time
 # valence
 # food
-# animal
+# pet
 # crowd
 # identifier
 
@@ -80,10 +80,10 @@ conjattr_full = c("country",
   "surname",
   "job",
   "issue",
-  "nostalgia",
+  "time",
   "valence",
   "food",
-  "animal",
+  "pet",
   "crowd",
   "identifier")
 
@@ -105,10 +105,10 @@ for(i in 1:ntask)
                                                     "surname",
                                                     "job",
                                                     "issue",
-                                                    "nostalgia",
+                                                    "time",
                                                     "valence",
                                                     "food",
-                                                    "animal",
+                                                    "pet",
                                                     "crowd",
                                                     "identifier")
     )

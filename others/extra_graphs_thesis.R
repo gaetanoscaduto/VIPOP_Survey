@@ -16,38 +16,84 @@
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/for_thesis_gaetano/")
+#recoding_functional_equivalents=T
+
 
 ########################
 #### Marginal Means, general
 ########################
 
-id_data_mm_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/MMs/singlecountry_data.rds")
-pop_data_mm_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/MMs/singlecountry_data.rds")
+if(recoding_functional_equivalents == T)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/FE/for_thesis_gaetano/")
+  
+  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/FE/"
+}
+
+if(recoding_functional_equivalents == F)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/for_thesis_gaetano/")
+  
+  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/"
+}
 
 
-y_labels_plots = list(ethnicity=c("Black","White"),
-                      gender=c("Female","Male"),
-                      age=c("35", "70"),
-                      job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                      issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                      nostalgia=c("Future1","Future2","Past1","Past2"),
-                      valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                      animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                      food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                      crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-)
+id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
+pop_data_mm_it = readRDS(paste0(main_path_vcd,"singlecountry/populism/IT/MMs/singlecountry_data.rds"))
 
-attributes= c("Ethnicity", "Ethnicity",
-              "Gender", "Gender", 
-              "Age","Age",
-              "Job","Job","Job","Job","Job",
-              "Issue", "Issue", "Issue", "Issue",
-              "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
-              "Valence","Valence","Valence","Valence",
-              "Food","Food","Food","Food",
-              "Animal","Animal","Animal","Animal",
-              "Crowd","Crowd","Crowd","Crowd")
+if(recoding_functional_equivalents == T)
+{
+  y_labels_plots = list(ethnicity=c("Black","White"),
+                        gender=c("Female","Male"),
+                        age=c("35", "70"),
+                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
+                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
+                        nostalgia=c("Future","Past"),
+                        valence=c("Corruption", "Honesty"),
+                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                        pet=c("Cat","Dog"),
+                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
+  )
+  
+  attributes= c("Ethnicity", "Ethnicity",
+                "Gender", "Gender",
+                "Age","Age",
+                "Job","Job","Job","Job","Job",
+                "Issue", "Issue", "Issue", "Issue",
+                "Nostalgia", "Nostalgia",
+                "Valence","Valence",
+                "Food","Food","Food","Food",
+                "Pet","Pet",
+                "Crowd","Crowd","Crowd","Crowd")
+}
+
+if(recoding_functional_equivalents == F)
+{
+  y_labels_plots = list(ethnicity=c("Black","White"),
+                        gender=c("Female","Male"),
+                        age=c("35", "70"),
+                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
+                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
+                        nostalgia=c("Future1","Future2","Past1","Past2"),
+                        valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
+                        pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
+                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
+  )
+  
+  attributes= c("Ethnicity", "Ethnicity",
+                "Gender", "Gender", 
+                "Age","Age",
+                "Job","Job","Job","Job","Job",
+                "Issue", "Issue", "Issue", "Issue",
+                "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
+                "Valence","Valence","Valence","Valence",
+                "Food","Food","Food","Food",
+                "Pet","Pet","Pet","Pet",
+                "Crowd","Crowd","Crowd","Crowd")
+}
+
+
 
 intercept = 0.5
 leftlim = 0.4
@@ -98,7 +144,7 @@ for(attribute in unique(attributes))
 
 p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(0.3, 0.7),
                                                          breaks = round(seq(0.3, 0.7, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
-p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Animal"]]+xlab("Effect size")))
+p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
 
 p=p1|p2
 
@@ -118,8 +164,8 @@ ggsave(paste0(output_wd,"mms_main.png"), p,
 #### AMCE, general
 ########################
 
-id_data_amce_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/AMCEs/singlecountry_data.rds")
-pop_data_amce_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/AMCEs/singlecountry_data.rds")
+id_data_amce_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/AMCEs/singlecountry_data.rds"))
+pop_data_amce_it = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/AMCEs/singlecountry_data.rds"))
 
 
 intercept = 0
@@ -173,7 +219,7 @@ p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(-0.2, 0.2),
                                                              breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+scale_x_continuous(limits = c(-0.2, 0.2),
                                                                                                                                                                                breaks = round(seq(-0.2, 0.2, length.out = 7), digits=3))+xlab("Effect size")))
 
-p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Animal"]]+xlab("Effect size")))
+p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
 
 p= (p1+plot_layout(heights = c(1,1,1,2,2)))|p2
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing; Triangle=Populism; AMCEs, 95% C.I.")
@@ -192,9 +238,9 @@ ggsave(paste0(output_wd,"amces_main.png"), p,
 ##########
 
 #ideology acies marginal means italian political
-id_data_politics = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_political_data.rds")
+id_data_politics = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_data.rds"))
 #populism acies marginal means italian political
-pop_data_politics = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/Interactions/MMs/interacted_political_data.rds")
+pop_data_politics =readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_political_data.rds"))
 
 
 id_data_politics$level = gsub("\n"," ", id_data_politics$level)
@@ -239,6 +285,14 @@ p_politics = ggplot()+
         axis.title.y = element_text(size=12))
 
 p_politics
+
+
+ggsave(paste0(output_wd,"ACIEs_interacted_politics_mm.png"), 
+       p_politics,
+       height = 10,
+       width = 8,
+       create.dir = T)
+
 
 #############
 # 
@@ -308,9 +362,9 @@ p_politics
 ############### ACIEs with sociodemos  1
 ############################## 
 #ideology acies marginal means italian sociodemos
-id_data_sociodemo = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_data.rds")
+id_data_sociodemo = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_data.rds"))
 #populism acies marginal means italian sociodemos
-pop_data_sociodemo = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/Interactions/MMs/interacted_sociodemos_data.rds")
+pop_data_sociodemo = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_sociodemos_data.rds"))
 
 
 ### axis y labels langer rather than higher
@@ -356,6 +410,12 @@ p_sociodemo = ggplot()+
         axis.title.y = element_text(size=12))
 
 p_sociodemo
+
+ggsave(paste0(output_wd,"ACIEs_interacted_sociodemo_mm.png"), 
+       p_sociodemo,
+       height = 10,
+       width = 8,
+       create.dir = T)
 
 
 #############
@@ -428,9 +488,9 @@ p_sociodemo
 ####### 
 
 #ideology acies marginal means italian cultural
-id_data_cultural = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_cultural_data.rds")
+id_data_cultural = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_cultural_data.rds"))
 #populism acies marginal means italian cultural
-pop_data_cultural = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/Interactions/MMs/interacted_cultural_data.rds")
+pop_data_cultural = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_cultural_data.rds"))
 
 id_data_cultural$level = gsub("\n"," ", id_data_cultural$level)
 pop_data_cultural$level = gsub("\n"," ", pop_data_cultural$level)
@@ -475,6 +535,13 @@ p_cultural = ggplot()+
         axis.title.y = element_text(size=12))
 
 p_cultural
+
+
+ggsave(paste0(output_wd,"ACIEs_interacted_cultural_mm.png"), 
+       p_cultural,
+       height = 10,
+       width = 8,
+       create.dir = T)
 
 
 #############
@@ -544,9 +611,9 @@ p_cultural
 ############### ACIEs with sociodemos  full
 ############################## 
 #ideology acies marginal means italian sociodemos
-id_data_sociodemo_full = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_full_data.rds")
+id_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_full_data.rds"))
 #populism acies marginal means italian sociodemos
-pop_data_sociodemo_full = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/Interactions/MMs/interacted_sociodemos_full_data.rds")
+pop_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_sociodemos_full_data.rds"))
 
 
 ### axis y labels langer rather than higher
@@ -600,29 +667,8 @@ ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Sociodemo_full.png"),
 
 
 
+######## Composite graphs
 
-##################################  
-################# ACIES graphs for thesis classic cj
-################# #################
-
-
-ggsave(paste0(output_wd,"ACIEs_interacted_politics_mm.png"), 
-       p_politics,
-       height = 10,
-       width = 8,
-       create.dir = T)
-
-ggsave(paste0(output_wd,"ACIEs_interacted_sociodemo_mm.png"), 
-       p_sociodemo,
-       height = 10,
-       width = 8,
-       create.dir = T)
-
-ggsave(paste0(output_wd,"ACIEs_interacted_cultural_mm.png"), 
-       p_cultural,
-       height = 10,
-       width = 8,
-       create.dir = T)
 
 
 p= p_politics/p_sociodemo/p_cultural+plot_layout(heights = c(2, 1, 2))
@@ -643,6 +689,81 @@ ggsave(paste0(output_wd,"mms_ACIEs_polcult.png"), p,
        height = 10,
        width = 8,
        create.dir = T)
+
+
+##################################  ##########################################
+################# Ordered overall MM graph for between attribute  ###########
+################# confrontation in the VISUAL conjoint #####################  
+################# ################# ########################################  
+
+
+
+id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
+pop_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/MMs/singlecountry_data.rds"))
+
+
+intercept = 0.5
+leftlim = 0.3
+rightlim = 0.6
+
+
+p = ggplot()+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(data=id_data_mm_it,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, estimate, .desc = T), 
+                      col="Right-wing", shape = "Right-wing"),
+                  position = position_nudge(y = 1/10),
+                  show.legend = F)+
+  geom_pointrange(data=pop_data_mm_it,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, id_data_mm_it$estimate, .desc = T), 
+                      col="Populism", shape = "Populism"),
+                  position = position_nudge(y = -1/10),
+                  show.legend = F)+
+  ylab("Attribute levels")+
+  xlab("\n")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+  #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+  scale_color_manual(
+    values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
+               "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
+    name = "Inference on",
+    limits = c("Right-wing", "Populism")
+  ) +
+  scale_shape_manual(
+    values = c("Right-wing" = 19, 
+               "Populism" = 17),
+    name = "Inference on",
+    limits = c("Right-wing", "Populism")
+  ) +
+  theme(
+    legend.position = "right",  # You can change this to "top", "bottom", etc.
+    axis.text.y = element_text(size = 10),
+    axis.title.y = element_text(size = 12)
+  )
+
+
+
+p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
+
+p
+
+ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), p, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
+
+
+####################################################################  
+################# CLASSIC CONJOINT ##################################
+####################################################################
+
+
+##################################  
+################# ACIES graphs for thesis classic cj
+################# #################
 
 ################### Rearrange the graph for the ACIEs in the classic conjoint
 
@@ -727,36 +848,66 @@ subgroups = c("Education level", "News media Exposure", "Gender", "Political Ide
 for(subgroup in subgroups)
 {
   
-  id_data = readRDS(paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/Subgroup Analyses/", subgroup, "mm_differences_data.rds"))
-  pop_data = readRDS(paste0("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/Subgroup Analyses/", subgroup, "mm_differences_data.rds"))
+  id_data = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Subgroup Analyses/", subgroup, "mm_differences_data.rds"))
+  pop_data = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Subgroup Analyses/", subgroup, "mm_differences_data.rds"))
   
   
   intercept = 0
   leftlim = -0.2
   rightlim = 0.2
   
-  y_labels_plots = list(ethnicity=c("Black","White"),
-                        gender=c("Female","Male"),
-                        age=c("35", "70"),
-                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        nostalgia=c("Future1","Future2","Past1","Past2"),
-                        valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                        animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-  )
+  if(recoding_functional_equivalents == T)
+  {
+    y_labels_plots = list(ethnicity=c("Black","White"),
+                          gender=c("Female","Male"),
+                          age=c("35", "70"),
+                          job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
+                          issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
+                          nostalgia=c("Future","Past"),
+                          valence=c("Corruption", "Honesty"),
+                          food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                          pet=c("Cat","Dog"),
+                          crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
+    )
+    
+    attributes= c("Ethnicity", "Ethnicity",
+                  "Gender", "Gender",
+                  "Age","Age",
+                  "Job","Job","Job","Job","Job",
+                  "Issue", "Issue", "Issue", "Issue",
+                  "Nostalgia", "Nostalgia",
+                  "Valence","Valence",
+                  "Food","Food","Food","Food",
+                  "Pet","Pet",
+                  "Crowd","Crowd","Crowd","Crowd")
+  }
   
-  attributes= c("Ethnicity", "Ethnicity",
-                "Gender", "Gender", 
-                "Age","Age",
-                "Job","Job","Job","Job","Job",
-                "Issue", "Issue", "Issue", "Issue",
-                "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
-                "Valence","Valence","Valence","Valence",
-                "Food","Food","Food","Food",
-                "Animal","Animal","Animal","Animal",
-                "Crowd","Crowd","Crowd","Crowd")
+  if(recoding_functional_equivalents == F)
+  {
+    y_labels_plots = list(ethnicity=c("Black","White"),
+                          gender=c("Female","Male"),
+                          age=c("35", "70"),
+                          job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
+                          issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
+                          nostalgia=c("Future1","Future2","Past1","Past2"),
+                          valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
+                          pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
+                          food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                          crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
+    )
+    
+    attributes= c("Ethnicity", "Ethnicity",
+                  "Gender", "Gender", 
+                  "Age","Age",
+                  "Job","Job","Job","Job","Job",
+                  "Issue", "Issue", "Issue", "Issue",
+                  "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
+                  "Valence","Valence","Valence","Valence",
+                  "Food","Food","Food","Food",
+                  "Pet","Pet","Pet","Pet",
+                  "Crowd","Crowd","Crowd","Crowd")
+  }
+  
   
   
   v=list()
@@ -805,7 +956,7 @@ for(subgroup in subgroups)
   
   p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3),
                                                            breaks = round(seq(leftlim-0.3, rightlim+0.3, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
-  p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Animal"]]+xlab("Effect size")))
+  p2= ((v[["Nostalgia"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
   
   p=p1|p2
   
@@ -821,66 +972,3 @@ for(subgroup in subgroups)
 
 
 
-##################################  ##########################################
-################# Ordered overall MM graph for between attribute  ###########
-################# confrontation in the VISUAL conjoint #####################  
-################# ################# ########################################  
-
-
-
-id_data_mm_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/ideology/IT/MMs/singlecountry_data.rds")
-pop_data_mm_it = readRDS("G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/populism/IT/MMs/singlecountry_data.rds")
-
-
-intercept = 0.5
-leftlim = 0.3
-rightlim = 0.6
-
-
-  p = ggplot()+
-    geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-    geom_pointrange(data=id_data_mm_it,
-                    aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(level, estimate, .desc = T), 
-                        col="Right-wing", shape = "Right-wing"),
-                    position = position_nudge(y = 1/10),
-                    show.legend = F)+
-    geom_pointrange(data=pop_data_mm_it,
-                    aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(level, id_data_mm_it$estimate, .desc = T), 
-                        col="Populism", shape = "Populism"),
-                    position = position_nudge(y = -1/10),
-                    show.legend = F)+
-    ylab("Attribute levels")+
-    xlab("\n")+
-    scale_x_continuous(limits = c(leftlim, rightlim), 
-                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
-    #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
-    scale_color_manual(
-      values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
-                 "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
-      name = "Inference on",
-      limits = c("Right-wing", "Populism")
-    ) +
-    scale_shape_manual(
-      values = c("Right-wing" = 19, 
-                 "Populism" = 17),
-      name = "Inference on",
-      limits = c("Right-wing", "Populism")
-    ) +
-    theme(
-      legend.position = "right",  # You can change this to "top", "bottom", etc.
-      axis.text.y = element_text(size = 10),
-      axis.title.y = element_text(size = 12)
-    )
-
-
-
-p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
-
-p
-
-ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), p, 
-       height = 10, 
-       width = 8,
-       create.dir = T)

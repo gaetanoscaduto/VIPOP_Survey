@@ -38,8 +38,11 @@ set_categories_and_levels_visual = function(effects,
                                      attributes=attributes){
   # effects=effects_pooled
   # attributes=attributes
-  effects$feature = factor(attributes, levels = unique(attributes))
-  effects$level=factor(levels_vector, levels = levels_vector)
+  effects <- effects %>%
+    mutate(feature = gsub("vcd_", "", feature) %>% # Remove "vcd_"
+             tools::toTitleCase())   
+  
+  #effects$level=factor(levels_vector, levels = levels_vector)
   
   return(effects)
 }
@@ -77,7 +80,7 @@ draw_plot_effects = function(effects,
   }
   
 v=list()
-  for(attribute in unique(attributes))
+  for(attribute in unique(effects$feature))
   {
    p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -96,10 +99,10 @@ v=list()
   }
   
   p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
-                                                           breaks = round(seq(leftlim, rightlim, length.out = 7),
+                                                           breaks = round(seq(leftlim-0.3, rightlim+0.3, length.out = 7),
                                                                           digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
   
-  p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+  p2 = (v[["Time"]]/v[["Valence"]]/v[["Food"]]/v[["Pet"]]/(v[["Crowd"]]+xlab("Effect size")))
   
   p=p1|p2
   
@@ -211,7 +214,7 @@ full_subgroup_analysis = function(data,
     p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3), 
                                                              breaks = round(seq(leftlim, rightlim, length.out = 7),
                                                                             digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
-    p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    p2 = (v[["Time"]]/v[["Valence"]]/v[["Food"]]/v[["Pet"]]/(v[["Crowd"]]+xlab("Effect size")))
     p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
@@ -278,7 +281,7 @@ full_subgroup_analysis = function(data,
     }
     
     p1 = (v[["Gender"]]/v[["Ethnicity"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
-    p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+    p2 = (v[["Time"]]/v[["Valence"]]/v[["Food"]]/v[["Pet"]]/(v[["Crowd"]]+xlab("Effect size")))
     p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
@@ -379,6 +382,7 @@ full_analysis = function(data,
   
    estimator=match.arg(estimator)
 
+  browser()
    h_0 = ifelse(estimator == "mm", 0.5, 0)
    
   effects_pooled <- data |>
@@ -412,40 +416,18 @@ full_analysis = function(data,
   
 }
 
-#Our levels regarding match and mismatches (for labeling)
-
-
-y_labels_plots = list(ethnicity=c("Black","White"),
-                      gender=c("Female","Male"),
-                      age=c("35", "70"),
-                      job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                      issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                      nostalgia=c("Future1","Future2","Past1","Past2"),
-                      valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                      food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                      animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                      crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-                      )
-
-levels_vector= unlist(y_labels_plots, use.names = F)
-
-attributes= c("Ethnicity", "Ethnicity",
-                      "Gender", "Gender", 
-                      "Age","Age",
-                      "Job","Job","Job","Job","Job",
-                      "Issue", "Issue", "Issue", "Issue",
-                      "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
-                      "Valence","Valence","Valence","Valence",
-                      "Food","Food","Food","Food",
-                      "Animal","Animal","Animal","Animal",
-                      "Crowd","Crowd","Crowd","Crowd")
-
 
 #############################################################
 
 ################### 
 ################### PRELIMINARY STUFF
 ####################
+
+
+
+
+
+
 
 
 #If you launch this script from the master script, make sure to have the context 
@@ -464,7 +446,26 @@ attributes= c("Ethnicity", "Ethnicity",
 # gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/", outcome, "/", context, "/")
+#recoding_functional_equivalents = T
+
+if(recoding_functional_equivalents == T)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/",
+                     "FE",
+                     "/singlecountry/", 
+                     outcome, "/", 
+                     context, "/")
+}
+
+if(recoding_functional_equivalents == F)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/",
+                     "NFE",
+                     "/singlecountry/", 
+                     outcome, "/", 
+                     context, "/")
+}
+
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
 ### fedra suggested to treat  corruption, valence and crowd as functional equivalents
@@ -474,45 +475,109 @@ data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
 ### recode vcd_valence
 
-data <- data |>
-  mutate(vcd_valence = case_when(
-    vcd_valence == "Corruption1" ~ "Corruption",
-    vcd_valence == "Corruption2" ~ "Corruption",
-    vcd_valence == "Honesty1" ~ "Honesty",
-    vcd_valence == "Honesty2" ~ "Honesty",
-    TRUE ~ as.character(vcd_valence)  # Keeps any values not in the list as they are
+
+if(recoding_functional_equivalents == T)
+{
+  data <- data |>
+    mutate(vcd_valence = case_when(
+      vcd_valence == "Corruption1" ~ "Corruption",
+      vcd_valence == "Corruption2" ~ "Corruption",
+      vcd_valence == "Honesty1" ~ "Honesty",
+      vcd_valence == "Honesty2" ~ "Honesty",
+      TRUE ~ as.character(vcd_valence)  # Keeps any values not in the list as they are
     )
-  )
-
-data$vcd_valence = factor(data$vcd_valence, levels=c("Corruption", "Honesty"))
-
-### recode nostalgia
-
-data <- data |>
-  mutate(vcd_nostalgia = case_when(
-    vcd_nostalgia == "Future1" ~ "Future",
-    vcd_nostalgia == "Future2" ~ "Future",
-    vcd_nostalgia == "Past1" ~ "Past",
-    vcd_nostalgia == "Past2" ~ "Past",
-    TRUE ~ as.character(vcd_nostalgia)  # Keeps any values not in the list as they are
     )
+  
+  data$vcd_valence = factor(data$vcd_valence, levels=c("Corruption", "Honesty"))
+  
+  ### recode nostalgia
+  
+  data <- data |>
+    mutate(vcd_nostalgia = case_when(
+      vcd_nostalgia == "Future1" ~ "Future",
+      vcd_nostalgia == "Future2" ~ "Future",
+      vcd_nostalgia == "Past1" ~ "Past",
+      vcd_nostalgia == "Past2" ~ "Past",
+      TRUE ~ as.character(vcd_nostalgia)  # Keeps any values not in the list as they are
+    )
+    )
+  
+  data$vcd_nostalgia = factor(data$vcd_nostalgia, levels=c("Future", "Past"))
+  
+  ### recode animal
+  
+  data <- data |>
+    mutate(vcd_animal = case_when(
+      vcd_animal == "Catpoor" ~ "Cat",
+      vcd_animal == "Catrich" ~ "Cat",
+      vcd_animal == "Dogpoor" ~ "Dog",
+      vcd_animal == "Dogrich" ~ "Dog",
+      TRUE ~ as.character(vcd_animal)  # Keeps any values not in the list as they are
+      )
+    )
+  
+  data$vcd_animal = factor(data$vcd_animal, levels=c("Cat", "Dog"))
+  
+  
+  y_labels_plots = list(ethnicity=c("Black","White"),
+                        gender=c("Female","Male"),
+                        age=c("35", "70"),
+                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
+                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
+                        time=c("Future","Past"),
+                        valence=c("Corruption", "Honesty"),
+                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                        pet=c("Cat","Dog"),
+                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
   )
+  
+  #levels_vector= unlist(y_labels_plots, use.names = F)
+  
+  # attributes= c("Ethnicity", "Ethnicity",
+  #               "Gender", "Gender",
+  #               "Age","Age",
+  #               "Job","Job","Job","Job","Job",
+  #               "Issue", "Issue", "Issue", "Issue",
+  #               "Time", "Time",
+  #               "Valence","Valence",
+  #               "Food","Food","Food","Food",
+  #               "Pet","Pet",
+  #               "Crowd","Crowd","Crowd","Crowd")
+  # 
+}
 
-data$vcd_nostalgia = factor(data$vcd_nostalgia, levels=c("Future", "Past"))
 
-### recode nostalgia
-
-data <- data |>
-  mutate(vcd_nostalgia = case_when(
-    vcd_nostalgia == "Future1" ~ "Future",
-    vcd_nostalgia == "Future2" ~ "Future",
-    vcd_nostalgia == "Past1" ~ "Past",
-    vcd_nostalgia == "Past2" ~ "Past",
-    TRUE ~ as.character(vcd_nostalgia)  # Keeps any values not in the list as they are
+if(recoding_functional_equivalents == F)
+{
+  y_labels_plots = list(ethnicity=c("Black","White"),
+                        gender=c("Female","Male"),
+                        age=c("35", "70"),
+                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
+                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
+                        time=c("Future1","Future2","Past1","Past2"),
+                        valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
+                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
+                        pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
+                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
   )
-  )
+  
+  # levels_vector= unlist(y_labels_plots, use.names = F)
+  
+  # attributes= c("Ethnicity", "Ethnicity",
+  #               "Gender", "Gender",
+  #               "Age","Age",
+  #               "Job","Job","Job","Job","Job",
+  #               "Issue", "Issue", "Issue", "Issue",
+  #               "Time", "Time", "Time", "Time",
+  #               "Valence","Valence","Valence","Valence",
+  #               "Food","Food","Food","Food",
+  #               "Pet","Pet","Pet","Pet",
+  #               "Crowd","Crowd","Crowd","Crowd")
+  
+}
 
-data$vcd_nostalgia = factor(data$vcd_nostalgia, levels=c("Future", "Past"))
+
+
 
 
 
@@ -521,7 +586,7 @@ if(outcome == "ideology")
   formula_outcome = vcd_chosen_rw ~  vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 
     vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_animal + vcd_food + vcd_crowd
+    vcd_food + vcd_animal + vcd_crowd
 }
 
 if(outcome == "trust")
@@ -529,14 +594,14 @@ if(outcome == "trust")
   formula_outcome = vcd_chosen_trust ~ vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 
     vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_animal + vcd_food + vcd_crowd
+     vcd_food + vcd_animal+ vcd_crowd
 }
 if(outcome == "populism")
 {
   formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
     vcd_gender + vcd_age + vcd_job + 
     vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_animal + vcd_food + vcd_crowd
+    vcd_food + vcd_animal+ vcd_crowd
 }
 
 ######################################
@@ -553,8 +618,8 @@ full_analysis(data,
               formula_outcome,
               "mm",
               subdir,
-              leftlim = 0.3,
-              rightlim=0.7)
+              leftlim = 0.4,
+              rightlim=0.6)
 
 
 ### Same as before, but with AMCes (for appendix)
@@ -564,10 +629,13 @@ subdir = "AMCEs/"
 full_analysis(data,
               formula_outcome,
               "amce",
-              subdir)
+              subdir,
+              leftlim = -0.2,
+              rightlim = 0.2)
 
+##########################################
 ################## ACIEs #####################
-
+##########################################
 
 ##### ACIEs
 
@@ -1021,7 +1089,7 @@ for(attribute in unique(attributes))
 }
 
 p1 = (v[["Ethnicity"]]/v[["Gender"]]/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,5,4))
-p2 = (v[["Nostalgia"]]/v[["Valence"]]/v[["Food"]]/v[["Animal"]]/(v[["Crowd"]]+xlab("Effect size")))
+p2 = (v[["Time"]]/v[["Valence"]]/v[["Food"]]/v[["Pet"]]/(v[["Crowd"]]+xlab("Effect size")))
 p=p1|p2
 
 p = p+patchwork::plot_annotation(caption= paste0("Circle = Left-wing, Triangle = Center\n Diamond = Right-wing, Square = Not collocated"))
