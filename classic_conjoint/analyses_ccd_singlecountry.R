@@ -364,8 +364,6 @@ full_analysis = function(data,
 
   estimator=match.arg(estimator)
   
-  browser()
-  
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
