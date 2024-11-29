@@ -629,7 +629,9 @@ full_interaction_effects(data, formula_interaction_sociodemos,
 
 #psycho
 
-data$interacted_psycho = interaction(data$ccd_consc, data$ccd_openness, data$ccd_neuroticism, sep ="\n")
+data$interacted_psycho = interaction(data$ccd_consc, 
+                                     data$ccd_openness, 
+                                     data$ccd_neuroticism, sep ="\n")
 
 if(outcome == "ideology")
 {
@@ -650,7 +652,8 @@ full_interaction_effects(data, formula_interaction_psycho,
 
 #cultural
 
-data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep ="\n")
+data$interacted_cultural = interaction(data$ccd_restaurant, 
+                                       data$ccd_transport, sep ="\n")
 
 if(outcome == "ideology")
 {
@@ -680,7 +683,8 @@ subdir = "Interactions/AMCEs/"
 ###sociodemos
 
 # age and religion
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, 
+                                         data$ccd_religion, sep =" ")
 
 if(outcome == "ideology")
 {
@@ -746,7 +750,10 @@ full_interaction_effects(data, formula_interaction_sociodemos,
 
 ### all three the sociodemos together let's see what happens here
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_profession, sep = ", ")
+data$interacted_sociodemos = interaction(data$ccd_age, 
+                                         data$ccd_religion, 
+                                         data$ccd_profession, 
+                                         sep = ", ")
 
 if(outcome == "ideology")
 {
