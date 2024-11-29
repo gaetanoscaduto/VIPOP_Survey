@@ -104,7 +104,7 @@ draw_plot_effects = function(effects,
   }
   
   p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-  p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+  p2 = (v[["Consc"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
   p=p1|p2
   
   return(p)
@@ -257,7 +257,7 @@ full_subgroup_analysis = function(data,
     }
     
     p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p2 = (v[["Consc"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
@@ -321,7 +321,7 @@ full_subgroup_analysis = function(data,
     }
     
     p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p2 = (v[["Consc"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
@@ -1038,7 +1038,7 @@ estimator = "mm"
     }
     
     p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p2 = (v[["Consc"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     
     p=p1|p2
     
