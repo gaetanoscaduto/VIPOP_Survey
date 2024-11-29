@@ -758,92 +758,27 @@ ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), p,
        create.dir = T)
 
 
-####################################################################  
-################# CLASSIC CONJOINT ##################################
-####################################################################
-
-
-##################################  
-################# ACIES graphs for thesis classic cj
-################# #################
-
-################### Rearrange the graph for the ACIEs in the classic conjoint
-
-plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobagemm.rds"))
-plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobreligionmm.rds"))
-plot3 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_religionagemm.rds"))
-
-plot1=plot1+labs(y="Interaction between age and job", x="")
-plot2=plot2+labs(y="Interaction between religion and job")
-plot3=plot3+labs(y="Interaction between religion and age", x="")
-
-p = plot1/plot3/plot2 +plot_layout(heights = c(4, 3, 4))
-
-
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/for_thesis_gaetano/")
-
-ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_Sociodemos.png"), p, 
-       height = 12, 
-       width = 8,
-       create.dir = T)
-
-
-plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_psychomm.rds"))
-plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_culturalmm.rds"))
-
-plot1=plot1+labs(y="Interaction between psychological attributes", x="")
-plot2=plot2+labs(y="Interaction between favorite restaurant and transportation")
-
-p = plot1/plot2+plot_layout(heights = c(3, 4))
-
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/for_thesis_gaetano/")
-
-ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_PsychoandLifestyle.png"), p, 
-       height = 12, 
-       width = 8,
-       create.dir = T)
-
 
 
 
 ##################################  ##########################################
-################# Ordered overall MM graph for between attribute  ###########
-################# confrontation in the classic conjoint #####################  
+################# subgroup analyses differences populism and ideology together
+################visual conjoint ##  
 ################# ################# ########################################  
 
-data = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/MMs/_data_singlecountry.rds"))
+if(recoding_functional_equivalents == T)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/FE/for_thesis_gaetano/")
+  
+  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/FE/"
+}
 
-
-leftlim=0.33
-rightlim=0.6
-p = ggplot(data)+
-  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
-  geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                      y=fct_reorder(level, estimate, .desc = T)), 
-                  col = wesanderson::wes_palettes$Darjeeling1[1])+
-  ylab("Attribute Level")+
-  xlab("Effect (MM)")+
-  scale_x_continuous(limits = c(leftlim, rightlim), 
-                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
-  theme(legend.position = "none",
-        axis.text.y = element_text(size=10),
-        axis.title.y = element_text(size=12))
-
-p
-ggsave(paste0(output_wd,"MMs_ccd_ordered.png"), 
-       p, 
-       height = 10, 
-       width = 8,
-       create.dir = T)
-
-
-
-
-##################################  ##########################################
-################# subgroup analyses differences populism and trust together ##  
-################# ################# ########################################  
-
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/for_thesis_gaetano/subgroup_analysis/")
+if(recoding_functional_equivalents == F)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/for_thesis_gaetano/")
+  
+  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/"
+}
 
 subgroups = c("Education level", "News media Exposure", "Gender", "Political Ideology", "Political Interest")
 
@@ -958,7 +893,7 @@ for(subgroup in subgroups)
   
   p1 = (v[["Gender"]]/(v[["Ethnicity"]]+scale_x_continuous(limits = c(leftlim-0.3, rightlim+0.3),
                                                            breaks = round(seq(leftlim-0.3, rightlim+0.3, length.out = 7), digits=3)))/v[["Age"]]/v[["Job"]]/(v[["Issue"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,1,2,2))
-  p2= ((v[["Time"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))
+  p2= ((v[["Time"]])/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(1,1,2,2,1))
   
   p=p1|p2
   
@@ -971,6 +906,87 @@ for(subgroup in subgroups)
          width = 8,
          create.dir = T)
 }
+
+
+####################################################################  
+################# CLASSIC CONJOINT ##################################
+####################################################################
+
+
+##################################  
+################# ACIES graphs for thesis classic cj
+################# #################
+
+################### Rearrange the graph for the ACIEs in the classic conjoint
+
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobagemm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobreligionmm.rds"))
+plot3 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_religionagemm.rds"))
+
+plot1=plot1+labs(y="Interaction between age and job", x="")
+plot2=plot2+labs(y="Interaction between religion and job")
+plot3=plot3+labs(y="Interaction between religion and age", x="")
+
+p = plot1/plot3/plot2 +plot_layout(heights = c(4, 3, 4))
+
+
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/for_thesis_gaetano/")
+
+ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_Sociodemos.png"), p, 
+       height = 12, 
+       width = 8,
+       create.dir = T)
+
+
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_psychomm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_culturalmm.rds"))
+
+plot1=plot1+labs(y="Interaction between psychological attributes", x="")
+plot2=plot2+labs(y="Interaction between favorite restaurant and transportation")
+
+p = plot1/plot2+plot_layout(heights = c(3, 4))
+
+output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/classic_conjoint_design/for_thesis_gaetano/")
+
+ggsave(paste0(output_wd,"ACIEs_Classic_Conjoint_PsychoandLifestyle.png"), p, 
+       height = 12, 
+       width = 8,
+       create.dir = T)
+
+
+
+
+##################################  ##########################################
+################# Ordered overall MM graph for between attribute  ###########
+################# confrontation in the classic conjoint #####################  
+################# ################# ########################################  
+
+data = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/MMs/_data_singlecountry.rds"))
+
+
+leftlim=0.33
+rightlim=0.6
+p = ggplot(data)+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, estimate, .desc = T)), 
+                  col = wesanderson::wes_palettes$Darjeeling1[1])+
+  ylab("Attribute Level")+
+  xlab("Effect (MM)")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+  theme(legend.position = "none",
+        axis.text.y = element_text(size=10),
+        axis.title.y = element_text(size=12))
+
+p
+ggsave(paste0(output_wd,"MMs_ccd_ordered.png"), 
+       p, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
+
+
 
 
 

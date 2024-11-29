@@ -68,6 +68,7 @@ draw_plot_effects = function(effects,
   }
   
   v=list()
+  
   for(attribute in unique(effects$feature))
   {
     
@@ -78,6 +79,7 @@ draw_plot_effects = function(effects,
                       col = wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
+      scale_y_discrete(limits = rev(unique(effects[effects$feature==attribute, ]$level)))+
       scale_x_continuous(limits = c(leftlim, rightlim), 
                          breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       theme(legend.position = "none",
@@ -247,6 +249,7 @@ full_subgroup_analysis = function(data,
                         show.legend = T)+
         ylab(attribute)+
         xlab("\n")+
+        scale_y_discrete(limits = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level)))+
         scale_x_continuous(limits = c(leftlim, rightlim), 
                            breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
@@ -276,7 +279,7 @@ full_subgroup_analysis = function(data,
     effects_pooled = set_categories_and_levels(effects_pooled)
     
     
-    effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
+    effects_pooled = effects_pooled[effects_pooled$level != "Non-Binary", ] #not enough power!
     
     
     
@@ -313,6 +316,7 @@ full_subgroup_analysis = function(data,
         xlab("\n")+
         scale_x_continuous(limits = c(leftlim, rightlim), 
                            breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+        scale_y_discrete(limits = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level)))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -959,7 +963,7 @@ estimator = "mm"
     effects_pooled = set_categories_and_levels(effects_pooled)
     
     
-    effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
+    effects_pooled = effects_pooled[effects_pooled$level != "Non-Binary", ] #not enough power!
     
     effects_subgroup1 = effects_pooled |>
       filter(temp_subgroup == "Left-wing")
@@ -1023,7 +1027,10 @@ estimator = "mm"
                         show.legend = T)+
         ylab(attribute)+
         xlab("\n")+
-        xlim(leftlim,rightlim)+
+        scale_y_discrete(limits = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level)))+
+        scale_x_continuous(limits = c(leftlim, rightlim), 
+                           breaks = round(seq(leftlim, rightlim, length.out = 7), 
+                                          digits=3))+
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))

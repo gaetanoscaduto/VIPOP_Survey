@@ -84,6 +84,7 @@ v=list()
                       col=wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
+     scale_y_discrete(limits = rev(unique(effects[effects$feature==attribute, ]$level)))+
      scale_x_continuous(limits = c(leftlim, rightlim), 
                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       theme(legend.position = "none",
@@ -146,8 +147,6 @@ full_subgroup_analysis = function(data,
     
     effects_pooled = set_categories_and_levels_visual(effects_pooled)
     
-    
-    
     v = list()
     
     if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
@@ -195,6 +194,7 @@ full_subgroup_analysis = function(data,
                         show.legend = T)+
         ylab(attribute)+
         xlab("\n")+
+        scale_y_discrete(limits = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level)))+
         scale_x_continuous(limits = c(leftlim, rightlim), 
                            breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
@@ -263,6 +263,7 @@ full_subgroup_analysis = function(data,
                         shape=19)+
         ylab(attribute)+
         xlab("\n")+
+        scale_y_discrete(limits = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level)))+
         scale_x_continuous(limits = c(leftlim, rightlim), 
                            breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
@@ -336,7 +337,8 @@ full_interaction_effects = function(data,
                         y=fct_reorder(level, desc(estimate)), 
                         col=wesanderson::wes_palettes$Darjeeling1[1]))+
     labs(y="",x="Marginal Mean")+
-    xlim(leftlim,rightlim)+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
@@ -963,7 +965,7 @@ intercept=0.5
 
 v=list()
 
-for(attribute in unique(effects_pooled$feature))
+for(attribute in unique(effects_ooled$feature))
 {
   
   p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
@@ -1007,6 +1009,7 @@ for(attribute in unique(effects_pooled$feature))
                     show.legend = T)+
     ylab(attribute)+
     xlab("\n")+
+    scale_y_discrete(limits = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level)))+
     scale_x_continuous(limits = c(leftlim, rightlim), 
                        breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     theme(legend.position = "right",
