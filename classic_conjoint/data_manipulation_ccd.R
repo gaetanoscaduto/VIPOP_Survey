@@ -62,25 +62,25 @@ conjattr_full = c("gender",
                   "age",
                   "religion",
                   "citysize",
-                  "job",
+                  "profession",
                   "consc",
                   "ope",
-                  "neu",
+                  "neuroticism",
                   "restaurant",
                   "transport",
-                  "animal")
+                  "pet")
 
 cjdata$ccd_gender = NA
 cjdata$ccd_age = NA
 cjdata$ccd_religion = NA
 cjdata$ccd_citysize = NA
-cjdata$ccd_job = NA
+cjdata$ccd_profession = NA
 cjdata$ccd_consc = NA
-cjdata$ccd_ope = NA
-cjdata$ccd_neu = NA
+cjdata$ccd_openness = NA
+cjdata$ccd_neuroticism = NA
 cjdata$ccd_restaurant = NA
 cjdata$ccd_transport = NA
-cjdata$ccd_animal = NA
+cjdata$ccd_pet = NA
 
 
 #the profile the respondent has chosen
