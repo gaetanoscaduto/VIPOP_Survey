@@ -41,61 +41,11 @@ if(recoding_functional_equivalents == F)
 id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
 pop_data_mm_it = readRDS(paste0(main_path_vcd,"singlecountry/populism/IT/MMs/singlecountry_data.rds"))
 
+
+# View(data.frame(attribute=id_data_mm_it$feature, level=id_data_mm_it$level,
+#                 id_est=id_data_mm_it$estimate, pop_est=pop_data_mm_it$estimate))
+
 data = id_data_mm_it 
-
-if(recoding_functional_equivalents == T)
-{
-  y_labels_plots = list(ethnicity=c("Black","White"),
-                        gender=c("Female","Male"),
-                        age=c("35", "70"),
-                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        time=c("Future","Past"),
-                        valence=c("Corruption", "Honesty"),
-                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                        pet=c("Cat","Dog"),
-                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-  )
-  
-  attributes= c("Ethnicity", "Ethnicity",
-                "Gender", "Gender",
-                "Age","Age",
-                "Job","Job","Job","Job","Job",
-                "Issue", "Issue", "Issue", "Issue",
-                "Time", "Time",
-                "Valence","Valence",
-                "Food","Food","Food","Food",
-                "Pet","Pet",
-                "Crowd","Crowd","Crowd","Crowd")
-}
-
-if(recoding_functional_equivalents == F)
-{
-  y_labels_plots = list(ethnicity=c("Black","White"),
-                        gender=c("Female","Male"),
-                        age=c("35", "70"),
-                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        time=c("Future1","Future2","Past1","Past2"),
-                        valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                        pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-  )
-  
-  attributes= c("Ethnicity", "Ethnicity",
-                "Gender", "Gender", 
-                "Age","Age",
-                "Job","Job","Job","Job","Job",
-                "Issue", "Issue", "Issue", "Issue",
-                "Time", "Time", "Time", "Time",
-                "Valence","Valence","Valence","Valence",
-                "Food","Food","Food","Food",
-                "Pet","Pet","Pet","Pet",
-                "Crowd","Crowd","Crowd","Crowd")
-}
-
-
 
 intercept = 0.5
 leftlim = 0.4
@@ -121,7 +71,7 @@ for(attribute in unique(data$feature))
     xlab("\n")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
                        breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
-    scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+    scale_y_discrete(limits = rev(unique(data[data$feature==attribute, ]$level)))+
     scale_color_manual(
       values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                  "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
@@ -151,8 +101,6 @@ p2= ((v[["Time"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet
 p=p1|p2
 
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
-
-p
 
 ggsave(paste0(output_wd,"mms_main.png"), p, 
        height = 10, 
@@ -194,7 +142,7 @@ for(attribute in unique(data$feature))
     xlab("\n")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
                        breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
-    scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+    scale_y_discrete(limits = rev(unique(data[data$feature==attribute, ]$level)))+
     scale_color_manual(
       values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                  "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
@@ -225,8 +173,6 @@ p2= ((v[["Time"]]+ylab("Time"))/v[["Valence"]]/v[["Crowd"]]/v[["Food"]]/(v[["Pet
 
 p= (p1+plot_layout(heights = c(1,1,1,2,2)))|p2
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing; Triangle=Populism; AMCEs, 95% C.I.")
-
-p
 
 ggsave(paste0(output_wd,"amces_main.png"), p, 
        height = 10, 
@@ -285,9 +231,6 @@ p_politics = ggplot()+
   theme(legend.position = "none",
         axis.text.y = element_text(size=10),
         axis.title.y = element_text(size=12))
-
-p_politics
-
 
 ggsave(paste0(output_wd,"ACIEs_interacted_politics_mm.png"), 
        p_politics,
@@ -411,7 +354,7 @@ p_sociodemo = ggplot()+
         axis.text.y = element_text(size=10),
         axis.title.y = element_text(size=12))
 
-p_sociodemo
+
 
 ggsave(paste0(output_wd,"ACIEs_interacted_sociodemo_mm.png"), 
        p_sociodemo,
@@ -535,9 +478,6 @@ p_cultural = ggplot()+
   theme(legend.position = "none",
         axis.text.y = element_text(size=10),
         axis.title.y = element_text(size=12))
-
-p_cultural
-
 
 ggsave(paste0(output_wd,"ACIEs_interacted_cultural_mm.png"), 
        p_cultural,
@@ -693,6 +633,67 @@ ggsave(paste0(output_wd,"mms_ACIEs_polcult.png"), p,
        create.dir = T)
 
 
+
+
+
+############################## 
+############### ACIEs with sociodemos politics full
+############################## 
+#ideology acies marginal means italian sociodemos
+id_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_sociodemo_data.rds"))
+#populism acies marginal means italian sociodemos
+pop_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_political_sociodemos_full_data.rds"))
+
+
+### axis y labels langer rather than higher
+
+
+intercept = 0.5
+leftlim = 0
+rightlim = 1
+
+p_sociodemo_full = ggplot()+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(data=id_data_sociodemo_full,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, desc(estimate)),
+                      col="Right-wing", shape = "Right-wing"),
+                  position = position_nudge(y = 1/10),
+                  show.legend = T)+
+  geom_pointrange(data=pop_data_sociodemo_full,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, desc(id_data_sociodemo_full$estimate)),
+                      col="Populism", shape = "Populism"),
+                  position = position_nudge(y = -1/10),
+                  show.legend = T)+
+  labs(y="",x="")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 11), digits=3))+
+  scale_color_manual(
+    values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
+               "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
+    name = "Inference on",
+    limits = c("Right-wing", "Populism")
+  ) +
+  scale_shape_manual(
+    values = c("Right-wing" = 19, 
+               "Populism" = 17),
+    name = "Inference on",
+    limits = c("Right-wing", "Populism")
+  ) +
+  theme(legend.position = "none",
+        axis.text.y = element_text(size=10),
+        axis.title.y = element_text(size=12))
+
+p_sociodemo_full = p_sociodemo_full +plot_annotation(caption = "Circle=Right-wing, Triangle=Populism; Marginal means, 95% C.I.")
+
+
+ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Sociodemo_full.png"), 
+       p_sociodemo_full, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
+
 ##################################  ##########################################
 ################# Ordered overall MM graph for between attribute  ###########
 ################# confrontation in the VISUAL conjoint #####################  
@@ -727,7 +728,6 @@ p = ggplot()+
   xlab("\n")+
   scale_x_continuous(limits = c(leftlim, rightlim), 
                      breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
-  #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
   scale_color_manual(
     values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
@@ -749,8 +749,6 @@ p = ggplot()+
 
 
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
-
-p
 
 ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), p, 
        height = 10, 
@@ -793,63 +791,11 @@ for(subgroup in subgroups)
   leftlim = -0.2
   rightlim = 0.2
   
-  if(recoding_functional_equivalents == T)
-  {
-    y_labels_plots = list(ethnicity=c("Black","White"),
-                          gender=c("Female","Male"),
-                          age=c("35", "70"),
-                          job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                          issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                          time=c("Future","Past"),
-                          valence=c("Corruption", "Honesty"),
-                          food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                          pet=c("Cat","Dog"),
-                          crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-    )
-    
-    attributes= c("Ethnicity", "Ethnicity",
-                  "Gender", "Gender",
-                  "Age","Age",
-                  "Job","Job","Job","Job","Job",
-                  "Issue", "Issue", "Issue", "Issue",
-                  "Time", "Time",
-                  "Valence","Valence",
-                  "Food","Food","Food","Food",
-                  "Pet","Pet",
-                  "Crowd","Crowd","Crowd","Crowd")
-  }
-  
-  if(recoding_functional_equivalents == F)
-  {
-    y_labels_plots = list(ethnicity=c("Black","White"),
-                          gender=c("Female","Male"),
-                          age=c("35", "70"),
-                          job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                          issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                          time=c("Future1","Future2","Past1","Past2"),
-                          valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                          pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                          food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                          crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-    )
-    
-    attributes= c("Ethnicity", "Ethnicity",
-                  "Gender", "Gender", 
-                  "Age","Age",
-                  "Job","Job","Job","Job","Job",
-                  "Issue", "Issue", "Issue", "Issue",
-                  "Time", "Time", "Time", "Time",
-                  "Valence","Valence","Valence","Valence",
-                  "Food","Food","Food","Food",
-                  "Pet","Pet","Pet","Pet",
-                  "Crowd","Crowd","Crowd","Crowd")
-  }
-  
-  
+  data=id_data
   
   v=list()
   
-  for(attribute in unique(attributes))
+  for(attribute in unique(data$feature))
   {
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
@@ -868,7 +814,7 @@ for(subgroup in subgroups)
       scale_x_continuous(limits = c(leftlim, rightlim), 
                          breaks = round(seq(leftlim, rightlim, length.out = 7),
                                         digits=3))+
-      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
+      scale_y_discrete(limits = rev(unique(data[data$feature==attribute, ]$level)))+
       scale_color_manual(
         values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1],
                    "Populism" = wesanderson::wes_palettes$Darjeeling1[2]),
@@ -919,12 +865,12 @@ for(subgroup in subgroups)
 
 ################### Rearrange the graph for the ACIEs in the classic conjoint
 
-plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobagemm.rds"))
-plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_jobreligionmm.rds"))
+plot1 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_professionagemm.rds"))
+plot2 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_professionreligionmm.rds"))
 plot3 = readRDS(paste0(gdrive_code,"VIPOP_SURVEY/analyses/classic_conjoint_design/singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_religionagemm.rds"))
 
-plot1=plot1+labs(y="Interaction between age and job", x="")
-plot2=plot2+labs(y="Interaction between religion and job")
+plot1=plot1+labs(y="Interaction between age and profession", x="")
+plot2=plot2+labs(y="Interaction between religion and profession")
 plot3=plot3+labs(y="Interaction between religion and age", x="")
 
 p = plot1/plot3/plot2 +plot_layout(heights = c(4, 3, 4))

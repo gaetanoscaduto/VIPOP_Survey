@@ -334,11 +334,14 @@ full_interaction_effects = function(data,
   p=ggplot(effects)+
     geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
     geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                        y=fct_reorder(level, desc(estimate)), 
-                        col=wesanderson::wes_palettes$Darjeeling1[1]))+
+                        y=fct_reorder(level, desc(estimate)
+                                      )
+                        ), 
+                    col=wesanderson::wes_palettes$Darjeeling1[1])+
     labs(y="",x="Marginal Mean")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
-                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), 
+                                      digits=3))+
     theme(legend.position = "none",
           axis.text.y = element_text(size=10),
           axis.title.y = element_text(size=12))
@@ -413,14 +416,7 @@ full_analysis = function(data,
 
 ################### 
 ################### PRELIMINARY STUFF
-####################
-
-
-
-
-
-
-
+###################
 
 #If you launch this script from the master script, make sure to have the context 
 # and the outcome fixed. Otherwise, uncomment desired context
@@ -600,7 +596,15 @@ data$interacted_political = interaction(data$vcd_issue,
                                         data$vcd_valence, 
                                         sep ="\n")
 
+data$interacted_political_sociodemo = interaction(data$vcd_issue, 
+                                        data$vcd_gender,
+                                         #data$vcd_ethnicity,
+                                        data$vcd_job, 
+                                        sep =", ")
 
+data$interacted_political_cultural = interaction(data$vcd_issue, 
+                                                  data$vcd_food, 
+                                                  sep ="\n")
 
 
 if(outcome=="ideology")
@@ -609,8 +613,8 @@ if(outcome=="ideology")
   formula_interaction_sociodemos = vcd_chosen_rw ~ interacted_sociodemos
   formula_interaction_cultural = vcd_chosen_rw ~ interacted_cultural
   formula_interaction_political = vcd_chosen_rw ~ interacted_political
-  
-  
+  formula_interaction_political_sociodemo = vcd_chosen_rw ~ interacted_political_sociodemo
+  formula_interaction_political_cultural = vcd_chosen_rw ~ interacted_political_cultural
 }
 
 if(outcome=="trust")
@@ -619,8 +623,8 @@ if(outcome=="trust")
   formula_interaction_sociodemos = vcd_chosen_trust ~ interacted_sociodemos  
   formula_interaction_cultural = vcd_chosen_trust ~ interacted_cultural
   formula_interaction_political = vcd_chosen_trust ~ interacted_political
-  
-  
+  formula_interaction_political_sociodemo = vcd_chosen_trust ~ interacted_political_sociodemo
+  formula_interaction_political_cultural = vcd_chosen_trust ~ interacted_political_cultural
 }
 
 if(outcome=="populism")
@@ -629,11 +633,13 @@ if(outcome=="populism")
   formula_interaction_sociodemos = vcd_chosen_pop ~ interacted_sociodemos
   formula_interaction_cultural = vcd_chosen_pop ~ interacted_cultural
   formula_interaction_political = vcd_chosen_pop ~ interacted_political
-  
+  formula_interaction_political_sociodemo = vcd_chosen_pop ~ interacted_political_sociodemo
+  formula_interaction_political_cultural = vcd_chosen_pop ~ interacted_political_cultural
 }
 
+######## 
 ######## ACIEs with MMs
-
+######## 
 subdir = "Interactions/MMs/"
 estimator="mm"
 
@@ -664,8 +670,9 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_so
 
 
 
-### interacted sociodemos not full
-
+######## #### 
+#### interacted sociodemos not full
+#### #### 
 return_list = full_interaction_effects(data, 
                              formula_interaction_sociodemos,
                              estimator,
@@ -688,9 +695,9 @@ saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos.rds"))
 saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_sociodemos_data.rds"))
 
 
-
+#### #### 
 ##### ACIE of the cultural dimensions
-
+#### #### 
 return_list = full_interaction_effects(data, 
                              formula_interaction_cultural,
                              estimator,
@@ -709,9 +716,9 @@ saveRDS(p, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
 saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cultural_data.rds"))
 
 
-
+#### #### 
 #####  ACIE of the political dimensions
-
+#### #### 
 
 return_list = full_interaction_effects(data, 
                              formula_interaction_political,
@@ -730,13 +737,66 @@ saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
 
 saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_data.rds"))
 
+#### #### 
+#####  ACIE of the political and sociodemos
+#### #### 
+
+return_list = full_interaction_effects(data, 
+                                       formula_interaction_political_sociodemo,
+                                       estimator,
+                                       leftlim=0.33,
+                                       rightlim=0.67)
+
+p=return_list$plot
+
+p
+ggsave(paste0(output_wd, subdir,"interacted_political_sociodemo.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_sociodemo.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_sociodemo_data.rds"))
 
 
-######## ACIEs with AMCEs
 
+#### #### 
+#####  ACIE of the political and cultural
+#### #### 
+
+
+return_list = full_interaction_effects(data, 
+                                       formula_interaction_political_cultural,
+                                       estimator,
+                                       leftlim=0.33,
+                                       rightlim=0.67)
+
+p=return_list$plot
+
+p
+
+ggsave(paste0(output_wd, subdir,"interacted_political_cultural.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_cultural.rds"))
+
+saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_cultural_data.rds"))
+
+
+
+####################
+###########ACIEs with AMCEs
+#########################
 subdir = "Interactions/AMCEs/"
 estimator="amce"
 
+
+####################  
+#####  ACIE of the sociodemos dimensions
+####################
 
 return_list = full_interaction_effects(data, 
                                        formula_interaction_sociodemos,
@@ -755,8 +815,9 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_so
 
 
 
-##### ACIE of the cultural dimensions
-
+####################  
+#####  ACIE of the cultural dimensions
+####################
 return_list = full_interaction_effects(data, 
                                        formula_interaction_cultural,
                                        estimator)
@@ -774,7 +835,10 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cu
 
 
 
+####################  
 #####  ACIE of the political dimensions
+####################
+
 
 
 return_list = full_interaction_effects(data, 
@@ -791,6 +855,122 @@ ggsave(paste0(output_wd, subdir,"interacted_political.png"),
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
 
 saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_data.rds"))
+
+
+
+####################  
+#####  ACIE of the political and sociodemos
+####################
+
+dataleft=data[data$vcd_issue == "Leftpos" | data$vcd_issue == "Leftneg", ]
+
+
+dataleft$interacted_political_sociodemo = factor(dataleft$interacted_political_sociodemo, 
+                                                levels = levels(data$interacted_political_sociodemo)[grep("Left", 
+                                                                                                         levels(data$interacted_political_sociodemo))]
+)
+
+dataleft$interacted_political_sociodemo=relevel(dataleft$interacted_political_sociodemo, ref = "Leftpos, Female, Waiter")
+
+
+dataright=data[data$vcd_issue == "Rightpos" | data$vcd_issue == "Rightneg", ]
+
+dataright$interacted_political_sociodemo = factor(dataright$interacted_political_sociodemo, 
+                                                 levels = levels(data$interacted_political_sociodemo)[grep("Right", 
+                                                                                                          levels(data$interacted_political_sociodemo))]
+)
+
+dataright$interacted_political_sociodemo=relevel(dataright$interacted_political_sociodemo, ref = "Rightpos, Female, Teacher")
+
+
+return_list1 = full_interaction_effects(dataleft, 
+                                       formula_interaction_political_sociodemo,
+                                       estimator,
+                                       leftlim=-0.22,
+                                       rightlim=0.22)
+
+p1=return_list1$plot
+
+p1
+
+return_list2 = full_interaction_effects(dataright, 
+                                       formula_interaction_political_sociodemo,
+                                       estimator,
+                                       leftlim=-0.22,
+                                       rightlim=0.22)
+
+p2=return_list2$plot
+
+p2=p2+xlab("")
+
+
+p=p2/p1
+
+p
+
+ggsave(paste0(output_wd, subdir,"interacted_political_sociodemo.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_sociodemo.rds"))
+
+saveRDS(rbind(return_list2$effects_data, return_list1$effects_data), file = paste0(output_wd, subdir,"interacted_political_sociodemo_data.rds"))
+
+
+
+####################  
+##### ACIE of the political and cultural
+####################
+
+
+dataleft$interacted_political_cultural = factor(dataleft$interacted_political_cultural, 
+                                             levels = levels(data$interacted_political_cultural)[grep("Left", 
+                                                                                                            levels(data$interacted_political_cultural))]
+                                             )
+
+dataleft$interacted_political_cultural = relevel(dataleft$interacted_political_cultural,
+                                                 ref="Leftneg\nVegan")
+
+dataright$interacted_political_cultural = factor(dataright$interacted_political_cultural, 
+                                                 levels = levels(data$interacted_political_cultural)[grep("Right", 
+                                                                                                          levels(data$interacted_political_cultural))]
+)
+
+dataright$interacted_political_cultural = relevel(dataright$interacted_political_cultural,
+                                                  ref="Rightneg\nVegan")
+
+return_list1 = full_interaction_effects(dataleft, 
+                                       formula_interaction_political_cultural,
+                                       estimator,
+                                       leftlim=-0.2,
+                                       rightlim=0.2)
+
+p1=return_list1$plot
+
+
+return_list2 = full_interaction_effects(dataright, 
+                                       formula_interaction_political_cultural,
+                                       estimator,
+                                       leftlim=-0.2,
+                                       rightlim=0.2)
+
+p2=return_list2$plot
+
+p2=p2+xlab("")
+
+
+p=p2/p1
+
+ggsave(paste0(output_wd, subdir,"interacted_political_cultural.png"), 
+       p, 
+       height = 10, 
+       width = 10, create.dir = T)
+
+saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_cultural.rds"))
+
+saveRDS(rbind(return_list2$effects_data, return_list1$effects_data), file = paste0(output_wd, subdir,"interacted_political_cultural_data.rds"))
+
 
 
 ################################################################
@@ -1032,8 +1212,6 @@ h_0 = ifelse(estimator == "mm", 0.5, 0)
 #        height = 12, 
 #        width = 10, create.dir = T)
 
-
-
 ### test of significance differences between left and right
 
 data1 = data |>
@@ -1052,5 +1230,3 @@ full_subgroup_analysis(data1,
                        subgroup1 = "Left",
                        subgroup2 = "Right"  #the name of the second subgroup (variable level)
 )
-
-
