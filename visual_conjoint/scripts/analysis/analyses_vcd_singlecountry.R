@@ -965,7 +965,7 @@ intercept=0.5
 
 v=list()
 
-for(attribute in unique(effects_ooled$feature))
+for(attribute in unique(effects_pooled$feature))
 {
   
   p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+

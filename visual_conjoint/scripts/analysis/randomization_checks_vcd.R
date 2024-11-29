@@ -25,7 +25,29 @@
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
 #gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
-output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/", outcome, "/", context,"/randomization_checks/")
+
+#recoding_functional_equivalents = T
+
+if(recoding_functional_equivalents == T)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/",
+                     "FE",
+                     "/singlecountry/", 
+                     outcome, "/",
+                     context,
+                     "/randomization_checks/")
+}
+
+if(recoding_functional_equivalents == F)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/",
+                     "NFE",
+                     "/singlecountry/", 
+                     outcome, "/",
+                     context,
+                     "/randomization_checks/")
+}
+
 
 data = readRDS(paste0(dataset_rep, "cjdata_vcd_", context, ".RDS"))
 
@@ -50,29 +72,29 @@ if(outcome == "populism")
 
 
 #### Randomization check with levels not recoded (probability assigned based on similarity!)
-if(context != "POOL") #When context==POOL, there is a name which is the same of one surname!
-{
-  plot(cj_freqs(data, vcd_outcome ~ vcd_ethnicity + 
-                  vcd_gender + vcd_age + vcd_photo +
-                  vcd_name + vcd_surname +
-                  vcd_job + vcd_issue + vcd_time+
-                  vcd_pet + vcd_food + vcd_crowd,
-                id = ~respid), col="grey")
-}
-if(context=="POOL")
-{
-  plot(cj_freqs(data, vcd_outcome ~ vcd_ethnicity + 
-                  vcd_gender + vcd_age + vcd_photo +
-                  #vcd_name + vcd_surname +
-                  vcd_job + vcd_issue + vcd_time+
-                  vcd_pet + vcd_food + vcd_crowd,
-                id = ~respid), col="grey")
-  
-}
+#NOTICE THAT When context==POOL, there is a name which is the same of one surname!
 
+  plot(cj_freqs(data, vcd_outcome ~ vcd_ethnicity + 
+                  vcd_gender + vcd_age + vcd_job + 
+                  vcd_issue + vcd_time + vcd_valence+
+                  vcd_pet + vcd_food + vcd_crowd, 
+                  feature_labels = list(vcd_gender="Gender",
+                                        vcd_age="Age",
+                                        vcd_ethnicity="Ethnicity",
+                                        vcd_job="Job",
+                                        vcd_issue="Positional Issue",
+                                        vcd_time = "Time",
+                                        vcd_valence= "Valence",
+                                        vcd_pet="Pet",
+                                        vcd_food="Food",
+                                        vcd_crowd="Crowd"
+                                        ),
+                  id = ~respid), 
+       col="grey")+
+    theme(legend.position = "none")
 
 ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_cj.png"), 
-       height = 15, width = 8, create.dir = T)
+       height = 10, width = 8, create.dir = T)
 
 
 # With ggplot
