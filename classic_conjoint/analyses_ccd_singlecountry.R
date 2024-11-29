@@ -213,7 +213,7 @@ full_subgroup_analysis = function(data,
     
     v=list()
     
-    effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
+    effects_pooled = effects_pooled[effects_pooled$level != "Non-Binary", ] #not enough power!
     
     effects_subgroup1 = effects_pooled |>
       filter(temp_subgroup == subgroup1)
@@ -946,12 +946,6 @@ data$temp_subgroup = factor(data[, "ideology_r"])
 
 plot(cj(data, formula_outcome,
         id = ~respid, estimate = "mm", by = ~temp_subgroup))
-
-
-
-
-
-
 
 estimator = "mm"
   

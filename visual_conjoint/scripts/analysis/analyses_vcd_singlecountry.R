@@ -34,8 +34,7 @@
 
 
 
-set_categories_and_levels_visual = function(effects, 
-                                     attributes=attributes){
+set_categories_and_levels_visual = function(effects){
 
   effects <- effects %>%
     mutate(feature = gsub("vcd_", "", feature) %>% # Remove "vcd_"
@@ -145,8 +144,7 @@ full_subgroup_analysis = function(data,
          alpha=0.01, 
          h=h_0)
     
-    effects_pooled = set_categories_and_levels_visual(effects_pooled,
-                                               attributes = attributes)
+    effects_pooled = set_categories_and_levels_visual(effects_pooled)
     
     
     
@@ -172,7 +170,7 @@ full_subgroup_analysis = function(data,
     effects_subgroup2 = effects_pooled |>
       filter(temp_subgroup == subgroup2)
     
-    for(attribute in unique(attributes))
+    for(attribute in unique(effects_pooled$feature))
     {
       p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
         geom_vline(aes(xintercept=intercept), 
@@ -230,8 +228,7 @@ full_subgroup_analysis = function(data,
          #h0=h_0
          )
     
-    effects_pooled = set_categories_and_levels_visual(effects_pooled,
-                                               attributes = attributes)
+    effects_pooled = set_categories_and_levels_visual(effects_pooled)
     
     
     
@@ -252,7 +249,7 @@ full_subgroup_analysis = function(data,
     v=list()
     
     
-    for(attribute in unique(attributes))
+    for(attribute in unique(effects_pooled$feature))
     {
       p = ggplot(effects_pooled[effects_pooled$feature==attribute, ])+
         geom_vline(aes(xintercept=intercept), 
@@ -387,8 +384,7 @@ full_analysis = function(data,
        #h0=h_0
        )
   
-  effects_pooled = set_categories_and_levels_visual(effects_pooled,
-                                                    attributes = attributes)
+  effects_pooled = set_categories_and_levels_visual(effects_pooled)
   result_list = draw_plot_effects(effects_pooled,
                         estimator=estimator,
                         leftlim,
@@ -946,8 +942,7 @@ effects_pooled <- data |>
      #h0=h_0
      )
 
-effects_pooled = set_categories_and_levels_visual(effects_pooled,
-                                           attributes = attributes)
+effects_pooled = set_categories_and_levels_visual(effects_pooled)
 
 
 effects_subgroup1 = effects_pooled |>
@@ -968,7 +963,7 @@ intercept=0.5
 
 v=list()
 
-for(attribute in unique(attributes))
+for(attribute in unique(effects_pooled$feature))
 {
   
   p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+

@@ -45,20 +45,20 @@ if(outcome=="populism")
 
 
 plot(cj_freqs(data, ccd_outcome ~ ccd_gender+
-                ccd_age+ccd_religion+ccd_citysize+ccd_job+
-                ccd_consc+ccd_ope+ ccd_neu+
-                ccd_restaurant+ccd_transport+ccd_animal, 
+                ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+                ccd_consc+ccd_openness+ ccd_neuroticism+
+                ccd_restaurant+ccd_transport+ccd_pet, 
               feature_labels = list(ccd_gender="Gender",
                                       ccd_age="Age",
                                     ccd_religion="Religion",
                                     ccd_citysize="City size",
-                                    ccd_job= "Job",
+                                    ccd_profession= "Profession",
                                     ccd_consc= "Conscientiousness",
-                                    ccd_ope="Openness",
-                                    ccd_neu="Neuroticism",
+                                    ccd_openness="Openness",
+                                    ccd_neuroticism="Neuroticism",
                                     ccd_restaurant="Favorite Restaurant",
                                     ccd_transport="Mean of transportation",
-                                    ccd_animal="Pet"),
+                                    ccd_pet="Pet"),
               id = ~respid), col="grey")+theme(legend.position = "none")
 
 
@@ -68,9 +68,9 @@ ggsave(paste0(output_wd, "diagnostic_randomization.png"),
 
 # With ggplot
 aus = cj_freqs(data, ccd_outcome ~ ccd_gender+
-                 ccd_age+ccd_religion+ccd_citysize+ccd_job+
-                 ccd_consc+ccd_ope+ ccd_neu+
-                 ccd_restaurant+ccd_transport+ccd_animal,
+                 ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+                 ccd_consc+ccd_openness+ ccd_neuroticism+
+                 ccd_restaurant+ccd_transport+ccd_pet,
                id = ~respid)
 
 v = list()
@@ -113,17 +113,7 @@ ggsave(paste0(output_wd,  "diagnostic_randomization_ggplot2.png"),
 # 
 # data$ccd_outcome = factor(data$ccd_outcome)
 # 
-# plot(cj(data, 
-#         ccd_outcome ~ ccd_gender+
-#         ccd_age+ccd_religion+ccd_citysize+ccd_job+
-#         ccd_consc+ccd_ope+ ccd_neu+
-#         ccd_restaurant+ccd_transport+ccd_animal,
-#         id = ~respid,
-#         by = ~ccd_profile_number,
-#         estimate = "mm_differences"),
-#      group = "ccd_profile_number",
-#      vline = 0)
-# 
+
 # ### checking it with a different approach: if the effect is significant, 
 # # it means that  the effect of a certain attribute varies by whether a
 # #profile is on the left or on the right
@@ -263,23 +253,23 @@ p4 = plot(cregg::cj(data, ccd_outcome ~ ccd_citysize,
   theme_gray()+
   theme(legend.position = "none")
 
-p5 = plot(cregg::cj(data, ccd_outcome ~ ccd_job, 
+p5 = plot(cregg::cj(data, ccd_outcome ~ ccd_profession, 
                     id = ~respid,
                     by = ~attribute_5_position,
                     estimate = "mm",
                     alpha=0.01,
-                    feature_labels = list(ccd_job = "Job")), 
+                    feature_labels = list(ccd_profession = "Profession")), 
           group = "attribute_5_position")+
-  geom_vline(aes(xintercept = mean(data[data$ccd_job == "Entrepreneur", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_profession == "Entrepreneur", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
-  geom_vline(aes(xintercept = mean(data[data$ccd_job == "Lawyer", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_profession == "Lawyer", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+ 
-  geom_vline(aes(xintercept = mean(data[data$ccd_job == "Waiter", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_profession == "Waiter", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
-  geom_vline(aes(xintercept = mean(data[data$ccd_job == "Teacher", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_profession == "Teacher", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+ 
   xlab("")+
@@ -305,34 +295,34 @@ p6 = plot(cregg::cj(data, ccd_outcome ~ ccd_consc,
         legend.title = element_blank(),
         legend.position = "right")
 
-p7 = plot(cregg::cj(data, ccd_outcome ~ ccd_ope, 
+p7 = plot(cregg::cj(data, ccd_outcome ~ ccd_openness, 
                     id = ~respid,
                     by = ~attribute_7_position,
                     estimate = "mm",    
                     alpha=0.01,
-                    feature_labels = list(ccd_ope = "Openness")), 
+                    feature_labels = list(ccd_openness = "Openness")), 
           group = "attribute_7_position")+
-  geom_vline(aes(xintercept = mean(data[data$ccd_ope == "Open", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_openness == "Open", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
-  geom_vline(aes(xintercept = mean(data[data$ccd_ope == "Rigid", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_openness == "Rigid", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+ 
   xlab("")+
   theme_gray()+
   theme(legend.position = "none")
 
-p8 = plot(cregg::cj(data, ccd_outcome ~ ccd_neu, 
+p8 = plot(cregg::cj(data, ccd_outcome ~ ccd_neuroticism, 
                     id = ~respid,
                     by = ~attribute_8_position,
                     estimate = "mm",
                     alpha=0.01,
-                    feature_labels = list(ccd_neu = "Neuroticism")), 
+                    feature_labels = list(ccd_neuroticism = "Neuroticism")), 
           group = "attribute_8_position")+
-  geom_vline(aes(xintercept = mean(data[data$ccd_neu == "Anxious", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_neuroticism == "Anxious", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
-  geom_vline(aes(xintercept = mean(data[data$ccd_neu == "Calm", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_neuroticism == "Calm", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
   theme_gray()+
@@ -381,23 +371,23 @@ p10 = plot(cregg::cj(data, ccd_outcome ~ ccd_transport,
   theme(legend.position = "none")
 
 
-p11 = plot(cregg::cj(data, ccd_outcome ~ ccd_animal, 
+p11 = plot(cregg::cj(data, ccd_outcome ~ ccd_pet, 
                     id = ~respid,
                     by = ~attribute_9_position,
                     estimate = "mm",
                     alpha=0.01,
-                    feature_labels = list(ccd_animal = "Animal")), 
+                    feature_labels = list(ccd_pet = "Pet")), 
           group = "attribute_9_position")+
-  geom_vline(aes(xintercept = mean(data[data$ccd_animal == "Cat Large", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_pet == "Cat Large", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
-  geom_vline(aes(xintercept = mean(data[data$ccd_animal == "Dog", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_pet == "Dog", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+ 
-  geom_vline(aes(xintercept = mean(data[data$ccd_animal == "No Pets", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_pet == "No Pets", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+
-  geom_vline(aes(xintercept = mean(data[data$ccd_animal == "Small Dog", ]$ccd_outcome)),
+  geom_vline(aes(xintercept = mean(data[data$ccd_pet == "Small Dog", ]$ccd_outcome)),
              col="black",
              alpha= 1/4)+ 
   xlab("")+
