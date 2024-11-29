@@ -74,7 +74,8 @@ draw_plot_effects = function(effects,
     p = ggplot(effects[effects$feature==attribute, ])+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(aes(x=estimate, xmin=lower, xmax=upper,
-                          y=level), col = wesanderson::wes_palettes$Darjeeling1[1])+
+                          y=level), 
+                      col = wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
       scale_x_continuous(limits = c(leftlim, rightlim), 
@@ -363,8 +364,7 @@ full_analysis = function(data,
 
   estimator=match.arg(estimator)
   
-  browser()
-  
+
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
