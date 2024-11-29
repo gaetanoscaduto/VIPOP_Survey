@@ -36,13 +36,10 @@
 
 set_categories_and_levels_visual = function(effects, 
                                      attributes=attributes){
-  # effects=effects_pooled
-  # attributes=attributes
+
   effects <- effects %>%
     mutate(feature = gsub("vcd_", "", feature) %>% # Remove "vcd_"
              tools::toTitleCase())   
-  
-  #effects$level=factor(levels_vector, levels = levels_vector)
   
   return(effects)
 }
@@ -57,7 +54,6 @@ set_categories_and_levels_visual = function(effects,
 
 draw_plot_effects = function(effects, 
                              estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                             y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
                              x_intercept=999 #the vertical line to signal the difference from the insignificance
@@ -120,7 +116,6 @@ v=list()
 full_subgroup_analysis = function(data,
                                  formula=formula_outcome,
                                  estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                                 y_labels=y_labels_plots,
                                  subdir, #the subdirectory where plots will be saved
                                  leftlim=999, #the left limit of the plot
                                  rightlim=999,#the right limit of the plot
@@ -396,7 +391,6 @@ full_analysis = function(data,
                                                     attributes = attributes)
   result_list = draw_plot_effects(effects_pooled,
                         estimator=estimator,
-                        y_labels=y_labels_plots,
                         leftlim,
                         rightlim)
   
@@ -519,62 +513,9 @@ if(recoding_functional_equivalents == T)
   data$vcd_pet = factor(data$vcd_pet, levels=c("Cat", "Dog"))
   
   
-  y_labels_plots = list(ethnicity=c("Black","White"),
-                        gender=c("Female","Male"),
-                        age=c("35", "70"),
-                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        time=c("Future","Past"),
-                        valence=c("Corruption", "Honesty"),
-                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                        pet=c("Cat","Dog"),
-                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-  )
-  
-  #levels_vector= unlist(y_labels_plots, use.names = F)
-  
-  # attributes= c("Ethnicity", "Ethnicity",
-  #               "Gender", "Gender",
-  #               "Age","Age",
-  #               "Job","Job","Job","Job","Job",
-  #               "Issue", "Issue", "Issue", "Issue",
-  #               "Time", "Time",
-  #               "Valence","Valence",
-  #               "Food","Food","Food","Food",
-  #               "Pet","Pet",
-  #               "Crowd","Crowd","Crowd","Crowd")
-  # 
-}
+ }
 
 
-if(recoding_functional_equivalents == F)
-{
-  y_labels_plots = list(ethnicity=c("Black","White"),
-                        gender=c("Female","Male"),
-                        age=c("35", "70"),
-                        job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                        issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                        time=c("Future1","Future2","Past1","Past2"),
-                        valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                        food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                        pet=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                        crowd=c("Mixedelite","Mixedpeople", "Whiteelite", "Whitepeople")
-  )
-  
-  # levels_vector= unlist(y_labels_plots, use.names = F)
-  
-  # attributes= c("Ethnicity", "Ethnicity",
-  #               "Gender", "Gender",
-  #               "Age","Age",
-  #               "Job","Job","Job","Job","Job",
-  #               "Issue", "Issue", "Issue", "Issue",
-  #               "Time", "Time", "Time", "Time",
-  #               "Valence","Valence","Valence","Valence",
-  #               "Food","Food","Food","Food",
-  #               "Pet","Pet","Pet","Pet",
-  #               "Crowd","Crowd","Crowd","Crowd")
-  
-}
 
 
 
@@ -867,7 +808,6 @@ data$gender_r = factor(ifelse(data$gender == "nonbinary" | data$gender == "notsa
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -880,7 +820,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "gender_r",
                        leftlim = -0.2,
@@ -897,7 +836,6 @@ data$educ_r = factor(toTitleCase(data$educ_r), levels = c("No University", "Univ
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -911,7 +849,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "educ_r",
                        subgroup_name = "Education level",
@@ -930,7 +867,6 @@ data$interest_r = factor(toTitleCase(data$interest_r), levels = c("Low", "High")
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "interest_r",
                        subgroup_name = "Political Interest",
@@ -942,7 +878,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "interest_r",
                        subgroup_name = "Political Interest",
@@ -961,7 +896,6 @@ data$exposure_r = factor(toTitleCase(data$exposure_r), levels=c("Low", "High"))
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -975,7 +909,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        subgroup_variable = "exposure_r",
                        subgroup_name = "News media Exposure",
@@ -1115,7 +1048,6 @@ data1$ideology_r = factor(data1$ideology_r, levels =c("Left-wing", "Right-wing")
 full_subgroup_analysis(data1,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim=-0.2,
                        rightlim=0.2,

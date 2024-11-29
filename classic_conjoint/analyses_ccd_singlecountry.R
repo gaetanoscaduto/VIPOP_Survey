@@ -31,12 +31,11 @@
 #fashion in the mm dataset resulting from the cj function. The
 #functio
 
-set_categories_and_levels = function(effects, 
-                                            attributes=attributes){
-  # effects=effects_pooled
-  # attributes=attributes
-  effects$feature = factor(attributes, levels = unique(attributes))
-  effects$level=factor(levels_vector, levels = levels_vector)
+set_categories_and_levels = function(effects){
+  
+  effects <- effects %>%
+    mutate(feature = gsub("ccd_", "", feature) %>% # Remove "vcd_"
+             tools::toTitleCase())   
   
   return(effects)
 }
@@ -50,7 +49,6 @@ set_categories_and_levels = function(effects,
 
 draw_plot_effects = function(effects, 
                              estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                             y_labels=y_labels_plots,
                              leftlim=999, #the left limit of the plot
                              rightlim=999,#the right limit of the plot
                              intercept=999,
@@ -70,7 +68,7 @@ draw_plot_effects = function(effects,
   }
   
   v=list()
-  for(attribute in unique(attributes))
+  for(attribute in unique(effects$feature))
   {
     
     p = ggplot(effects[effects$feature==attribute, ])+
@@ -79,7 +77,6 @@ draw_plot_effects = function(effects,
                           y=level), col = wesanderson::wes_palettes$Darjeeling1[1])+
       ylab(attribute)+
       xlab("\n")+
-      scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]]))+
       scale_x_continuous(limits = c(leftlim, rightlim), 
                          breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       theme(legend.position = "none",
@@ -105,8 +102,8 @@ draw_plot_effects = function(effects,
                                                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))
   }
   
-  p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-  p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+  p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+  p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
   p=p1|p2
   
   return(p)
@@ -170,7 +167,6 @@ full_interaction_effects = function(data,
 full_subgroup_analysis = function(data,
                                   formula,
                                   estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                                  y_labels=y_labels_plots,
                                   subdir, #the subdirectory where plots will be saved
                                   leftlim=999, #the left limit of the plot
                                   rightlim=999,#the right limit of the plot
@@ -196,8 +192,7 @@ full_subgroup_analysis = function(data,
          estimate = estimator,
           alpha=0.01)
     
-    effects_pooled = set_categories_and_levels(effects_pooled,
-                                               attributes = attributes)
+    effects_pooled = set_categories_and_levels(effects_pooled)
     
     
     
@@ -225,7 +220,7 @@ full_subgroup_analysis = function(data,
     effects_subgroup2 = effects_pooled |>
       filter(temp_subgroup == subgroup2)
     
-    for(attribute in unique(attributes))
+    for(attribute in unique(effects_pooled$feature))
     {
       
       p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
@@ -251,7 +246,6 @@ full_subgroup_analysis = function(data,
                         show.legend = T)+
         ylab(attribute)+
         xlab("\n")+
-        scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
         scale_x_continuous(limits = c(leftlim, rightlim), 
                            breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
         theme(legend.position = "right",
@@ -261,8 +255,8 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Circle = ", subgroup1, "\nTriangle = ", subgroup2))
@@ -278,8 +272,7 @@ full_subgroup_analysis = function(data,
          by = ~temp_subgroup,
          estimate = estimator)
     
-    effects_pooled = set_categories_and_levels(effects_pooled,
-                                               attributes = attributes)
+    effects_pooled = set_categories_and_levels(effects_pooled)
     
     
     effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
@@ -303,7 +296,7 @@ full_subgroup_analysis = function(data,
     v=list()
     
 
-    for(attribute in unique(attributes))
+    for(attribute in unique(effects_pooled$feature))
     {
       p = ggplot(effects_pooled[effects_pooled$feature==attribute, ])+
         geom_vline(aes(xintercept=intercept), 
@@ -326,8 +319,8 @@ full_subgroup_analysis = function(data,
       v[[attribute]] = p
     }
     
-    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     p=p1|p2
     
     p = p+patchwork::plot_annotation(caption= paste0("Differences ", unique(effects_pooled$BY)))
@@ -346,8 +339,9 @@ full_subgroup_analysis = function(data,
 }
 
 
-
-
+###################
+#######FULL ANALYSIS
+###################
 
 
 
@@ -370,19 +364,19 @@ full_analysis = function(data,
 
   estimator=match.arg(estimator)
   
+  browser()
+  
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
        estimate = estimator)
   
-  effects_pooled = set_categories_and_levels(effects_pooled,
-                                                    attributes = attributes)
+  effects_pooled = set_categories_and_levels(effects_pooled)
   
   if(continuous==F)
   {
   p = draw_plot_effects(effects_pooled,
                         estimator=estimator,
-                        y_labels=y_labels_plots,
                         leftlim,
                         rightlim,
                         intercept)
@@ -391,7 +385,6 @@ full_analysis = function(data,
   {
     p = draw_plot_effects(effects_pooled,
                           estimator=estimator,
-                          y_labels=y_labels_plots,
                           leftlim = leftlim, 
                           rightlim = rightlim,
                           intercept = intercept,
@@ -420,6 +413,11 @@ full_analysis = function(data,
 
 #############################################################
 
+
+###################
+#######PRELIMINARY STUFF
+###################
+
 #If you launch this script from the master script, make sure to have the context fixed
 #otherwise, uncomment desired context
 #context = "IT"
@@ -435,71 +433,6 @@ full_analysis = function(data,
 # dataset_rep = paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/")
 
 #withoutNB=F
-
-#Our levels regarding match and mismatches (for labeling)
-
-
-if(withoutNB==F)
-{
-  y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
-                        age=c("25 years old","45 years old","65 years old"),
-                        religion=c("Non believer","Non practitioner", "Practitioner"),
-                        citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
-                        job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
-                        conscientiousness=c("Disorganized", "Reliable"),
-                        openness=c("Open", "Rigid"),
-                        neuroticism=c("Anxious", "Calm"),
-                        restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
-                        transport=c("Bicycle","Public Transport","SUV"),
-                        animal=c("Cat","Large dog","No pets","Small dog")
-  )
-                        
-  levels_vector= unlist(y_labels_plots, use.names = F)
-  
-  attributes= c("Gender", "Gender", "Gender",
-                "Age","Age","Age",
-                "Religion","Religion","Religion",
-                "Citysize","Citysize","Citysize",
-                "Job","Job","Job","Job",
-                "Conscientiousness","Conscientiousness",
-                "Openness","Openness",
-                "Neuroticism","Neuroticism",
-                "Restaurant","Restaurant","Restaurant","Restaurant",
-                "Transport","Transport","Transport",
-                "Animal","Animal","Animal","Animal"
-                )
-}
-
-if(withoutNB==T)
-{
-  y_labels_plots = list(gender=c("Female", "Male"),
-                        age=c("25 years old","45 years old","65 years old"),
-                        religion=c("Non believer","Non practitioner", "Practitioner"),
-                        citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
-                        job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
-                        conscientiousness=c("Disorganized", "Reliable"),
-                        openness=c("Open", "Rigid"),
-                        neuroticism=c("Anxious", "Calm"),
-                        restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
-                        transport=c("Bicycle","Public Transport","SUV"),
-                        animal=c("Cat","Large dog","No pets","Small dog")
-                        )
-  levels_vector= unlist(y_labels_plots, use.names = F)
-  
-  attributes= c("Gender", "Gender",
-                "Age","Age","Age",
-                "Religion","Religion","Religion",
-                "Citysize","Citysize","Citysize",
-                "Job","Job","Job","Job",
-                "Conscientiousness","Conscientiousness",
-                "Openness","Openness",
-                "Neuroticism","Neuroticism",
-                "Restaurant","Restaurant","Restaurant","Restaurant",
-                "Transport","Transport","Transport",
-                "Animal","Animal","Animal","Animal"
-  )
-}
-
 
 if(withoutNB==F)
 {
@@ -530,21 +463,21 @@ data_continuous = data[data$ccd_profile_number == 1, ]
 if(outcome == "ideology")
 {
   formula_outcome = ccd_chosen_rw ~ ccd_gender+
-    ccd_age+ccd_religion+ccd_citysize+ccd_job+
-    ccd_consc+ccd_ope+ccd_neu+
-    ccd_restaurant+ccd_transport+ccd_animal
+    ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+    ccd_consc+ccd_openness+ccd_neuroticism+
+    ccd_restaurant+ccd_transport+ccd_pet
   
   formula_continuous = ccd_continuous ~ ccd_gender+
-    ccd_age+ccd_religion+ccd_citysize+ccd_job+
-    ccd_consc+ccd_ope+ ccd_neu+
-    ccd_restaurant+ccd_transport+ccd_animal
+    ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+    ccd_consc+ccd_openness+ccd_neuroticism+
+    ccd_restaurant+ccd_transport+ccd_pet
 }
 if(outcome == "populism")
 {
   formula_outcome = ccd_populism ~ ccd_gender+
-    ccd_age+ccd_religion+ccd_citysize+ccd_job+
-    ccd_consc+ccd_ope+ccd_neu+
-    ccd_restaurant+ccd_transport+ccd_animal
+    ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+    ccd_consc+ccd_openness+ccd_neuroticism+
+    ccd_restaurant+ccd_transport+ccd_pet
 }
 
 
@@ -625,31 +558,9 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          intercept = 0.5,
                          "sociodemos_religionage")
 
-#job and age
+#profession and age
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_job, sep =" ")
-
-if(outcome == "ideology")
-{
-  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
-}
-
-if(outcome == "populism")
-{
-  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
-}
-
-full_interaction_effects(data, formula_interaction_sociodemos,
-                         estimator = "mm",
-                         leftlim = 0.35,
-                         rightlim = 0.65,
-                         intercept = 0.5,
-                         "sociodemos_jobage")
-
-### job and religion
-
-
-data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_job, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_profession, sep =" ")
 
 if(outcome == "ideology")
 {
@@ -666,12 +577,34 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          leftlim = 0.35,
                          rightlim = 0.65,
                          intercept = 0.5,
-                         "sociodemos_jobreligion")
+                         "sociodemos_professionage")
+
+### profession and religion
+
+
+data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_profession, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "mm",
+                         leftlim = 0.35,
+                         rightlim = 0.65,
+                         intercept = 0.5,
+                         "sociodemos_professionreligion")
 
 
 ### try with all three together
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_job, sep = ", ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_profession, sep = ", ")
 
 if(outcome == "ideology")
 {
@@ -688,11 +621,11 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          leftlim = 0.3,
                          rightlim = 0.7,
                          intercept = 0.5,
-                         "sociodemos_jobreligionage")
+                         "sociodemos_professionreligionage")
 
 #psycho
 
-data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep ="\n")
+data$interacted_psycho = interaction(data$ccd_consc, data$ccd_openness, data$ccd_neuroticism, sep ="\n")
 
 if(outcome == "ideology")
 {
@@ -763,31 +696,9 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          intercept = 0,
                          "sociodemos_religionage")
 
-#job and age
+#profession and age
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_job, sep =" ")
-
-if(outcome == "ideology")
-{
-  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
-}
-
-if(outcome == "populism")
-{
-  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
-}
-
-full_interaction_effects(data, formula_interaction_sociodemos,
-                         estimator = "amce",
-                         leftlim = -0.15,
-                         rightlim = 0.15,
-                         intercept = 0,
-                         "sociodemos_jobage")
-
-### job and religion
-
-
-data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_job, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_profession, sep =" ")
 
 if(outcome == "ideology")
 {
@@ -804,12 +715,34 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          leftlim = -0.15,
                          rightlim = 0.15,
                          intercept = 0,
-                         "sociodemos_jobreligion")
+                         "sociodemos_professionage")
+
+### profession and religion
+
+
+data$interacted_sociodemos = interaction(data$ccd_religion, data$ccd_profession, sep =" ")
+
+if(outcome == "ideology")
+{
+  formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos 
+}
+
+if(outcome == "populism")
+{
+  formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
+}
+
+full_interaction_effects(data, formula_interaction_sociodemos,
+                         estimator = "amce",
+                         leftlim = -0.15,
+                         rightlim = 0.15,
+                         intercept = 0,
+                         "sociodemos_professionreligion")
 
 
 ### all three the sociodemos together let's see what happens here
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_job, sep = ", ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, data$ccd_profession, sep = ", ")
 
 if(outcome == "ideology")
 {
@@ -826,12 +759,14 @@ full_interaction_effects(data, formula_interaction_sociodemos,
                          leftlim = -0.2,
                          rightlim = 0.2,
                          intercept = 0,
-                         "sociodemos_jobreligionage")
+                         "sociodemos_professionreligionage")
 
 
 #psycho
 
-data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep ="\n")
+data$interacted_psycho = interaction(data$ccd_consc, 
+                                     data$ccd_openness, 
+                                     data$ccd_neuroticism, sep ="\n")
 
 if(outcome == "ideology")
 {
@@ -888,7 +823,6 @@ data$gender_r = factor(ifelse(data$gender == "nonbinary" | data$gender == "notsa
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -901,7 +835,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = -0.1,
                        rightlim = 0.1,
@@ -920,7 +853,6 @@ data$educ_r = factor(toTitleCase(data$educ_r), levels = c("No University", "Univ
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -933,7 +865,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = -0.1,
                        rightlim = 0.1,
@@ -952,7 +883,6 @@ data$interest_r = factor(toTitleCase(data$interest_r), levels = c("Low", "High")
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -965,7 +895,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = -0.1,
                        rightlim = 0.1,
@@ -985,7 +914,6 @@ data$exposure_r = factor(toTitleCase(data$exposure_r), levels=c("Low", "High"))
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = 0.3,
                        rightlim = 0.7,
@@ -998,7 +926,6 @@ full_subgroup_analysis(data,
 full_subgroup_analysis(data,
                        formula=formula_outcome,
                        estimator="mm_differences",
-                       y_labels=y_labels_plots,
                        subdir,
                        leftlim = -0.1,
                        rightlim = 0.1,
@@ -1035,8 +962,7 @@ estimator = "mm"
          estimate = estimator,
          alpha=0.01)
     
-    effects_pooled = set_categories_and_levels(effects_pooled,
-                                               attributes = attributes)
+    effects_pooled = set_categories_and_levels(effects_pooled)
     
     
     effects_pooled = effects_pooled[effects_pooled$level != "Non-binary", ] #not enough power!
@@ -1059,7 +985,7 @@ estimator = "mm"
     
     v=list()
     
-    for(attribute in unique(attributes))
+    for(attribute in unique(effects_pooled$feature))
     {
       
       p = ggplot(effects_subgroup1[effects_subgroup1$feature==attribute, ])+
@@ -1104,7 +1030,6 @@ estimator = "mm"
         ylab(attribute)+
         xlab("\n")+
         xlim(leftlim,rightlim)+
-        #scale_y_discrete(limits = rev(y_labels_plots[[tolower(attribute)]])) +
         theme(legend.position = "right",
               axis.text.y = element_text(size=10),
               axis.title.y = element_text(size=12))
@@ -1112,8 +1037,8 @@ estimator = "mm"
       v[[attribute]] = p
     }
     
-    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Job"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
-    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Animal"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     
     p=p1|p2
     
@@ -1137,7 +1062,6 @@ estimator = "mm"
     full_subgroup_analysis(data1,
                            formula=formula_outcome,
                            estimator="mm_differences",
-                           y_labels=y_labels_plots,
                            subdir,
                            leftlim = -0.1,
                            rightlim = 0.1,
