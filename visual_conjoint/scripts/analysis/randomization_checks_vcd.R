@@ -93,7 +93,7 @@ if(outcome == "populism")
        col="grey")+
     theme(legend.position = "none")
 
-ggsave(paste0(output_wd,"randomization_checks/", "diagnostic_randomization_nomatch_cj.png"), 
+ggsave(paste0(output_wd,"diagnostic_randomization_nomatch_cj.png"), 
        height = 10, width = 8, create.dir = T)
 
 
