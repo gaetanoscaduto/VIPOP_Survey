@@ -344,7 +344,6 @@ full_subgroup_analysis = function(data,
 ###################
 
 
-
 full_analysis = function(data,
                          formula, #the conjoint formula
                          estimator=c("mm","amce"), #marginal means and amces
@@ -363,6 +362,8 @@ full_analysis = function(data,
   
 
   estimator=match.arg(estimator)
+  
+  browser()
   
   effects_pooled <- data |>
     cj(formula, 
@@ -470,6 +471,7 @@ if(outcome == "ideology")
     ccd_consc+ccd_openness+ccd_neuroticism+
     ccd_restaurant+ccd_transport+ccd_pet
 }
+
 if(outcome == "populism")
 {
   formula_outcome = ccd_populism ~ ccd_gender+
@@ -1035,7 +1037,7 @@ estimator = "mm"
       v[[attribute]] = p
     }
     
-    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
+    p1 = (v[["Gender"]]/v[["Age"]]/v[["Religion"]]/v[["Citysize"]]/(v[["Profession"]]+xlab("Effect size")))+plot_layout(heights = c(3,3,3,3,4))
     p2 = (v[["Conscientiousness"]]/v[["Openness"]]/v[["Neuroticism"]]/v[["Restaurant"]]/v[["Transport"]]/(v[["Pet"]]+xlab("Effect size")))+plot_layout(heights = c(2,2,2,4,3,4))
     
     p=p1|p2
