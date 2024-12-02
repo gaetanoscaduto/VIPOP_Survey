@@ -572,7 +572,9 @@ full_analysis(data,
 ################## ACIEs #####################
 ##########################################
 
-##### ACIEs
+########################################  
+##### ACIEs PRELIMINARY STUFF
+####################
 
 
 data$interacted_sociodemos_full = interaction(data$vcd_age,
@@ -642,6 +644,12 @@ if(outcome=="populism")
 ######## 
 subdir = "Interactions/MMs/"
 estimator="mm"
+
+
+
+############ 
+#### interacted sociodemos full
+############ 
 
 return_list = full_interaction_effects(data, 
                                        formula_interaction_sociodemos_full,
@@ -769,8 +777,8 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_po
 return_list = full_interaction_effects(data, 
                                        formula_interaction_political_cultural,
                                        estimator,
-                                       leftlim=0.33,
-                                       rightlim=0.67)
+                                       leftlim=0.38,
+                                       rightlim=0.62)
 
 p=return_list$plot
 
@@ -886,7 +894,7 @@ dataright$interacted_political_sociodemo=relevel(dataright$interacted_political_
 return_list1 = full_interaction_effects(dataleft, 
                                        formula_interaction_political_sociodemo,
                                        estimator,
-                                       leftlim=-0.22,
+                                       leftlim=-0.08,
                                        rightlim=0.22)
 
 p1=return_list1$plot
@@ -896,7 +904,7 @@ p1
 return_list2 = full_interaction_effects(dataright, 
                                        formula_interaction_political_sociodemo,
                                        estimator,
-                                       leftlim=-0.22,
+                                       leftlim=-0.08,
                                        rightlim=0.22)
 
 p2=return_list2$plot
@@ -943,8 +951,8 @@ dataright$interacted_political_cultural = relevel(dataright$interacted_political
 return_list1 = full_interaction_effects(dataleft, 
                                        formula_interaction_political_cultural,
                                        estimator,
-                                       leftlim=-0.2,
-                                       rightlim=0.2)
+                                       leftlim=-0.06,
+                                       rightlim=0.15)
 
 p1=return_list1$plot
 
@@ -952,8 +960,8 @@ p1=return_list1$plot
 return_list2 = full_interaction_effects(dataright, 
                                        formula_interaction_political_cultural,
                                        estimator,
-                                       leftlim=-0.2,
-                                       rightlim=0.2)
+                                       leftlim=-0.06,
+                                       rightlim=0.15)
 
 p2=return_list2$plot
 
@@ -961,6 +969,8 @@ p2=p2+xlab("")
 
 
 p=p2/p1
+
+p
 
 ggsave(paste0(output_wd, subdir,"interacted_political_cultural.png"), 
        p, 
