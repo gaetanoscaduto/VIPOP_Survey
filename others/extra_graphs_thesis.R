@@ -20,8 +20,10 @@
 
 
 ########################
-#### Marginal Means, general
+#### VISUAL
 ########################
+
+
 
 if(recoding_functional_equivalents == T)
 {
@@ -36,6 +38,12 @@ if(recoding_functional_equivalents == F)
   
   main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/"
 }
+
+
+########################
+#### Marginal Means, general
+########################
+
 
 
 id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
@@ -693,6 +701,87 @@ ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Sociodemo_full.png"),
        height = 10, 
        width = 8,
        create.dir = T)
+
+
+############################## 
+############### ACIEs with sociodemos politics full (only interaction non-exploratory)
+##############################
+
+id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_sociodemo_data.rds"))
+
+id_data_mm_it$ideology = ifelse(grepl("Right", id_data_mm_it$level), "Right-wing issue", "Left-wing issue")
+
+
+
+intercept = 0.5
+leftlim = 0.33
+rightlim = 0.67
+
+p = ggplot()+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(data=id_data_mm_it,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, desc(estimate)),
+                      col=ideology, shape=ideology),
+                  position = position_nudge(y = 1/10),
+                  show.legend = T)+
+  labs(y="",x="")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 11), digits=3))+
+  theme(legend.position = "none",
+        axis.text.y = element_text(size=10),
+        axis.title.y = element_text(size=12))
+
+p
+
+p = p +plot_annotation(caption = "Circle=Left-wing issue, Triangle=Right-wing issue; Marginal means, 95% C.I.")
+
+ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Politics_with_Sociodemo.png"), 
+       p, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
+
+
+
+############################## 
+############### ACIEs with cultural with politics full (only interaction non-exploratory)
+##############################
+
+id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_cultural_data.rds"))
+
+id_data_mm_it$ideology = ifelse(grepl("Right", id_data_mm_it$level), "Right-wing issue", "Left-wing issue")
+
+intercept = 0.5
+leftlim = 0.38
+rightlim = 0.62
+
+p = ggplot()+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(data=id_data_mm_it,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, desc(estimate)),
+                      col=ideology),
+                  position = position_nudge(y = 1/10),
+                  show.legend = T)+
+  labs(y="",x="")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 11), digits=3))+
+  theme(legend.position = "none",
+    axis.text.y = element_text(size=10),
+    axis.title.y = element_text(size=12))
+
+p
+
+p = p +plot_annotation(caption = "Circle=Left-wing issue, Triangle=Right-wing issue; Marginal means, 95% C.I.")
+
+ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Culture_with_Sociodemo.png"), 
+       p, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
+
+
 
 ##################################  ##########################################
 ################# Ordered overall MM graph for between attribute  ###########
