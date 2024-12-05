@@ -28,8 +28,8 @@
 #functio
 
 set_categories_and_levels_bycountry = function(effects, 
-                                     type=c("match","nominal"), 
-                                     nominal_attributes=nominal_attributes){
+                                               type=c("match","nominal"), 
+                                               nominal_attributes=nominal_attributes){
   
   type=match.arg(type)
   
@@ -67,14 +67,14 @@ set_categories_and_levels_bycountry = function(effects,
 ##Function to draw plots for the effects
 
 draw_plot_effects_bycountry = function(effects, 
-                             type=c("match", "nominal"), #"match" or "nominal" 
-                             categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
-                             #("sociodemo", "psycho", "lifestyle")
-                             estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                             y_labels=y_labels_plots,
-                             leftlim=999, #the left limit of the plot
-                             rightlim=999,#the right limit of the plot
-                             x_intercept=999 #the vertical line to signal the difference from the insignificance
+                                       type=c("match", "nominal"), #"match" or "nominal" 
+                                       categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
+                                       #("sociodemo", "psycho", "lifestyle")
+                                       estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
+                                       y_labels=y_labels_plots,
+                                       leftlim=999, #the left limit of the plot
+                                       rightlim=999,#the right limit of the plot
+                                       x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
   
   estimator=match.arg(estimator)
@@ -295,14 +295,14 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                                            #already disentangled by country+pooled
                                            ees, #the dataset with the ees
                                            #already disentangled by country+pooled
-                                       type=c("match", "nominal"), #"match" or "nominal" 
-                                       categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
-                                       #("sociodemo", "psycho", "lifestyle")
-                                       estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                                       y_labels=y_labels_plots,
-                                       leftlim=999, #the left limit of the plot
-                                       rightlim=999,#the right limit of the plot
-                                       x_intercept=999 #the vertical line to signal the difference from the insignificance
+                                           type=c("match", "nominal"), #"match" or "nominal" 
+                                           categories=c("Sociodemographics", "Psychological", "Lifestyle", "Political"), #vector of thee categories 
+                                           #("sociodemo", "psycho", "lifestyle")
+                                           estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
+                                           y_labels=y_labels_plots,
+                                           leftlim=999, #the left limit of the plot
+                                           rightlim=999,#the right limit of the plot
+                                           x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
   
   #####browser()
@@ -337,20 +337,21 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
+                      position = position_nudge(y = -1/10),
                       #size=1.3,
                       show.legend = T)+
       geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = -1/10),
-                      show.legend = T)+
-      geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "POOL", ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
-                      alpha = 1,
                       position = position_nudge(y = -1/5),
-                      #size=1.3,
                       show.legend = T)+
+      # geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "POOL", ],
+      #                 aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+      #                 alpha = 1,
+      #                 position = position_nudge(y = -1/5),
+      #                 #size=1.3,
+      #                 show.legend = T)+
       ylab("")+
       xlab(category)+
       xlim(leftlim,rightlim)+
@@ -360,18 +361,22 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
                    "SW" = wesanderson::wes_palettes$Darjeeling1[3],
                    "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
-                   "POOL" = 'black'),
+                   #"POOL" = 'black'
+                   ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
+        limits = c("IT", "FR", "SW", "CZ"#, "POOL"
+                   )
       ) +
       scale_shape_manual(
         values = c("IT" = 19, 
                    "FR" = 17, 
                    "SW" = 15, 
                    "CZ" = 18, 
-                   "POOL" = 1),
+                   #"POOL" = 1
+                   ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
+        limits = c("IT", "FR", "SW", "CZ", #"POOL"
+                   )
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
@@ -408,19 +413,20 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
+                      position = position_nudge(y = -1/10),
                       show.legend = T)+
       geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = -1/10),
-                      show.legend = T)+
-      geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "POOL", ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
-                      alpha = 1,
                       position = position_nudge(y = -1/5),
-                      #size=1.3,
                       show.legend = T)+
+      # geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "POOL", ],
+      #                 aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+      #                 alpha = 1,
+      #                 position = position_nudge(y = -1/5),
+      #                 #size=1.3,
+      #                 show.legend = T)+
       ylab("")+
       xlab(category)+
       xlim(leftlim,rightlim)+
@@ -429,33 +435,42 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
                    "SW" = wesanderson::wes_palettes$Darjeeling1[3],
-                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
-                   "POOL" = 'black'),
-        name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
-      ) +
-      scale_shape_manual(
-        values = c("IT" = 19, 
-                   "FR" = 17, 
-                   "SW" = 15, 
-                   "CZ" = 18, 
-                   "POOL" = 1),
-        name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
-      ) +
-      theme(
-        legend.position = "none",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
-        axis.title.y = element_text(size = 12)
-      )
-    
-    
-    
-    acdes_list[[category]] = acdes_plot
-    
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4]#,
+                   #"POOL" = 'black'),
+                   name = "Country",
+                   limits = c("IT", 
+                              "FR",
+                              "SW",
+                              "CZ"#, "POOL"
+                   )
+        ) +
+          scale_shape_manual(
+            values = c("IT" = 19, 
+                       "FR" = 17, 
+                       "SW" = 15, 
+                       "CZ" = 18#, 
+                       #"POOL" = 1
+            ),
+            name = "Country",
+            limits = c("IT", 
+                       "FR", 
+                       "SW",
+                       "CZ"#, "POOL"
+            )
+          ) +
+          theme(
+            legend.position = "none",  # You can change this to "top", "bottom", etc.
+            axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+            axis.title.y = element_text(size = 12)
+          )
+        
+        
+        
+        acdes_list[[category]] = acdes_plot
+        
   }
   
-
+  
   #draw the ees plots
   for(category in categories[1:3])
   {
@@ -477,20 +492,21 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
+                      position = position_nudge(y = -1/10)
                       #size=1.3,
                       show.legend = T)+
       geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = -1/10),
-                      show.legend = T)+
-      geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "POOL", ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
-                      alpha = 1,
                       position = position_nudge(y = -1/5),
-                      #size=1.3,
                       show.legend = T)+
+      # geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "POOL", ],
+      #                 aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+      #                 alpha = 1,
+      #                 position = position_nudge(y = -1/5),
+      #                 #size=1.3,
+      #                 show.legend = T)+
       ylab("")+
       xlab(category)+
       xlim(-0.3,0.3)+
@@ -499,8 +515,9 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
                    "SW" = wesanderson::wes_palettes$Darjeeling1[3],
-                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
-                   "POOL" = 'black'),
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4]#,
+                   #"POOL" = 'black'
+        ),
         name = "Country",
         limits = c("IT", "FR", "SW", "CZ", "POOL")
       ) +
@@ -508,10 +525,15 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
         values = c("IT" = 19, 
                    "FR" = 17, 
                    "SW" = 15, 
-                   "CZ" = 18, 
-                   "POOL" = 1),
+                   "CZ" = 18#, 
+                   #"POOL" = 1
+        ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
+        limits = c("IT",
+                   "FR",
+                   "SW",
+                   "CZ"#, "POOL"
+        )
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
@@ -706,15 +728,15 @@ compare_effects_bycountry = function(data,
        estimate = estimator,
        by= ~cpd_country)
   
-  ates_pooled = data |>
-    filter(cpd_exparm2 == "natural") |>
-    cj(formula, id = ~respid,
-       estimate = estimator)
+  # ates_pooled = data |>
+  #   filter(cpd_exparm2 == "natural") |>
+  #   cj(formula, id = ~respid,
+  #      estimate = estimator)
+  # 
+  # ates_pooled$cpd_country = "POOL"
+  # ates_pooled$BY = "POOL"
   
-  ates_pooled$cpd_country = "POOL"
-  ates_pooled$BY = "POOL"
-  
-  ates=rbind(ates, ates_pooled)
+  # ates=rbind(ates, ates_pooled)
   
   ###Compute the ACDEs
   acdes <- data |>
@@ -726,17 +748,17 @@ compare_effects_bycountry = function(data,
   
   ###browser()
   
-  acdes_pooled <- data |>
-    filter(cpd_exparm2 == arm) |>
-    cj(formula, 
-       id = ~respid,
-       estimate = estimator)
-  
-  
-  acdes_pooled$cpd_country = "POOL"
-  acdes_pooled$BY = "POOL"
-  
-  acdes=rbind(acdes, acdes_pooled)
+  # acdes_pooled <- data |>
+  #   filter(cpd_exparm2 == arm) |>
+  #   cj(formula, 
+  #      id = ~respid,
+  #      estimate = estimator)
+  # 
+  # 
+  # acdes_pooled$cpd_country = "POOL"
+  # acdes_pooled$BY = "POOL"
+  # 
+  # acdes=rbind(acdes, acdes_pooled)
   
   
   ### Compute the EEs
@@ -755,18 +777,19 @@ compare_effects_bycountry = function(data,
     
     ees=rbind(ees, ees_country)
   }
-  ees_pooled = data |>
-    filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-    cj(formula_match,
-       id = ~respid,
-       estimate = paste0(estimator, "_differences"),
-       by = ~cpd_exparm)
   
-  ees_pooled$cpd_country = "POOL"
-  
-  ######browser()
-  
-  ees = rbind(ees, ees_pooled)
+  # ees_pooled = data |>
+  #   filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
+  #   cj(formula_match,
+  #      id = ~respid,
+  #      estimate = paste0(estimator, "_differences"),
+  #      by = ~cpd_exparm)
+  # 
+  # ees_pooled$cpd_country = "POOL"
+  # 
+  # ######browser()
+  # 
+  # ees = rbind(ees, ees_pooled)
   
   
   ##Set the categories and levels for the three datasets
@@ -786,12 +809,9 @@ compare_effects_bycountry = function(data,
   #Call draw effects with the for_comparison argument ==T, which means that it will return
   #the vector separately, not the already assembled immage
   
-  ######browser()
-  
+
   x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
   
-  
-  #####browser()
   
   plots = draw_compared_effects_bycountry(ates,
                                           acdes,
@@ -807,16 +827,16 @@ compare_effects_bycountry = function(data,
   pates=plots$ates_plots
   
   pacdes=plots$acdes_plots
-  pees=plots$ees_plots
-  #Now I assemble three plots (for each category) so that they are easy to compare
   
+  pees=plots$ees_plots
+  
+  #Now I assemble three plots (for each category) so that they are easy to compare
   
   p_socio = (pates[["Sociodemographics"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Sociodemographics"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Sociodemographics"]]+labs(title = "Eliminated Effects (EEs)"))
   
   p_psycho = (pates[["Psychological"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Psychological"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Psychological"]]+labs(title = "Eliminated Effects (EEs)"))
   
   p_lifestyle = (pates[["Lifestyle"]]+labs(title = "Average Treatment Effects (ATEs)"))/(pacdes[["Lifestyle"]]+labs(title = "Average Conditional Direct Effects (ACDEs)"))/(pees[["Lifestyle"]]+labs(title = "Eliminated Effects (EEs)"))
-  
   
   
   
@@ -875,47 +895,47 @@ y_labels_match = list(Sociodemographics=c("Gender Mismatch", "Gender Match",
 
 
 nominal_attributes= c("Gender", "Gender",
-                        "Age", "Age","Age",
-                        "Education","Education",
-                        "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
-                        "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
-                        "Regionfeel","Regionfeel","Regionfeel",
-                        "Conscientiousness","Conscientiousness","Conscientiousness",
-                        "Openness","Openness","Openness",
-                        "Diet","Diet","Diet",
-                        "Animal","Animal","Animal",
-                        "Holiday","Holiday","Holiday")
-  
+                      "Age", "Age","Age",
+                      "Education","Education",
+                      "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
+                      "Regionfeel","Regionfeel","Regionfeel","Regionfeel",
+                      "Regionfeel","Regionfeel","Regionfeel",
+                      "Conscientiousness","Conscientiousness","Conscientiousness",
+                      "Openness","Openness","Openness",
+                      "Diet","Diet","Diet",
+                      "Animal","Animal","Animal",
+                      "Holiday","Holiday","Holiday")
+
 levels_vector= c("Female", "Male",
-                   "Under 35", "Between 35 and 59","Over 60",
-                   "Degree","No degree",
-                   "Cechia (CZ)","Center (IT)", "Gotland (SW)",
-                   "Moravia (CZ)", "No Paris (FR)", "North (IT)",
-                   "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
-                   "South (IT)", "Svealand (SW)",
-                   "High Consc.","Med. Consc.","Low Consc.",
-                   "High Ope.","Med. Ope.","Low Ope.",
-                   "Omnivore","Vegetarian","Vegan",
-                   "Cat","Dog","No pet",
-                   "City","Outdoor","Relax")
-  
+                 "Under 35", "Between 35 and 59","Over 60",
+                 "Degree","No degree",
+                 "Cechia (CZ)","Center (IT)", "Gotland (SW)",
+                 "Moravia (CZ)", "No Paris (FR)", "North (IT)",
+                 "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
+                 "South (IT)", "Svealand (SW)",
+                 "High Consc.","Med. Consc.","Low Consc.",
+                 "High Ope.","Med. Ope.","Low Ope.",
+                 "Omnivore","Vegetarian","Vegan",
+                 "Cat","Dog","No pet",
+                 "City","Outdoor","Relax")
+
 y_labels_nominal = list(Sociodemographics = c("Female", "Male",
-                                                "Under 35", "Between 35 and 59","Over 60",
-                                                "Degree","No degree",
-                                                "Cechia (CZ)","Center (IT)", "Gotland (SW)",
-                                                "Moravia (CZ)", "No Paris (FR)", "North (IT)",
-                                                "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
-                                                "South (IT)", "Svealand (SW)"),
-                          Psychological = c("High Consc.","Med. Consc.","Low Consc.",
-                                            "High Ope.","Med. Ope.","Low Ope."),
-                          Lifestyle = c("Omnivore","Vegetarian","Vegan",
-                                        "Cat","Dog","No pet",
-                                        "City","Outdoor","Relax"),
-                          Political = c("Right-wing",
-                                        "Left-wing",
-                                        "Center",
-                                        "Not collocated"))
-  
+                                              "Under 35", "Between 35 and 59","Over 60",
+                                              "Degree","No degree",
+                                              "Cechia (CZ)","Center (IT)", "Gotland (SW)",
+                                              "Moravia (CZ)", "No Paris (FR)", "North (IT)",
+                                              "Norrland (SW)", "Paris (FR)", "Prague (CZ)",
+                                              "South (IT)", "Svealand (SW)"),
+                        Psychological = c("High Consc.","Med. Consc.","Low Consc.",
+                                          "High Ope.","Med. Ope.","Low Ope."),
+                        Lifestyle = c("Omnivore","Vegetarian","Vegan",
+                                      "Cat","Dog","No pet",
+                                      "City","Outdoor","Relax"),
+                        Political = c("Right-wing",
+                                      "Left-wing",
+                                      "Center",
+                                      "Not collocated"))
+
 
 
 y_labels_plots=list(match=y_labels_match, 
@@ -963,28 +983,28 @@ subdir = "ATEs/match/MMs/"
 
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "ATEs",
-              "match",
-              "mm",
-              "natural",
-              leftlim=0.35,
-              rightlim=0.65,
-              subdir)
+                        formula_match,
+                        "ATEs",
+                        "match",
+                        "mm",
+                        "natural",
+                        leftlim=0.35,
+                        rightlim=0.65,
+                        subdir)
 
 
 ### Same as before, but with AMCes (for appendix)
 subdir = "ATEs/match/AMCEs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "ATEs",
-              "match",
-              "amce",
-              "natural",
-              leftlim=-0.15,
-              rightlim=0.15,
-              subdir)
+                        formula_match,
+                        "ATEs",
+                        "match",
+                        "amce",
+                        "natural",
+                        leftlim=-0.15,
+                        rightlim=0.15,
+                        subdir)
 
 
 
@@ -994,14 +1014,14 @@ subdir = "ATEs/nominal/MMs/"
 
 
 full_analysis_bycountry(data, 
-              formula_nominal,
-              "ATEs",
-              "nominal",
-              "mm",
-              "natural",
-              leftlim=0.35,
-              rightlim=0.65,
-              subdir)
+                        formula_nominal,
+                        "ATEs",
+                        "nominal",
+                        "mm",
+                        "natural",
+                        leftlim=0.35,
+                        rightlim=0.65,
+                        subdir)
 
 
 #same but with amce
@@ -1009,14 +1029,14 @@ full_analysis_bycountry(data,
 subdir = "ATEs/nominal/AMCEs/"
 
 full_analysis_bycountry(data, 
-              formula_nominal,
-              "ATEs",
-              "nominal",
-              "amce",
-              "natural",
-              leftlim=-0.15,
-              rightlim=0.15,
-              subdir = subdir)
+                        formula_nominal,
+                        "ATEs",
+                        "nominal",
+                        "amce",
+                        "natural",
+                        leftlim=-0.15,
+                        rightlim=0.15,
+                        subdir = subdir)
 
 
 ########################################
@@ -1043,14 +1063,14 @@ subdir = "ACDEs/match/MMs/"
 
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "ACDEs",
-              "match",
-              "mm",
-              "ideology_match",
-              leftlim=0.4,
-              rightlim=0.6,
-              subdir)
+                        formula_match,
+                        "ACDEs",
+                        "match",
+                        "mm",
+                        "ideology_match",
+                        leftlim=0.4,
+                        rightlim=0.6,
+                        subdir)
 
 
 
@@ -1062,14 +1082,14 @@ subdir = "ACDEs/mismatch/MMs/"
 
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "ACDEs",
-              "match",
-              "mm",
-              "ideology_mismatch",
-              leftlim=0.4,
-              rightlim=0.6,
-              subdir)
+                        formula_match,
+                        "ACDEs",
+                        "match",
+                        "mm",
+                        "ideology_mismatch",
+                        leftlim=0.4,
+                        rightlim=0.6,
+                        subdir)
 
 ######################################
 #### ACDEs for ideological match with AMCE
@@ -1078,14 +1098,14 @@ full_analysis_bycountry(data,
 subdir = "ACDEs/match/AMCEs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "ACDEs",
-              "match",
-              "amce",
-              "ideology_match",
-              leftlim=-0.1,
-              rightlim=0.1,
-              subdir)
+                        formula_match,
+                        "ACDEs",
+                        "match",
+                        "amce",
+                        "ideology_match",
+                        leftlim=-0.1,
+                        rightlim=0.1,
+                        subdir)
 
 ############################################################################
 ################ ACDEs for ideological mismatch with AMCE################### 
@@ -1094,14 +1114,14 @@ full_analysis_bycountry(data,
 subdir = "ACDEs/mismatch/AMCEs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "ACDEs",
-              "match",
-              "amce",
-              "ideology_mismatch",
-              leftlim=-0.1,
-              rightlim=0.1,
-              subdir)
+                        formula_match,
+                        "ACDEs",
+                        "match",
+                        "amce",
+                        "ideology_mismatch",
+                        leftlim=-0.1,
+                        rightlim=0.1,
+                        subdir)
 
 
 ############################################################################
@@ -1122,14 +1142,14 @@ full_analysis_bycountry(data,
 subdir = "EEs/match/MMs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "EEs",
-              "match",
-              "mm",
-              "ideology_match",
-              leftlim=-0.2,
-              rightlim=0.2,
-              subdir)
+                        formula_match,
+                        "EEs",
+                        "match",
+                        "mm",
+                        "ideology_match",
+                        leftlim=-0.2,
+                        rightlim=0.2,
+                        subdir)
 
 
 ##### ELIMINATED EFFECTS WITH MM FOR IDEOLOGICAL MISMATCH
@@ -1137,14 +1157,14 @@ full_analysis_bycountry(data,
 subdir = "EEs/mismatch/MMs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "EEs",
-              "match",
-              "mm",
-              "ideology_mismatch",
-              leftlim=-0.2,
-              rightlim=0.2,
-              subdir)
+                        formula_match,
+                        "EEs",
+                        "match",
+                        "mm",
+                        "ideology_mismatch",
+                        leftlim=-0.2,
+                        rightlim=0.2,
+                        subdir)
 
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MATCH
@@ -1152,28 +1172,28 @@ full_analysis_bycountry(data,
 subdir = "EEs/match/AMCEs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "EEs",
-              "match",
-              "amce",
-              "ideology_match",
-              leftlim=-0.2,
-              rightlim=0.2,
-              subdir)
+                        formula_match,
+                        "EEs",
+                        "match",
+                        "amce",
+                        "ideology_match",
+                        leftlim=-0.2,
+                        rightlim=0.2,
+                        subdir)
 
 ##### ELIMINATED EFFECTS WITH AMCE FOR IDEOLOGICAL MISMATCH
 
 subdir = "EEs/mismatch/AMCEs/"
 
 full_analysis_bycountry(data, 
-              formula_match,
-              "EEs",
-              "match",
-              "amce",
-              "ideology_mismatch",
-              leftlim=-0.2,
-              rightlim=0.2,
-              subdir)
+                        formula_match,
+                        "EEs",
+                        "match",
+                        "amce",
+                        "ideology_mismatch",
+                        leftlim=-0.2,
+                        rightlim=0.2,
+                        subdir)
 
 
 
@@ -1184,16 +1204,16 @@ subdir="CompareEffects/Ideology_match/"
 
 
 plots_match = compare_effects_bycountry(data,
-                          formula_match,
-                          type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                          estimator="mm", #marginal means and amces
-                          arm="ideology_match", #manipulated mediation arm with ideological match, 
-                          #or manipulated mediation arm with ideological mismatch
-                          subdir,#the subdirectory where the plots will be saved
-                          leftlim=0.35,
-                          rightlim=0.65#,
-                          #x_intercept=0.5
-                          )
+                                        formula_match,
+                                        type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                                        estimator="mm", #marginal means and amces
+                                        arm="ideology_match", #manipulated mediation arm with ideological match, 
+                                        #or manipulated mediation arm with ideological mismatch
+                                        subdir,#the subdirectory where the plots will be saved
+                                        leftlim=0.35,
+                                        rightlim=0.65#,
+                                        #x_intercept=0.5
+)
 
 
 
@@ -1202,16 +1222,16 @@ subdir="CompareEffects/Ideology_mismatch/"
 
 #####browser()
 plots_mismatch = compare_effects_bycountry(data,
-                          formula_match,
-                          type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                          estimator="mm", #marginal means and amces
-                          arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
-                          #or manipulated mediation arm with ideological mismatch
-                          subdir,#the subdirectory where the plots will be saved
-                          leftlim=0.35,
-                          rightlim=0.65#,
-                          #x_intercept=0.5
-                          )
+                                           formula_match,
+                                           type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                                           estimator="mm", #marginal means and amces
+                                           arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
+                                           #or manipulated mediation arm with ideological mismatch
+                                           subdir,#the subdirectory where the plots will be saved
+                                           leftlim=0.35,
+                                           rightlim=0.65#,
+                                           #x_intercept=0.5
+)
 
 
 #Now I also draw the plots like Achara et al figure 1, namely by comparing EEs on the
@@ -1219,7 +1239,7 @@ plots_mismatch = compare_effects_bycountry(data,
 subdir="CompareEffects/ATES_vs_EEs/"
 
 plots_match$ates_plots$Sociodemographics = plots_match$ates_plots$Sociodemographics + labs(title = "ATEs (natural mediation arm)")
-                  
+
 plots_match$ees_plots$Sociodemographics  = (plots_match$ees_plots$Sociodemographics + labs(title = "EEs (ideological similarity)"))
 
 plots_mismatch$ees_plots$Sociodemographics = (plots_mismatch$ees_plots$Sociodemographics  + labs(title = "EEs (ideological dissimilarity)"))
