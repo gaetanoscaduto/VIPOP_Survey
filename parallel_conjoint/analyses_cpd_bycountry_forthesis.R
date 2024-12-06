@@ -673,7 +673,13 @@ compare_effects_bycountry = function(data,
   # ees = rbind(ees, ees_pooled)
   
   
-  browser()
+  #browser()
+  
+  temp_ref_cat = ates |> filter(is.na(std.error))
+  
+  temp_ref_cat$cpd_exparm = "natural"
+
+  ees=rbind(ees, temp_ref_cat)
   ##Set the categories and levels for the three datasets
   
   ates = set_categories_and_levels_bycountry(ates,
@@ -1107,8 +1113,8 @@ plots_match = compare_effects_bycountry(data,
                                         arm="ideology_match", #manipulated mediation arm with ideological match, 
                                         #or manipulated mediation arm with ideological mismatch
                                         subdir,#the subdirectory where the plots will be saved
-                                        leftlim=-0.15,
-                                        rightlim=0.15#,
+                                        leftlim=-0.2,
+                                        rightlim=0.2#,
                                         #x_intercept=0.5
 )
 
