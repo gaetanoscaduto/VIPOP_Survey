@@ -436,7 +436,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
                    "SW" = wesanderson::wes_palettes$Darjeeling1[3],
                    "CZ" = wesanderson::wes_palettes$Darjeeling1[4]#,
-                   #"POOL" = 'black'),
+                   #"POOL" = 'black'
+                   ),
                    name = "Country",
                    limits = c("IT", 
                               "FR",
@@ -492,7 +493,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
-                      position = position_nudge(y = -1/10)
+                      position = position_nudge(y = -1/10),
                       #size=1.3,
                       show.legend = T)+
       geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "CZ", ],
