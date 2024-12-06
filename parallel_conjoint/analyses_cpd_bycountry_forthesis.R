@@ -111,25 +111,26 @@ draw_plot_effects_bycountry = function(effects,
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = 1/10),
+                      position = position_nudge(y = 1/15),
                       show.legend = T)+
       geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
+                      position = position_nudge(y = -1/15),
                       #size=1.3,
                       show.legend = T)+
       geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = -1/10),
-                      show.legend = T)+
-      geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "POOL", ],
-                      aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
-                      alpha = 1,
                       position = position_nudge(y = -1/5),
-                      #size=1.3,
                       show.legend = T)+
+      # geom_pointrange(data=effects[effects$category == category & effects$cpd_country == "POOL", ],
+      #                 aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "POOL", shape = "POOL"),
+      #                 alpha = 1,
+      #                 position = position_nudge(y = -1/5),
+      #                 #size=1.3,
+      #                 show.legend = T)+
       ylab("")+
       xlab(category)+
       xlim(leftlim,rightlim)+
@@ -138,19 +139,25 @@ draw_plot_effects_bycountry = function(effects,
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
                    "SW" = wesanderson::wes_palettes$Darjeeling1[3],
-                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
-                   "POOL" = 'black'),
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4]#,
+                   #"POOL" = 'black'
+                   ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
+        limits = c("IT", "FR", "SW", "CZ"#,
+                   #"POOL"
+                   )
       ) +
       scale_shape_manual(
         values = c("IT" = 19, 
                    "FR" = 17, 
                    "SW" = 15, 
-                   "CZ" = 18, 
-                   "POOL" = 1),
+                   "CZ" = 18#, 
+                   #"POOL" = 1
+                   ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
+        limits = c("IT", "FR", "SW", "CZ"#, 
+                   #"POOL"
+                   )
       ) +
       theme(
         legend.position = "right",  # You can change this to "top", "bottom", etc.
@@ -172,7 +179,7 @@ full_analysis_bycountry = function(data,
                                    formula, #the conjoint formula
                                    effect=c("ATEs", "ACDEs", "EEs"), #the three possible effects to compute
                                    type=c("match", "nominal"), #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                                   estimator=c("mm","amce"), #marginal means and amces
+                                   estimator=c("mm","amce", "mm_differences", "amce_differences"), #marginal means and amces
                                    arm=c("natural", "ideology_match", "ideology_mismatch"), #natural mediation arm, or manipulated mediation arm with ideological match, 
                                    #or manipulated mediation arm with ideological mismatch
                                    subdir,
@@ -198,14 +205,14 @@ full_analysis_bycountry = function(data,
   
   if(effect!= "EEs")
   {
-    effects_pooled <- data |>
-      filter(cpd_exparm2 == arm) |>
-      cj(formula, 
-         id = ~respid,
-         estimate = estimator)
-    
-    effects_pooled$cpd_country = "POOL"
-    effects_pooled$BY = "POOL"
+    # effects_pooled <- data |>
+    #   filter(cpd_exparm2 == arm) |>
+    #   cj(formula, 
+    #      id = ~respid,
+    #      estimate = estimator)
+    # 
+    # effects_pooled$cpd_country = "POOL"
+    # effects_pooled$BY = "POOL"
     
     effects_bycountry <- data |>
       filter(cpd_exparm2 == arm) |>
@@ -218,14 +225,14 @@ full_analysis_bycountry = function(data,
   {
     estimator= paste0(estimator, "_differences")
     
-    effects_pooled <- data |>
-      filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-      cj(formula_match,
-         id = ~respid,
-         estimate = estimator,
-         by = ~cpd_exparm)
-    
-    effects_pooled$cpd_country = "POOL"
+    # effects_pooled <- data |>
+    #   filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
+    #   cj(formula_match,
+    #      id = ~respid,
+    #      estimate = estimator,
+    #      by = ~cpd_exparm)
+    # 
+    # effects_pooled$cpd_country = "POOL"
     
     effects_bycountry =data.frame()
     
@@ -246,7 +253,7 @@ full_analysis_bycountry = function(data,
   }
   
   #browser()
-  effects = rbind(effects_bycountry, effects_pooled)
+  effects = effects_bycountry
   
   
   effects=set_categories_and_levels_bycountry(effects,
@@ -265,8 +272,8 @@ full_analysis_bycountry = function(data,
   
   for(category in categories[1:3])
   {
-    v[[category]]=v[[category]]+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", type),
-                                                           caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
+    # v[[category]]=v[[category]]+patchwork::plot_annotation(title = paste(effect, "of the Parallel Design Conjoint Experiment, ", type),
+    #                                                        caption= paste0(toupper(estimator), "s of the", arm, " mediation arm"))
     
     ggsave(paste0(output_wd,"estimations/", subdir, category, "_bycountry.png"), 
            v[[category]], 
@@ -332,12 +339,12 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = 1/10),
+                      position = position_nudge(y = 1/15),
                       show.legend = T)+
       geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
-                      position = position_nudge(y = -1/10),
+                      position = position_nudge(y = -1/15),
                       #size=1.3,
                       show.legend = T)+
       geom_pointrange(data=ates[ates$category == category & ates$cpd_country == "CZ", ],
@@ -360,7 +367,7 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
                    "SW" = wesanderson::wes_palettes$Darjeeling1[3],
-                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
+                   "CZ" = wesanderson::wes_palettes$Darjeeling1[4]#,
                    #"POOL" = 'black'
                    ),
         name = "Country",
@@ -371,11 +378,11 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
         values = c("IT" = 19, 
                    "FR" = 17, 
                    "SW" = 15, 
-                   "CZ" = 18, 
+                   "CZ" = 18#, 
                    #"POOL" = 1
                    ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", #"POOL"
+        limits = c("IT", "FR", "SW", "CZ"#, #"POOL"
                    )
       ) +
       theme(
@@ -407,13 +414,13 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = 1/10),
+                      position = position_nudge(y = 1/15),
                       show.legend = T)+
       geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = -1/10),
+                      position = position_nudge(y = -1/15),
                       show.legend = T)+
       geom_pointrange(data=acdes[acdes$category == category & acdes$cpd_country == "CZ", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "CZ", shape = "CZ"),
@@ -488,12 +495,12 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "FR", shape = "FR"),
                       alpha = 1,
                       #size=1.3,
-                      position = position_nudge(y = 1/10),
+                      position = position_nudge(y = 1/15),
                       show.legend = T)+
       geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "SW", ],
                       aes(x=estimate, xmin=lower, xmax=upper, y=level, col = "SW", shape = "SW"),
                       alpha = 1,
-                      position = position_nudge(y = -1/10),
+                      position = position_nudge(y = -1/15),
                       #size=1.3,
                       show.legend = T)+
       geom_pointrange(data=ees[ees$category == category & ees$cpd_country == "CZ", ],
@@ -520,7 +527,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
                    #"POOL" = 'black'
         ),
         name = "Country",
-        limits = c("IT", "FR", "SW", "CZ", "POOL")
+        limits = c("IT", "FR", "SW", "CZ"#, "POOL"
+                   )
       ) +
       scale_shape_manual(
         values = c("IT" = 19, 
@@ -566,137 +574,6 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
 # (regardless of the actual attribute displayed) into the probaility of 
 #selecting someone as their conversation partners (with and without politics,
 #depending on the experimental arm selected)
-
-full_match_effects_bycountry = function(data, 
-                                        formula, 
-                                        exparm){
-  
-  #browser()
-  
-  # exparm="natural"
-  # formula=formula_natural_nmatches
-  # country="IT"
-  
-  # exparm=match.arg(exparm)
-  
-  full_df = data.frame()
-  for(context_loc in c("IT", "FR","SW","CZ", "POOL"))
-  {
-    if(context_loc != "POOL")
-    {
-      #filter the data by country and experimental arm 
-      filtered_data = data |>
-        filter(cpd_country == context_loc & cpd_exparm == exparm)
-      
-    }
-    else
-    {
-      #filter the data by experimental arm (I want the pooled data)
-      filtered_data = data |>
-        filter(cpd_exparm == exparm)
-    }
-    
-    #make sure respid is a factor
-    filtered_data$respid = as.factor(filtered_data$respid)
-    
-    #I fit a multilevel model (random effects with respID)
-    
-    model =  glmer(cpd_chosen ~ cpd_n_matches +
-                     cpd_gender + cpd_age + cpd_educ + cpd_regionfeel +
-                     cpd_consc + cpd_ope +
-                     cpd_diet + cpd_animal + cpd_holiday + 
-                     (1 | respid),  # Random intercept for each respondent
-                   data = filtered_data,
-                   family = binomial)
-    
-    #using the library ggeffects I make the prediction for the different
-    #values of cpd_n_matches when the other variables are in the reference category
-    predictions = as.data.frame(ggpredict(model, terms = "cpd_n_matches"))
-    
-    # Convert predictions object to a data frame
-    effect_df <- data.frame(
-      x = predictions$x,  # The levels of the predictor
-      fit = predictions$predicted,   # Fitted values (predicted)
-      lower = predictions$conf.low, # Lower bound of confidence intervals
-      upper = predictions$conf.high  # Upper bound of confidence intervals
-    )
-    
-    #I add the country variable because then I row bind all the datasets created
-    #by the loop toghether
-    effect_df$cpd_country = context_loc
-    
-    #I bind the datasets
-    full_df=rbind(full_df, effect_df)
-    
-  }
-  
-  # Create caterpillar plot
-  p = ggplot() +
-    geom_pointrange(data = full_df[full_df$cpd_country == "IT", ], 
-                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                        col="IT", shape="IT"),
-                    position = position_nudge(x = -1/5)) +
-    geom_pointrange(data = full_df[full_df$cpd_country == "FR", ], 
-                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                        col="FR", shape="FR"),
-                    position = position_nudge(x = -1/10)) + 
-    geom_pointrange(data = full_df[full_df$cpd_country == "SW", ], 
-                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                        col="SW", shape="SW"),
-                    position = position_nudge(x = 0)) + 
-    geom_pointrange(data = full_df[full_df$cpd_country == "CZ", ], 
-                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                        col="CZ", shape="CZ"),
-                    position = position_nudge(x = 1/10)) + 
-    geom_pointrange(data = full_df[full_df$cpd_country == "POOL", ], 
-                    aes(x = x, y = fit, ymin = lower, ymax = upper, 
-                        col="POOL", shape="POOL"),
-                    position = position_nudge(x = 1/5)) + 
-    labs(
-      x = "Number of attribute matches",
-      y = "Marginal effect on the probability of choosing the profile",
-      title = ""
-    )+
-    scale_x_continuous(seq(1, 1+lengths(gregexpr("\\+", as.character(formula)[3])),by=1))+
-    scale_color_manual(
-      values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
-                 "FR" = wesanderson::wes_palettes$Darjeeling1[2],
-                 "SW" = wesanderson::wes_palettes$Darjeeling1[3],
-                 "CZ" = wesanderson::wes_palettes$Darjeeling1[4],
-                 "POOL" = 'black'),
-      name = "Country",
-      limits = c("IT", "FR", "SW", "CZ", "POOL")
-    ) +
-    scale_shape_manual(
-      values = c("IT" = 19, 
-                 "FR" = 17, 
-                 "SW" = 15, 
-                 "CZ" = 18, 
-                 "POOL" = 1),
-      name = "Country",
-      limits = c("IT", "FR", "SW", "CZ", "POOL")
-    ) +
-    theme(
-      legend.position = "right",  # You can change this to "top", "bottom", etc.
-      axis.text.y = element_text(size = 10),
-      axis.title.y = element_text(size = 12)
-    ) 
-  
-  #saving the plots
-  
-  ggsave(paste0(output_wd,"estimations/", 
-                subdir,"bycountry_", exparm, ".png"), 
-         p, 
-         height = 10, 
-         width = 10, create.dir = T)
-  
-  saveRDS(p, file = paste0(output_wd,"estimations/", 
-                           subdir,"bycountry_", exparm, ".rds"))
-  
-  
-  
-}
-
 
 
 
