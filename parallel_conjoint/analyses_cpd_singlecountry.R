@@ -1139,4 +1139,4 @@ p = plot(ideology_data)+
 ggsave(paste0(output_wd,"estimations/", subdir,  "ideology.png"), 
        p, 
        height = 4, 
-       width =4 , create.dir = T)
+       width = 6 , create.dir = T)
