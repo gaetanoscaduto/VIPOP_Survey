@@ -220,7 +220,7 @@ full_analysis_bycountry = function(data,
     
     effects_pooled <- data |>
       filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-      cj(formula_match,
+      cj(formula,
          id = ~respid,
          estimate = estimator,
          by = ~cpd_exparm)
@@ -233,7 +233,7 @@ full_analysis_bycountry = function(data,
     {
       temp_effects_bycountry <- data |>
         filter((cpd_exparm2 == "natural" | cpd_exparm2 == arm) & cpd_country == context) |>
-        cj(formula_match,
+        cj(formula,
            id = ~respid,
            estimate = estimator,
            by = ~cpd_exparm)
@@ -273,7 +273,7 @@ full_analysis_bycountry = function(data,
            height = 8, 
            width = 8, create.dir = T)
     
-    saveRDS(p, file = paste0(output_wd,"estimations/", subdir, category, "_bycountry.rds"))
+    saveRDS(v[[category]], file = paste0(output_wd,"estimations/", subdir, category, "_bycountry.rds"))
     
   }
   
@@ -375,7 +375,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.text.y = element_text(size = 10, #angle = 90,
+                                   hjust = 0.5, vjust=0.5),
         axis.title.y = element_text(size = 12)
       )
     
@@ -445,7 +446,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.text.y = element_text(size = 10, #angle = 90, 
+                                   hjust = 0.5, vjust=0.5),
         axis.title.y = element_text(size = 12)
       )
     
@@ -515,7 +517,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.text.y = element_text(size = 10, #angle = 90, 
+                                   hjust = 0.5, vjust=0.5),
         axis.title.y = element_text(size = 12)
       )
     
@@ -746,7 +749,7 @@ compare_effects_bycountry = function(data,
   {
     ees_country = data |>
       filter(cpd_country == context & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
-      cj(formula_match,
+      cj(formula,
          id = ~respid,
          estimate = paste0(estimator, "_differences"),
          by = ~cpd_exparm)
@@ -757,7 +760,7 @@ compare_effects_bycountry = function(data,
   }
   ees_pooled = data |>
     filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-    cj(formula_match,
+    cj(formula,
        id = ~respid,
        estimate = paste0(estimator, "_differences"),
        by = ~cpd_exparm)

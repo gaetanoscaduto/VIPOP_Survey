@@ -280,7 +280,7 @@ full_analysis_bycountry = function(data,
            height = 8, 
            width = 8, create.dir = T)
     
-    saveRDS(p, file = paste0(output_wd,"estimations/", subdir, category, "_bycountry.rds"))
+    saveRDS(v[[category]], file = paste0(output_wd,"estimations/", subdir, category, "_bycountry.rds"))
     
   }
   
@@ -387,7 +387,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.text.y = element_text(size = 10, #angle = 90, 
+                                   hjust = 0.5, vjust=0.5),
         axis.title.y = element_text(size = 12)
       )
     
@@ -468,7 +469,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
           ) +
           theme(
             legend.position = "none",  # You can change this to "top", "bottom", etc.
-            axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+            axis.text.y = element_text(size = 10, #angle = 90,
+                                       hjust = 0.5, vjust=0.5),
             axis.title.y = element_text(size = 12)
           )
         
@@ -546,7 +548,8 @@ draw_compared_effects_bycountry = function(ates, #the dataset with the ates
       ) +
       theme(
         legend.position = "none",  # You can change this to "top", "bottom", etc.
-        axis.text.y = element_text(size = 10, angle = 90, hjust = 0.5, vjust=0.5),
+        axis.text.y = element_text(size = 10, #angle = 90, 
+                                   hjust = 0.5, vjust=0.5),
         axis.title.y = element_text(size = 12)
       )
     
@@ -646,7 +649,7 @@ compare_effects_bycountry = function(data,
   {
     ees_country = data |>
       filter(cpd_country == context & (cpd_exparm2 == "natural" | cpd_exparm2 == arm)) |>
-      cj(formula_match,
+      cj(formula,
          id = ~respid,
          estimate = paste0(estimator, "_differences"),
          by = ~cpd_exparm)
@@ -658,7 +661,7 @@ compare_effects_bycountry = function(data,
   
   # ees_pooled = data |>
   #   filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-  #   cj(formula_match,
+  #   cj(formula,
   #      id = ~respid,
   #      estimate = paste0(estimator, "_differences"),
   #      by = ~cpd_exparm)
@@ -670,6 +673,7 @@ compare_effects_bycountry = function(data,
   # ees = rbind(ees, ees_pooled)
   
   
+  browser()
   ##Set the categories and levels for the three datasets
   
   ates = set_categories_and_levels_bycountry(ates,
@@ -690,7 +694,7 @@ compare_effects_bycountry = function(data,
 
   x_intercept = ifelse(estimator!="mm_differences", 0, 0.5)
   
-  
+  #browser()
   plots = draw_compared_effects_bycountry(ates,
                                           acdes,
                                           ees,
@@ -1078,7 +1082,7 @@ full_analysis_bycountry(data,
 #########################################
 ### Now I want to have the three effects close to each other. How do I do that?
 
-subdir="CompareEffects/Ideology_match/"
+subdir="CompareEffects/Ideology_match/MMs"
 
 
 plots_match = compare_effects_bycountry(data,
@@ -1090,6 +1094,21 @@ plots_match = compare_effects_bycountry(data,
                                         subdir,#the subdirectory where the plots will be saved
                                         leftlim=0.35,
                                         rightlim=0.65#,
+                                        #x_intercept=0.5
+)
+
+
+subdir="CompareEffects/Ideology_match/AMCEs/"
+
+plots_match = compare_effects_bycountry(data,
+                                        formula_match,
+                                        type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
+                                        estimator="amce", #marginal means and amces
+                                        arm="ideology_match", #manipulated mediation arm with ideological match, 
+                                        #or manipulated mediation arm with ideological mismatch
+                                        subdir,#the subdirectory where the plots will be saved
+                                        leftlim=-0.15,
+                                        rightlim=0.15#,
                                         #x_intercept=0.5
 )
 
