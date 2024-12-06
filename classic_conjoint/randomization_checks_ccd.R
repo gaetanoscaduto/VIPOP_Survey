@@ -35,7 +35,7 @@ if(outcome=="ideology")
 
 if(outcome=="populism")
 {
-  data$ccd_outcome = data$ccd_chosen_pop
+  data$ccd_outcome = data$ccd_populism
 }
 
 
@@ -66,45 +66,45 @@ ggsave(paste0(output_wd, "diagnostic_randomization.png"),
        height = 14, width = 10, create.dir = T)
 
 
-# With ggplot
-aus = cj_freqs(data, ccd_outcome ~ ccd_gender+
-                 ccd_age+ccd_religion+ccd_citysize+ccd_profession+
-                 ccd_consc+ccd_openness+ ccd_neuroticism+
-                 ccd_restaurant+ccd_transport+ccd_pet,
-               id = ~respid)
-
-v = list()
-
-for(i in unique(aus$feature))
-{
-  
-  p = aus |>
-    filter(feature == i) |>
-    ggplot(aes(y=level, x=estimate, fill=feature))+
-    geom_col()+
-    ylab("")+
-    xlab("")+
-    ggtitle(as.character(i))+
-    theme(text = element_text(size = 15),
-          legend.position = "none",
-          plot.title = element_text(size=14))
-  
-  v[[i]] = p
-}
-
-p = v[[1]]/v[[2]]/v[[3]]/v[[4]]/v[[5]]/v[[6]]
-
-p
-
-ggsave(paste0(output_wd,  "diagnostic_randomization_ggplot1.png"),
-       p, height = 12, width = 8, create.dir = T)
-
-p= v[[7]]/v[[8]]/v[[9]]/v[[10]]/v[[11]]
-
-p
-
-ggsave(paste0(output_wd,  "diagnostic_randomization_ggplot2.png"),
-       p, height = 12, width = 8, create.dir = T)
+# # With ggplot
+# aus = cj_freqs(data, ccd_outcome ~ ccd_gender+
+#                  ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+#                  ccd_consc+ccd_openness+ ccd_neuroticism+
+#                  ccd_restaurant+ccd_transport+ccd_pet,
+#                id = ~respid)
+# 
+# v = list()
+# 
+# for(i in unique(aus$feature))
+# {
+#   
+#   p = aus |>
+#     filter(feature == i) |>
+#     ggplot(aes(y=level, x=estimate, fill=feature))+
+#     geom_col()+
+#     ylab("")+
+#     xlab("")+
+#     ggtitle(as.character(i))+
+#     theme(text = element_text(size = 15),
+#           legend.position = "none",
+#           plot.title = element_text(size=14))
+#   
+#   v[[i]] = p
+# }
+# 
+# p = v[[1]]/v[[2]]/v[[3]]/v[[4]]/v[[5]]/v[[6]]
+# 
+# p
+# 
+# ggsave(paste0(output_wd,  "diagnostic_randomization_ggplot1.png"),
+#        p, height = 12, width = 8, create.dir = T)
+# 
+# p= v[[7]]/v[[8]]/v[[9]]/v[[10]]/v[[11]]
+# 
+# p
+# 
+# ggsave(paste0(output_wd,  "diagnostic_randomization_ggplot2.png"),
+#        p, height = 12, width = 8, create.dir = T)
 
 
 #### Checking whether there is a preference for the profile shown to the right

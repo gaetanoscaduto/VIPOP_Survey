@@ -189,7 +189,7 @@ full_analysis = function(data,
     
     effects_pooled <- data |>
       filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-      cj(formula_match,
+      cj(formula,
          id = ~respid,
          estimate =  paste0(estimator, "_differences"),
          by = ~cpd_exparm)
@@ -204,7 +204,7 @@ full_analysis = function(data,
       
       temp <- data |>
         filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-        cj(formula_match,
+        cj(formula,
            id = ~respid,
            estimate =  "amce")
       
@@ -301,7 +301,7 @@ compare_effects = function(data,
     
     temp <- data |>
       filter(cpd_exparm2 == "natural" | cpd_exparm2 == arm) |>
-      cj(formula_match,
+      cj(formula,
          id = ~respid,
          estimate =  "amce")
     
