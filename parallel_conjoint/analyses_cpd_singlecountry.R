@@ -7,14 +7,14 @@
 #############################################################
 #LIBRARY CALLS
 #############################################################
-
+# 
 # pacman::p_load(
 #   cregg, dplyr, ggpubr, cowplot,
 #   MASS, cjoint, corrplot, dplyr,
 #   forcats, ggplot2, gt, gtools,
 #   gtsummary, margins, openxlsx,
 #   patchwork, rio, texreg, tools,
-#   lme4, ggeffects
+#   lme4, ggeffects, wesanderson
 # )
 
 #############################################################
@@ -110,6 +110,7 @@ draw_plot_effects = function(effects,
       scale_y_discrete(limits = rev(y_labels[[type]][[category]])) +
       scale_x_continuous(limits = c(leftlim, rightlim), 
                          breaks = round(seq(leftlim, rightlim, length.out = 9), digits=3))+
+      scale_color_manual(values = wes_palettes$Darjeeling1) + # Apply the custom colors
       theme(legend.position = "none")
     
     # if(for_comparison == T)
@@ -1130,6 +1131,7 @@ p = plot(ideology_data)+
                      breaks = round(seq(-0.12, 0.12, length.out = 9), digits=2))+
   scale_y_discrete(labels = rev(c("Ideology (as shown)", "Center", "Not collocated", "Right", "Left",
                                   "Ideological similarity", "Ideology Mismatch", "Idelogy Match")))+
+  scale_color_manual(values = wes_palettes$Darjeeling1) + # Apply the custom colors
   theme_gray()+
   theme(legend.position = "none")
 
@@ -1137,4 +1139,4 @@ p = plot(ideology_data)+
 ggsave(paste0(output_wd,"estimations/", subdir,  "ideology.png"), 
        p, 
        height = 4, 
-       width = 6, create.dir = T)
+       width =4 , create.dir = T)
