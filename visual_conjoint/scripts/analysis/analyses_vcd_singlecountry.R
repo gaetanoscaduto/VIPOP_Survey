@@ -438,18 +438,16 @@ full_analysis = function(data,
 
 if(recoding_functional_equivalents == T)
 {
-  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/",
-                     "FE",
-                     "/singlecountry/", 
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/",
+                     "FE/", 
                      outcome, "/", 
                      context, "/")
 }
 
 if(recoding_functional_equivalents == F)
 {
-  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/",
-                     "NFE",
-                     "/singlecountry/", 
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/",
+                     "NFE/", 
                      outcome, "/", 
                      context, "/")
 }
@@ -508,12 +506,6 @@ if(recoding_functional_equivalents == T)
   
   
  }
-
-
-
-
-
-
 
 
 if(outcome == "ideology")

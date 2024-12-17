@@ -42,7 +42,7 @@ source("others/recodings/recoding_demo.R")
 
 #contexts = c("IT", "FR", "CZ", "SW", "POOL")
 
-context = c("IT")
+context = c("POOL")
 
 for(context in contexts)
 {
@@ -52,7 +52,7 @@ for(context in contexts)
   print(paste("Ok descriptives", context, Sys.time()))
   
   #classic conjoint scripts
-  #source("classic_conjoint/data_manipulation_ccd.R")
+  source("classic_conjoint/data_manipulation_ccd.R")
   print(paste("Ok ccd data man", context, Sys.time()))
 
   for(outcome in c("ideology", "populism"))
@@ -71,9 +71,8 @@ for(context in contexts)
   }
   
   #visual conjoint scripts
-  #source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
+  source("visual_conjoint/scripts/analysis/data_manipulation_vcd.R")
   print(paste("Ok vcd data man", context, Sys.time()))
-  
   
   
   for(outcome in c("ideology", "trust", "populism"))
@@ -117,8 +116,9 @@ print(paste("Ok cpd byocuntry", context, Sys.time()))
 
 for(outcome in c("ideology", "trust", "populism"))
 {
+  recoding_functional_equivalents = T 
   source("visual_conjoint/scripts/analysis/analyses_vcd_bycountry.R")
-  print(paste("Ok vcd bycountry", outcome, context, Sys.time()))
+  print(paste("Ok vcd bycountry", outcome, Sys.time()))
 }
 
 source("parallel_conjoint/analyses_cpd_bycountry.R")

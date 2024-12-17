@@ -23,39 +23,36 @@
 # DEFINING FUNCTIONS
 #############################################################
 
-###SET CATEGORIES AND LEVELS
+#############################################################
+# SET CATEGORIES AND LEVELS
+#############################################################
 
 #Here I define a function to set categories and levels in a neat and presentable 
 #fashion in the mm dataset resulting from the cj function. The
 #functio
 
-set_categories_and_levels_visual_bycountry = function(effects, 
-                                                      attributes=attributes){
-  # effects=effects_pooled
-  # attributes=attributes
-  effects$feature = factor(attributes, levels = unique(attributes))
-  effects$level=factor(levels_vector, levels = levels_vector)
+set_categories_and_levels_visual_bycountry = function(effects){
+  effects <- effects %>%
+    mutate(feature = gsub("ccd_", "", feature) %>% # Remove "vcd_"
+             tools::toTitleCase())   
   
   return(effects)
 }
 
 
 
-##Function to draw plots for the effects
+#############################################################
+# DRAW PLOT EFFECTS
+#############################################################
 
 draw_plot_effects_bycountry = function(effects_pooled,
                                        effects_bycountry,
                                        estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                                       y_labels=y_labels_plots,
                                        leftlim=999, #the left limit of the plot
                                        rightlim=999,#the right limit of the plot
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
-  # 
-  # y_labels=y_labels_plots
-  # leftlim=999 #the left limit of the plot
-  # rightlim=999#the right limit of the plot
-  # x_intercept=999 #th
+
   
   estimator=match.arg(estimator)
   
@@ -85,10 +82,11 @@ draw_plot_effects_bycountry = function(effects_pooled,
   effects_CZ= effects_bycountry |> filter(ccd_country=="CZ")
   
   v=list()
-  for(attribute in unique(attributes))
+  for(attribute in unique(effects_pooled$feature))
   {
     
-    these_labels = rev(y_labels_plots[[tolower(attribute)]])
+    these_labels = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level))
+    
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(data=effects_IT[effects_IT$feature == attribute, ],
@@ -124,8 +122,8 @@ draw_plot_effects_bycountry = function(effects_pooled,
                       show.legend = T)+
       ylab(attribute)+
       xlab("Effect size")+
-      xlim(leftlim,rightlim)+
-      scale_y_discrete(limits = these_labels)+
+      scale_x_continuous(limits = c(leftlim, rightlim), 
+                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+      scale_y_discrete(limits = these_labels)+
       scale_color_manual(
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
@@ -154,9 +152,14 @@ draw_plot_effects_bycountry = function(effects_pooled,
     v[[attribute]] = p
   }
   
-  
-  return(v)
+ 
 }
+
+
+#############################################################
+# FULL INTERACTION EFFECTS
+#############################################################
+
 
 full_interaction_effects_bycountry = function(data,
                                               formula,
@@ -214,7 +217,8 @@ full_interaction_effects_bycountry = function(data,
                     position = position_nudge(y = -1/5),
                     show.legend = T)+
     labs(y="",x="Marginal Mean")+
-    xlim(-0.1,1.1)+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     scale_color_manual(
       values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                  "FR" = wesanderson::wes_palettes$Darjeeling1[2],
@@ -254,7 +258,9 @@ full_interaction_effects_bycountry = function(data,
 }
 
 
-
+#############################################################
+# FULL ANALYSIS
+#############################################################
 
 full_analysis_bycountry = function(data,
                                    formula, #the conjoint formula
@@ -269,8 +275,7 @@ full_analysis_bycountry = function(data,
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
   
-  # formula=formula_outcome
-  # estimator="mm"
+
   
   estimator=match.arg(estimator)
   
@@ -289,26 +294,22 @@ full_analysis_bycountry = function(data,
   
   
   
-  effects_pooled = set_categories_and_levels_visual_bycountry(effects_pooled,
-                                                              attributes = attributes)
+  effects_pooled = set_categories_and_levels_visual_bycountry(effects_pooled)
   
   
-  effects_bycountry = set_categories_and_levels_visual_bycountry(effects_bycountry,
-                                                                 attributes = attributes)
+  effects_bycountry = set_categories_and_levels_visual_bycountry(effects_bycountry)
   
   if(continuous==F)
   {
     v = draw_plot_effects_bycountry(effects_pooled,
                                     effects_bycountry,
-                                    estimator=estimator,
-                                    y_labels=y_labels_plots)
+                                    estimator=estimator)
   }
   else
   {
     v = draw_plot_effects_bycountry(effects_pooled,
                                     effects_bycountry,
                                     estimator=estimator,
-                                    y_labels=y_labels_plots,
                                     leftlim = 0,
                                     rightlim = 10)
   }
@@ -318,49 +319,10 @@ full_analysis_bycountry = function(data,
   
   effects_pooled$ccd_country = "POOL"
   
-
-  binded_dataset = rbind(effects_pooled, effects_bycountry)
+  return_list = list(plot = v, effects = effects_bycountry)
   
-  #saveRDS(binded_dataset, file = paste0(output_wd, subdir, "data.rds"))
-  
-  return(v)
+  return(return_list)
 }
-
-#Our levels regarding match and mismatches (for labeling)
-
-
-y_labels_plots = list(gender=c("Female", "Male", "Non-binary"),
-                      age=c("25 years old","45 years old","65 years old"),
-                      religion=c("Non believer","Non practitioner", "Practitioner"),
-                      citysize=c("Big","Medium", "Small"), #ricorda di correggere l'ordine di sti factor
-                      job=c("Entrepreneur", "Lawyer", "Teacher", "Waiter"),
-                      conscientiousness=c("Disorganized", "Reliable"),
-                      openness=c("Open", "Rigid"),
-                      neuroticism=c("Anxious", "Calm"),
-                      restaurant=c("Asian","Steakhouse", "Traditional", "Vegan"),
-                      transport=c("Bicycle","Public Transport","SUV"),
-                      animal=c("Cat","Large dog","No pets","Small dog")
-)
-
-
-levels_vector= unlist(y_labels_plots, use.names = F)
-
-attributes= c("Gender", "Gender", "Gender",
-              "Age","Age","Age",
-              "Religion","Religion","Religion",
-              "Citysize","Citysize","Citysize",
-              "Job","Job","Job","Job",
-              "Conscientiousness","Conscientiousness",
-              "Openness","Openness",
-              "Neuroticism","Neuroticism",
-              "Restaurant","Restaurant","Restaurant","Restaurant",
-              "Transport","Transport","Transport",
-              "Animal","Animal","Animal","Animal"
-)
-
-
-
-
 
 
 #############################################################
@@ -414,15 +376,15 @@ if(outcome=="populism")
 
 subdir = "MMs/"
 
-v = full_analysis_bycountry(data,
+result = full_analysis_bycountry(data,
                             formula_outcome,
                             "mm",
                             subdir)
 
 
-for(attribute in unique(attributes))
+for(attribute in unique(result$effects$feature))
 {
-  p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
                                               caption= "Marginal means")
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
@@ -440,14 +402,14 @@ for(attribute in unique(attributes))
 
 subdir = "AMCEs/"
 
-v= full_analysis_bycountry(data,
+result = full_analysis_bycountry(data,
                            formula_outcome,
                            "amce",
                            subdir)
 
-for(attribute in unique(attributes))
+for(attribute in unique(result$effects$feature))
 {
-  p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
                                               caption= "Average marginal component effects")
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 

@@ -22,40 +22,36 @@
 # DEFINING FUNCTIONS
 #############################################################
 
+####################################
 ###SET CATEGORIES AND LEVELS
+####################################
 
 #Here I define a function to set categories and levels in a neat and presentable 
 #fashion in the mm dataset resulting from the cj function. The
 #functio
 
-set_categories_and_levels_visual_bycountry = function(effects, 
-                                                      attributes=attributes){
-  # effects=effects_pooled
-  # attributes=attributes
-  effects$feature = factor(attributes, levels = unique(attributes))
-  effects$level=factor(levels_vector, levels = levels_vector)
+set_categories_and_levels_visual_bycountry = function(effects){
+
+  effects <- effects %>%
+    mutate(feature = gsub("vcd_", "", feature) %>% # Remove "vcd_"
+             tools::toTitleCase())   
   
   return(effects)
 }
 
 
-
-##Function to draw plots for the effects
+####################################
+##DRAW PLOTS EFFECT BY COUNTRY
+####################################
 
 draw_plot_effects_bycountry = function(effects_pooled,
                                        effects_bycountry,
                                        estimator=c("mm", "amce", "mm_differences", "amce_differences"), #either amce, mm, or mm_differences
-                                       y_labels=y_labels_plots,
                                        leftlim=999, #the left limit of the plot
                                        rightlim=999,#the right limit of the plot
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
-  # 
-  # y_labels=y_labels_plots
-  # leftlim=999 #the left limit of the plot
-  # rightlim=999#the right limit of the plot
-  # x_intercept=999 #th
-  
+ 
   estimator=match.arg(estimator)
   
   v = list()
@@ -78,9 +74,10 @@ draw_plot_effects_bycountry = function(effects_pooled,
   effects_CZ= effects_bycountry |> filter(vcd_country=="CZ")
   
   v=list()
-  for(attribute in unique(attributes))
+  for(attribute in unique(effects_pooled$feature))
   {
-    these_labels = rev(y_labels_plots[[tolower(attribute)]])
+    these_labels = rev(unique(effects_pooled[effects_pooled$feature==attribute, ]$level))
+
     p = ggplot()+
       geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
       geom_pointrange(data=effects_IT[effects_IT$feature == attribute, ],
@@ -114,7 +111,8 @@ draw_plot_effects_bycountry = function(effects_pooled,
                       show.legend = T)+
       ylab(attribute)+
       xlab("Effect size")+
-      xlim(leftlim,rightlim)+
+      scale_x_continuous(limits = c(leftlim, rightlim), 
+                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
       scale_y_discrete(limits = these_labels)+
       scale_color_manual(
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
@@ -145,20 +143,40 @@ draw_plot_effects_bycountry = function(effects_pooled,
     v[[attribute]] = p
   }
   
-  
-  return_list = list(plot=v, effects = effects_bycountry)
-  
-  return(return_list)
+  return(v)
 }
+
+
+####################################
+##DRAW INTERACTION EFFECTS BY COUNTRY
+####################################
+
 
 full_interaction_effects_bycountry = function(data,
                                               formula,
-                                              type_of_interaction){
+                                              type_of_interaction,
+                                              estimator="mm",
+                                              leftlim=999,
+                                              rightlim=999, 
+                                              x_intercept = 999){
+  
+  if(leftlim==999) # if leftlim has default value (unspecified), then we set the limits conservatively
+    #with [-1; 1] for amces and [0, 1] for mm
+  {
+    
+    leftlim=ifelse(estimator!="mm", -1, 0)
+    rightlim=1
+  }
+  if(x_intercept==999)
+  {
+    intercept = ifelse(estimator!="mm", 0, 0.5)
+  }
+  
   
   effects <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = "mm",
+       estimate = estimator,
        by=~vcd_country#,
        #h0=0.5
        )
@@ -166,7 +184,7 @@ full_interaction_effects_bycountry = function(data,
   effects_pooled <- data |>
     cj(formula, 
        id = ~respid,
-       estimate = "mm"#,
+       estimate = estimator#,
        #h0=0.5
        )
   
@@ -180,6 +198,7 @@ full_interaction_effects_bycountry = function(data,
   effects_SW= effects |> filter(vcd_country=="SW")
   effects_CZ= effects |> filter(vcd_country=="CZ")
   effects_POOL= effects |> filter(vcd_country=="POOL")
+  
   
   
   
@@ -211,7 +230,8 @@ full_interaction_effects_bycountry = function(data,
                     position = position_nudge(y = -1/5),
                     show.legend = T)+
     labs(y="",x="Marginal Mean")+
-    xlim(-0.1,1.1)+
+    scale_x_continuous(limits = c(leftlim, rightlim), 
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
     scale_color_manual(
       values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                  "FR" = wesanderson::wes_palettes$Darjeeling1[2],
@@ -251,7 +271,9 @@ full_interaction_effects_bycountry = function(data,
   }
 
 
-
+####################################
+##FULL ANALYSIS BY COUNTRY
+####################################
 
 full_analysis_bycountry = function(data,
                          formula, #the conjoint formula
@@ -266,12 +288,8 @@ full_analysis_bycountry = function(data,
   #them in the appropriate repositories. 
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
-  
-  # formula=formula_outcome
-  # estimator="mm"
 
   estimator=match.arg(estimator)
-  
   
   h_0 = ifelse(estimator == "mm", 0.5, 0)
   
@@ -290,91 +308,27 @@ full_analysis_bycountry = function(data,
        #h0=h_0
        )
   
-
+  effects_pooled = set_categories_and_levels_visual_bycountry(effects_pooled)
   
-  effects_pooled = set_categories_and_levels_visual_bycountry(effects_pooled,
-                                                    attributes = attributes)
-  
-  
-  effects_bycountry = set_categories_and_levels_visual_bycountry(effects_bycountry,
-                                                    attributes = attributes)
+  effects_bycountry = set_categories_and_levels_visual_bycountry(effects_bycountry)
   
   v = draw_plot_effects_bycountry(effects_pooled,
                                   effects_bycountry,
                                   estimator=estimator,
-                                  y_labels=y_labels_plots,
                                   leftlim=leftlim,
                                   rightlim=rightlim)
   
   
-  #saveRDS(v$effects, file = paste0(output_wd, subdir, "bycountry_data.rds"))
+  return_list = list(plot=v, effects = effects_bycountry)
   
-  
-  return(v$plot)
-}
+  #saveRDS(return_list$effects, file = paste0(output_wd, subdir, "bycountry_data.rds"))
 
-#Our levels regarding match and mismatches (for labeling)
-
-
-y_labels_plots = list(ethnicity=c("Black","White"),
-                      gender=c("Female","Male"),
-                      age=c("35", "70"),
-                      job=c("Entrepreneur","Lawyer","Politician","Teacher","Waiter"),
-                      issue=c("Leftneg","Leftpos","Rightneg","Rightpos"),
-                      nostalgia=c("Future1","Future2","Past1","Past2"),
-                      valence=c("Corruption1","Corruption2", "Honesty1", "Honesty2"),
-                      animal=c("Catpoor","Catrich","Dogpoor","Dogrich"),
-                      food=c("Ethnic","Meatpoor","Meatrich", "Vegan"),
-                      crowd=c("Mixedelite","Mixedpeople", "Whiteelite","Whitepeople")
-)
-
-levels_vector= unlist(y_labels_plots, use.names = F)
-
-attributes= c("Ethnicity", "Ethnicity",
-              "Gender", "Gender", 
-              "Age","Age",
-              "Job","Job","Job","Job","Job",
-              "Issue", "Issue", "Issue", "Issue",
-              "Nostalgia", "Nostalgia", "Nostalgia", "Nostalgia",
-              "Valence","Valence","Valence","Valence",
-              "Food","Food","Food","Food",
-              "Animal","Animal","Animal","Animal",
-              "Crowd","Crowd","Crowd","Crowd")
-
-
-##################
-
-# outcome = "ideology"
-# outcome = "trust"
-# outcome = "populism"
-
-if(outcome == "ideology")
-{
-  formula_outcome = vcd_chosen_rw ~  vcd_ethnicity + 
-    vcd_gender + vcd_age + vcd_job + 
-    vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_animal + vcd_food + vcd_crowd
-}
-
-if(outcome == "trust")
-{
-  formula_outcome = vcd_chosen_trust ~ vcd_ethnicity + 
-    vcd_gender + vcd_age + vcd_job + 
-    vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_animal + vcd_food + vcd_crowd
-}
-if(outcome == "populism")
-{
-  formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
-    vcd_gender + vcd_age + vcd_job + 
-    vcd_issue + vcd_nostalgia + vcd_valence +
-    vcd_animal + vcd_food + vcd_crowd
+  return(return_list)
 }
 
 
-
-
-
+#############################################################
+##### PRELIMINARY STUFF
 #############################################################
 
 #dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
@@ -384,8 +338,103 @@ output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/by
 
 data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjdata_vcd_POOL.RDS"))
 
-#############################################################
 
+#recoding_functional_equivalents = T
+
+if(recoding_functional_equivalents == T)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/",
+                     "FE/", 
+                     outcome, "/")
+}
+
+if(recoding_functional_equivalents == F)
+{
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/",
+                     "NFE/", 
+                     outcome, "/")
+}
+
+
+### fedra suggested to treat  corruption, valence and crowd as functional equivalents
+#therefore, here I recode them 
+#If you don't want them recoded anymore, just comment the following lines
+
+
+### recode vcd_valence
+
+
+if(recoding_functional_equivalents == T)
+{
+  data <- data |>
+    mutate(vcd_valence = case_when(
+      vcd_valence == "Corruption1" ~ "Corruption",
+      vcd_valence == "Corruption2" ~ "Corruption",
+      vcd_valence == "Honesty1" ~ "Honesty",
+      vcd_valence == "Honesty2" ~ "Honesty",
+      TRUE ~ as.character(vcd_valence)  # Keeps any values not in the list as they are
+    )
+    )
+  
+  data$vcd_valence = factor(data$vcd_valence, levels=c("Corruption", "Honesty"))
+  
+  ### recode time
+  
+  data <- data |>
+    mutate(vcd_time = case_when(
+      vcd_time == "Future1" ~ "Future",
+      vcd_time == "Future2" ~ "Future",
+      vcd_time == "Past1" ~ "Past",
+      vcd_time == "Past2" ~ "Past",
+      TRUE ~ as.character(vcd_time)  # Keeps any values not in the list as they are
+    )
+    )
+  
+  data$vcd_time = factor(data$vcd_time, levels=c("Future", "Past"))
+  
+  ### recode pet
+  
+  data <- data |>
+    mutate(vcd_pet = case_when(
+      vcd_pet == "Catpoor" ~ "Cat",
+      vcd_pet == "Catrich" ~ "Cat",
+      vcd_pet == "Dogpoor" ~ "Dog",
+      vcd_pet == "Dogrich" ~ "Dog",
+      TRUE ~ as.character(vcd_pet)  # Keeps any values not in the list as they are
+    )
+    )
+  
+  data$vcd_pet = factor(data$vcd_pet, levels=c("Cat", "Dog"))
+  
+  
+}
+
+# outcome = "ideology"
+# outcome = "trust"
+# outcome = "populism"
+
+if(outcome == "ideology")
+{
+  formula_outcome = vcd_chosen_rw ~  vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_time + vcd_valence +
+    vcd_food + vcd_pet + vcd_crowd
+}
+
+if(outcome == "trust")
+{
+  formula_outcome = vcd_chosen_trust ~ vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_time + vcd_valence +
+    vcd_food + vcd_pet+ vcd_crowd
+}
+if(outcome == "populism")
+{
+  formula_outcome = vcd_chosen_pop ~ vcd_ethnicity + 
+    vcd_gender + vcd_age + vcd_job + 
+    vcd_issue + vcd_time + vcd_valence +
+    vcd_food + vcd_pet+ vcd_crowd
+}
 ######################################
 ############ EFFECTS ################# 
 ######################################
@@ -393,7 +442,7 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 
 subdir = "MMs/"
 
-v = full_analysis_bycountry(data,
+result = full_analysis_bycountry(data,
               formula_outcome,
               "mm",
               subdir,
@@ -401,9 +450,9 @@ v = full_analysis_bycountry(data,
               rightlim=0.7)
 
 
-for(attribute in unique(attributes))
+for(attribute in unique(result$effects$feature))
 {
-  p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
+  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
                                  caption= paste("Marginal means on", outcome, "perceptions"))
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
@@ -421,14 +470,14 @@ for(attribute in unique(attributes))
 
 subdir = "AMCEs/"
 
-v= full_analysis_bycountry(data,
+result = full_analysis_bycountry(data,
               formula_outcome,
               "amce",
               subdir)
 
-for(attribute in unique(attributes))
+for(attribute in unique(result$effects$feature))
 {
-  p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
+  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
                                               caption= paste("Average marginal component effects on", outcome, "perceptions"))
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
@@ -464,7 +513,7 @@ full_interaction_effects_bycountry(data,
 ##### ACIE of the cultural dimensions
 
 
-data$interacted_cultural = interaction(data$vcd_food, data$vcd_animal, sep =" ")
+data$interacted_cultural = interaction(data$vcd_food, data$vcd_pet, sep =" ")
 
 formula_interaction_cultural = vcd_chosen_rw ~ interacted_cultural
 
