@@ -27,16 +27,16 @@
 
 if(recoding_functional_equivalents == T)
 {
-  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/FE/for_thesis_gaetano/")
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/for_thesis_gaetano/FE/")
   
-  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/FE/"
+  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/FE/"
 }
 
 if(recoding_functional_equivalents == F)
 {
   output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/for_thesis_gaetano/")
   
-  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/"
+  main_path_vcd = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/analyses/visual_conjoint_design/singlecountry/NFE/"
 }
 
 
@@ -46,8 +46,8 @@ if(recoding_functional_equivalents == F)
 
 
 
-id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
-pop_data_mm_it = readRDS(paste0(main_path_vcd,"singlecountry/populism/IT/MMs/singlecountry_data.rds"))
+id_data_mm_it = readRDS(paste0(main_path_vcd, "ideology/IT/MMs/singlecountry_data.rds"))
+pop_data_mm_it = readRDS(paste0(main_path_vcd,"populism/IT/MMs/singlecountry_data.rds"))
 
 
 # View(data.frame(attribute=id_data_mm_it$feature, level=id_data_mm_it$level,
@@ -122,8 +122,8 @@ ggsave(paste0(output_wd,"mms_main.png"), p,
 #### AMCE, general
 ########################
 
-id_data_amce_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/AMCEs/singlecountry_data.rds"))
-pop_data_amce_it = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/AMCEs/singlecountry_data.rds"))
+id_data_amce_it = readRDS(paste0(main_path_vcd, "ideology/IT/AMCEs/singlecountry_data.rds"))
+pop_data_amce_it = readRDS(paste0(main_path_vcd, "populism/IT/AMCEs/singlecountry_data.rds"))
 data=id_data_amce_it 
 
 intercept = 0
@@ -194,9 +194,9 @@ ggsave(paste0(output_wd,"amces_main.png"), p,
 ##########
 
 #ideology acies marginal means italian political
-id_data_politics = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_data.rds"))
+id_data_politics = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_political_data.rds"))
 #populism acies marginal means italian political
-pop_data_politics =readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_political_data.rds"))
+pop_data_politics =readRDS(paste0(main_path_vcd, "populism/IT/Interactions/MMs/interacted_political_data.rds"))
 
 
 id_data_politics$level = gsub("\n"," ", id_data_politics$level)
@@ -315,9 +315,9 @@ ggsave(paste0(output_wd,"ACIEs_interacted_politics_mm.png"),
 ############### ACIEs with sociodemos  1
 ############################## 
 #ideology acies marginal means italian sociodemos
-id_data_sociodemo = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_data.rds"))
+id_data_sociodemo = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_sociodemos_data.rds"))
 #populism acies marginal means italian sociodemos
-pop_data_sociodemo = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_sociodemos_data.rds"))
+pop_data_sociodemo = readRDS(paste0(main_path_vcd, "populism/IT/Interactions/MMs/interacted_sociodemos_data.rds"))
 
 
 ### axis y labels langer rather than higher
@@ -441,9 +441,9 @@ ggsave(paste0(output_wd,"ACIEs_interacted_sociodemo_mm.png"),
 ####### 
 
 #ideology acies marginal means italian cultural
-id_data_cultural = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_cultural_data.rds"))
+id_data_cultural = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_cultural_data.rds"))
 #populism acies marginal means italian cultural
-pop_data_cultural = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_cultural_data.rds"))
+pop_data_cultural = readRDS(paste0(main_path_vcd, "populism/IT/Interactions/MMs/interacted_cultural_data.rds"))
 
 id_data_cultural$level = gsub("\n"," ", id_data_cultural$level)
 pop_data_cultural$level = gsub("\n"," ", pop_data_cultural$level)
@@ -561,9 +561,9 @@ ggsave(paste0(output_wd,"ACIEs_interacted_cultural_mm.png"),
 ############### ACIEs with sociodemos  full
 ############################## 
 #ideology acies marginal means italian sociodemos
-id_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_sociodemos_full_data.rds"))
+id_data_sociodemo_full = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_sociodemos_full_data.rds"))
 #populism acies marginal means italian sociodemos
-pop_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_sociodemos_full_data.rds"))
+pop_data_sociodemo_full = readRDS(paste0(main_path_vcd, "populism/IT/Interactions/MMs/interacted_sociodemos_full_data.rds"))
 
 
 ### axis y labels langer rather than higher
@@ -648,9 +648,9 @@ ggsave(paste0(output_wd,"mms_ACIEs_polcult.png"), p,
 ############### ACIEs with sociodemos politics full
 ############################## 
 #ideology acies marginal means italian sociodemos
-id_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_sociodemo_data.rds"))
+id_data_sociodemo_full = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_political_sociodemo_data.rds"))
 #populism acies marginal means italian sociodemos
-pop_data_sociodemo_full = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/Interactions/MMs/interacted_political_sociodemos_full_data.rds"))
+pop_data_sociodemo_full = readRDS(paste0(main_path_vcd, "populism/IT/Interactions/MMs/interacted_political_sociodemos_full_data.rds"))
 
 
 ### axis y labels langer rather than higher
@@ -707,11 +707,9 @@ ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Sociodemo_full.png"),
 ############### ACIEs with sociodemos politics full (only interaction non-exploratory)
 ##############################
 
-id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_sociodemo_data.rds"))
+id_data_mm_it = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_political_sociodemo_data.rds"))
 
 id_data_mm_it$ideology = ifelse(grepl("Right", id_data_mm_it$level), "Right-wing issue", "Left-wing issue")
-
-
 
 intercept = 0.5
 leftlim = 0.33
@@ -723,18 +721,23 @@ p = ggplot()+
                   aes(x=estimate, xmin=lower, xmax=upper,
                       y=fct_reorder(level, desc(estimate)),
                       col=ideology, shape=ideology),
-                  position = position_nudge(y = 1/10),
                   show.legend = T)+
   labs(y="",x="")+
   scale_x_continuous(limits = c(leftlim, rightlim), 
                      breaks = round(seq(leftlim, rightlim, length.out = 11), digits=3))+
+  scale_color_manual(
+    values = c("Left-wing issue" = wesanderson::wes_palettes$Darjeeling1[1],
+               "Right-wing issue" = wesanderson::wes_palettes$Darjeeling1[2]),
+    name = "Inference on",
+    limits = c("Left-wing issue", "Right-wing issue")
+  ) +
   theme(legend.position = "none",
         axis.text.y = element_text(size=10),
         axis.title.y = element_text(size=12))
 
 p
 
-p = p +plot_annotation(caption = "Circle=Left-wing issue, Triangle=Right-wing issue; Marginal means, 95% C.I.")
+p = p +plot_annotation(caption = "Circle=Left-wing issue, Triangle=Right-wing issue")
 
 ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Politics_with_Sociodemo.png"), 
        p, 
@@ -748,7 +751,7 @@ ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Politics_with_Sociodemo.png"),
 ############### ACIEs with cultural with politics full (only interaction non-exploratory)
 ##############################
 
-id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/Interactions/MMs/interacted_political_cultural_data.rds"))
+id_data_mm_it = readRDS(paste0(main_path_vcd, "ideology/IT/Interactions/MMs/interacted_political_cultural_data.rds"))
 
 id_data_mm_it$ideology = ifelse(grepl("Right", id_data_mm_it$level), "Right-wing issue", "Left-wing issue")
 
@@ -761,19 +764,24 @@ p = ggplot()+
   geom_pointrange(data=id_data_mm_it,
                   aes(x=estimate, xmin=lower, xmax=upper,
                       y=fct_reorder(level, desc(estimate)),
-                      col=ideology),
-                  position = position_nudge(y = 1/10),
+                      col=ideology, shape=ideology),
                   show.legend = T)+
   labs(y="",x="")+
   scale_x_continuous(limits = c(leftlim, rightlim), 
                      breaks = round(seq(leftlim, rightlim, length.out = 11), digits=3))+
+  scale_color_manual(
+    values = c("Left-wing issue" = wesanderson::wes_palettes$Darjeeling1[1],
+               "Right-wing issue" = wesanderson::wes_palettes$Darjeeling1[2]),
+    name = "Inference on",
+    limits = c("Left-wing issue", "Right-wing issue")
+  ) +
   theme(legend.position = "none",
     axis.text.y = element_text(size=10),
     axis.title.y = element_text(size=12))
 
 p
 
-p = p +plot_annotation(caption = "Circle=Left-wing issue, Triangle=Right-wing issue; Marginal means, 95% C.I.")
+p = p +plot_annotation(caption = "Circle=Left-wing issue, Triangle=Right-wing issue")
 
 ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Culture_with_Sociodemo.png"), 
        p, 
@@ -790,8 +798,8 @@ ggsave(paste0(output_wd,"ACIEs_Visual_Conjoint_Culture_with_Sociodemo.png"),
 
 
 
-id_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/ideology/IT/MMs/singlecountry_data.rds"))
-pop_data_mm_it = readRDS(paste0(main_path_vcd, "singlecountry/populism/IT/MMs/singlecountry_data.rds"))
+id_data_mm_it = readRDS(paste0(main_path_vcd, "ideology/IT/MMs/singlecountry_data.rds"))
+pop_data_mm_it = readRDS(paste0(main_path_vcd, "populism/IT/MMs/singlecountry_data.rds"))
 
 
 intercept = 0.5
@@ -839,13 +847,45 @@ p = ggplot()+
 
 p = p+patchwork::plot_annotation(caption= "Circle = Right-wing, Triangle=Populism; Marginal means; 95% C.I.")
 
-ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), p, 
+ggsave(paste0(output_wd,"MMs_vcd_ordered.png"), 
+       p, 
        height = 10, 
        width = 8,
        create.dir = T)
 
 
+p_only_id =  ggplot()+
+  geom_vline(aes(xintercept=intercept), col="black", alpha=1/4)+
+  geom_pointrange(data=id_data_mm_it,
+                  aes(x=estimate, xmin=lower, xmax=upper,
+                      y=fct_reorder(level, estimate, .desc = T), 
+                      col="Right-wing", shape = "Right-wing"),
+                  show.legend = F)+
+  ylab("Attribute levels")+
+  xlab("\n")+
+  scale_x_continuous(limits = c(leftlim, rightlim), 
+                     breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+  scale_color_manual(
+    values = c("Right-wing" = wesanderson::wes_palettes$Darjeeling1[1]),
+    name = "Inference on",
+    limits = c("Right-wing")
+  ) +
+  scale_shape_manual(
+    values = c("Right-wing" = 19),
+    name = "Inference on",
+    limits = c("Right-wing")
+  ) +
+  theme(
+    legend.position = "right",  # You can change this to "top", "bottom", etc.
+    axis.text.y = element_text(size = 10),
+    axis.title.y = element_text(size = 12)
+  )
 
+ggsave(paste0(output_wd,"MMs_vcd_ordered_only_id.png"), 
+       p_only_id, 
+       height = 10, 
+       width = 8,
+       create.dir = T)
 
 
 ##################################  ##########################################

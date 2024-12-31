@@ -811,7 +811,7 @@ for(attribute in conjattr_full)
 # Define the list with label mappings for each variable
 label_list <- list(gender=c("Female", "Male", "Non-binary"),
                    age=c("25 years old","45 years old","65 years old"), 
-                   religion=c("Practitioner","Non practitioner", "Non believer"),
+                   religion=c("Practicing","Non practicing", "Non believer"),
                    citysize=c("Big", "Small", "Medium"), #ricorda di correggere l'ordine di sti factor
                    job=c("Entrepreneur", "Teacher", "Waiter", "Lawyer"),
                    consc=c("Reliable", "Disorganized"),

@@ -42,7 +42,7 @@ source("others/recodings/recoding_demo.R")
 
 #contexts = c("IT", "FR", "CZ", "SW", "POOL")
 
-context = c("POOL")
+context = c("IT")
 
 for(context in contexts)
 {

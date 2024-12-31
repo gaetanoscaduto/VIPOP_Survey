@@ -283,8 +283,8 @@ full_subgroup_analysis = function(data,
 
   ggsave(paste0(output_wd, subdir, subgroup_name, estimator, ".png"), 
          p, 
-         height = 12, 
-         width = 12, create.dir = T)
+         height = 10, 
+         width = 8, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, subgroup_name, estimator, ".rds"))
   
@@ -396,14 +396,15 @@ full_analysis = function(data,
                         rightlim)
   
   p=result_list$plot
-  p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment"),
-                                 caption= toupper(estimator))
+  # p=p+patchwork::plot_annotation(title = paste("Effects of the attributes Visual Conjoint Experiment")#,
+  #                                #caption= toupper(estimator)
+  #                                )
   
 
   ggsave(paste0(output_wd, subdir,"singlecountry.png"), 
          p, 
          height = 10, 
-         width = 10, create.dir = T)
+         width = 8, create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"singlecountry.rds"))
   
@@ -661,7 +662,7 @@ p=return_list$plot
 ggsave(paste0(output_wd, subdir,"interacted_sociodemos_full.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos_full.rds"))
 
@@ -688,7 +689,7 @@ p=return_list$plot
 ggsave(paste0(output_wd, subdir,"interacted_sociodemos.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos.rds"))
 
@@ -701,17 +702,17 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_so
 return_list = full_interaction_effects(data, 
                              formula_interaction_cultural,
                              estimator,
-                             leftlim=0.2,
-                             rightlim=0.8)
+                             leftlim=0.4,
+                             rightlim=0.6)
 
-p=return_list$plot
+p_cul=return_list$plot
 
 ggsave(paste0(output_wd, subdir,"interacted_cultural.png"), 
-       p, 
+       p_cul, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
-saveRDS(p, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
+saveRDS(p_cul, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
 
 saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cultural_data.rds"))
 
@@ -723,19 +724,29 @@ saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_cu
 return_list = full_interaction_effects(data, 
                              formula_interaction_political,
                              estimator,
-                             leftlim=0.2,
-                             rightlim=0.8)
+                             leftlim=0.4,
+                             rightlim=0.6)
 
-p=return_list$plot
+p_pol=return_list$plot
 
 ggsave(paste0(output_wd, subdir,"interacted_political.png"), 
-       p, 
+       p_pol, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
-saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
+saveRDS(p_pol, file = paste0(output_wd, subdir,"interacted_political.rds"))
 
 saveRDS(return_list$effects_data, file = paste0(output_wd, subdir,"interacted_political_data.rds"))
+
+####
+
+p=p_pol/p_cul
+
+
+ggsave(paste0(output_wd, subdir,"interacted_political_over_cultural.png"), 
+       p, 
+       height = 10, 
+       width = 8, create.dir = T)
 
 #### #### 
 #####  ACIE of the political and sociodemos
@@ -753,7 +764,7 @@ p
 ggsave(paste0(output_wd, subdir,"interacted_political_sociodemo.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_sociodemo.rds"))
 
@@ -779,7 +790,7 @@ p
 ggsave(paste0(output_wd, subdir,"interacted_political_cultural.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_cultural.rds"))
 
@@ -807,7 +818,7 @@ p=return_list$plot
 ggsave(paste0(output_wd, subdir,"interacted_sociodemos.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_sociodemos.rds"))
 
@@ -827,7 +838,7 @@ p=return_list$plot
 ggsave(paste0(output_wd, subdir,"interacted_cultural.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_cultural.rds"))
 
@@ -850,7 +861,7 @@ p=return_list$plot
 ggsave(paste0(output_wd, subdir,"interacted_political.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political.rds"))
 
@@ -911,7 +922,7 @@ p
 ggsave(paste0(output_wd, subdir,"interacted_political_sociodemo.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_sociodemo.rds"))
 
@@ -967,7 +978,7 @@ p
 ggsave(paste0(output_wd, subdir,"interacted_political_cultural.png"), 
        p, 
        height = 10, 
-       width = 10, create.dir = T)
+       width = 8, create.dir = T)
 
 saveRDS(p, file = paste0(output_wd, subdir,"interacted_political_cultural.rds"))
 
@@ -1212,7 +1223,7 @@ h_0 = ifelse(estimator == "mm", 0.5, 0)
 # ggsave(paste0(output_wd, subdir,"Political ideology", estimator, ".png"), 
 #        p, 
 #        height = 12, 
-#        width = 10, create.dir = T)
+#        width = 8, create.dir = T)
 
 ### test of significance differences between left and right
 
