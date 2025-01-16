@@ -50,6 +50,7 @@ draw_plot_effects_bycountry = function(effects_pooled,
                                        leftlim=999, #the left limit of the plot
                                        rightlim=999,#the right limit of the plot
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
+                                       
 ){
  
   estimator=match.arg(estimator)
@@ -343,15 +344,15 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 
 if(recoding_functional_equivalents == T)
 {
-  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/",
-                     "FE/", 
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/FE/",
+                     "bycountry/", 
                      outcome, "/")
 }
 
 if(recoding_functional_equivalents == F)
 {
-  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/bycountry/",
-                     "NFE/", 
+  output_wd = paste0(gdrive_code, "VIPOP_SURVEY/analyses/visual_conjoint_design/NFE/",
+                     "bycountry/", 
                      outcome, "/")
 }
 
@@ -452,13 +453,13 @@ result = full_analysis_bycountry(data,
 
 for(attribute in unique(result$effects$feature))
 {
-  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
-                                 caption= paste("Marginal means on", outcome, "perceptions"))
+  # p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
+  #                                caption= paste("Marginal means on", outcome, "perceptions"))
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
-         width = 6,
+         width = 9,
          create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
@@ -477,13 +478,13 @@ result = full_analysis_bycountry(data,
 
 for(attribute in unique(result$effects$feature))
 {
-  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
-                                              caption= paste("Average marginal component effects on", outcome, "perceptions"))
-  
+  # p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Visual Conjoint Experiment, by country"),
+  #                                             caption= paste("Average marginal component effects on", outcome, "perceptions"))
+  # 
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
-         width = 6,
+         width = 9,
          create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds") )
