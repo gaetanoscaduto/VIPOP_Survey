@@ -12,11 +12,11 @@ library(gt)
 library(gtsummary)
 library(openxlsx)
 
-context = "IT"
+#context = "IT"
 #context = "FR"
 #context = "CZ"
 #context = "SW"
-#context = "POOL"
+context = "POOL"
 
 
 dataset_rep = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/VIPOP_SURVEY/dataset_finali_per_analisi/"
@@ -26,10 +26,10 @@ gdrive_code = "G:/.shortcut-targets-by-id/1WduStf1CW98br8clbg8816RTwL8KHvQW/"
 
 data = readRDS(paste0(dataset_rep, "data_recoded_", context, ".RDS"))
 
-setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/Dissertation/Tables/")
+setwd("C:/Users/gasca/OneDrive - Università degli Studi di Milano-Bicocca/Dottorato/Papers and Chapters/Scaduto et al 2025a/")
 
 #CHECK THE STATE OF THE COUNTRY VARIABLE
-data |> filter(country=="IT")
+#data |> filter(country=="IT")
 
 descriptive <- data |> 
   select(gender, age_r, education, region, citysize, socialposition) |>
