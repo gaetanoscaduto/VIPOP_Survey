@@ -831,14 +831,14 @@ compare_effects_bycountry = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,"socio_bycountry.rds"))
+  saveRDS(p_socio, file = paste0(output_wd,"estimations/", subdir,"socio_bycountry.rds"))
   
   ggsave(paste0(output_wd,"estimations/", subdir,"psycho_bycountry.png"), 
          p_psycho, 
          height = 10, 
          width = 10)
   
-  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,"psycho_bycountry.rds"))
+  saveRDS(p_psycho, file = paste0(output_wd,"estimations/", subdir,"psycho_bycountry.rds"))
   
   
   ggsave(paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.png"), 
@@ -846,7 +846,7 @@ compare_effects_bycountry = function(data,
          height = 10, 
          width = 10, create.dir = T)
   
-  saveRDS(p, file = paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.rds"))
+  saveRDS(p_lifestyle, file = paste0(output_wd,"estimations/", subdir,"lifestyle_bycountry.rds"))
   
   
   return(plots)
@@ -1189,12 +1189,12 @@ subdir="CompareEffects/Ideology_match/"
 plots_match = compare_effects_bycountry(data,
                           formula_match,
                           type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                          estimator="mm", #marginal means and amces
+                          estimator="amce", #marginal means and amces
                           arm="ideology_match", #manipulated mediation arm with ideological match, 
                           #or manipulated mediation arm with ideological mismatch
                           subdir,#the subdirectory where the plots will be saved
-                          leftlim=0.35,
-                          rightlim=0.65#,
+                          leftlim=-0.2,
+                          rightlim=0.2#,
                           #x_intercept=0.5
                           )
 
@@ -1207,12 +1207,12 @@ subdir="CompareEffects/Ideology_mismatch/"
 plots_mismatch = compare_effects_bycountry(data,
                           formula_match,
                           type="match", #whether we are considering the nominal attributes or the recoding match vs mismatch with the respondent
-                          estimator="mm", #marginal means and amces
+                          estimator="amce", #marginal means and amces
                           arm="ideology_mismatch", #manipulated mediation arm with ideological match, 
                           #or manipulated mediation arm with ideological mismatch
                           subdir,#the subdirectory where the plots will be saved
-                          leftlim=0.35,
-                          rightlim=0.65#,
+                          leftlim=-0.2,
+                          rightlim=0.2#,
                           #x_intercept=0.5
                           )
 
@@ -1227,7 +1227,7 @@ plots_match$ees_plots$Sociodemographics  = (plots_match$ees_plots$Sociodemograph
 
 plots_mismatch$ees_plots$Sociodemographics = (plots_mismatch$ees_plots$Sociodemographics  + labs(title = "EEs (ideological dissimilarity)"))
 
-p = plots_match$ates_plots$Sociodemographics | plots_match$ees_plots$Sociodemographics  | plots_mismatch$ees_plots$Sociodemographics                   
+p = plots_match$ates_plots$Sociodemographics/plots_match$ees_plots$Sociodemographics/plots_mismatch$ees_plots$Sociodemographics                   
 
 
 ggsave(paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.png"), 
@@ -1238,13 +1238,14 @@ ggsave(paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.png
 saveRDS(p, file = paste0(output_wd,"estimations/", subdir, "sociodemographics_bycountry.rds"))
 
 
+
 plots_match$ates_plots$Psychological = (plots_match$ates_plots$Psychological + labs(title = "ATEs (natural mediation arm)"))
 
 plots_match$ees_plots$Psychological  = (plots_match$ees_plots$Psychological + labs(title = "EEs (ideological similarity)"))
 
 plots_mismatch$ees_plots$Psychological = (plots_mismatch$ees_plots$Psychological  + labs(title = "EEs (ideological dissimilarity)"))
 
-p = plots_match$ates_plots$Psychological | plots_match$ees_plots$Psychological  | plots_mismatch$ees_plots$Psychological                   
+p = plots_match$ates_plots$Psychological/plots_match$ees_plots$Psychological/plots_mismatch$ees_plots$Psychological                   
 
 
 ggsave(paste0(output_wd,"estimations/", subdir, "psychological_bycountry.png"), 
@@ -1262,7 +1263,7 @@ plots_match$ees_plots$Lifestyle  = (plots_match$ees_plots$Lifestyle + labs(title
 
 plots_mismatch$ees_plots$Lifestyle = (plots_mismatch$ees_plots$Lifestyle  + labs(title = "EEs (ideological dissimilarity)"))
 
-p = plots_match$ates_plots$Lifestyle | plots_match$ees_plots$Lifestyle  | plots_mismatch$ees_plots$Lifestyle                   
+p = plots_match$ates_plots$Lifestyle/plots_match$ees_plots$Lifestyle/plots_mismatch$ees_plots$Lifestyle                   
 
 
 ggsave(paste0(output_wd,"estimations/", subdir, "Lifestyle_bycountry.png"), 
