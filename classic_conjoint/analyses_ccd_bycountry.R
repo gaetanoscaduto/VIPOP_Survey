@@ -542,7 +542,7 @@ full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociod
 
 #Age and job
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_job, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_profession, sep =" ")
 
 if(outcome == "ideology")
 {
@@ -558,7 +558,7 @@ full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociod
 
 #Job and religion
 
-data$interacted_sociodemos = interaction(data$ccd_job, data$ccd_religion, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_profession, data$ccd_religion, sep =" ")
 
 if(outcome == "ideology")
 {
@@ -577,7 +577,7 @@ full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociod
 #psychological variables
 ##############
 
-data$interacted_psycho = interaction(data$ccd_consc, data$ccd_ope, data$ccd_neu, sep =" ")
+data$interacted_psycho = interaction(data$ccd_consc, data$ccd_openness, data$ccd_neuroticism, sep =" ")
 
 if(outcome == "ideology")
 {
