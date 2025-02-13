@@ -53,7 +53,7 @@ draw_plot_effects_bycountry = function(effects_pooled,
                                        x_intercept=999 #the vertical line to signal the difference from the insignificance
 ){
 
-  
+
   estimator=match.arg(estimator)
   
   v = list()
@@ -62,18 +62,13 @@ draw_plot_effects_bycountry = function(effects_pooled,
     #with [-1; 1] for amces and [0, 1] for mm
   {
     
-    leftlim=ifelse(estimator!="mm", -1, 0)
-    rightlim=1
-    intercept = ifelse(estimator!="mm", 0, 0.5)
-    x_annotate_symbol=0.93
-    x_annotate_label=0.95
-    
+    leftlim=ifelse(estimator!="mm", -0.3, 0.2)
+    rightlim=ifelse(estimator!="mm", 0.3, 0.7)
   }
-  else
+  
+  if(x_intercept == 999)
   {
-    intercept = 5
-    x_annotate_symbol=9.3
-    x_annotate_label=9.5  
+    intercept = ifelse(estimator!="mm", 0, 0.5)
   }
   
   effects_IT= effects_bycountry |> filter(ccd_country=="IT")
@@ -123,7 +118,8 @@ draw_plot_effects_bycountry = function(effects_pooled,
       ylab(attribute)+
       xlab("Effect size")+
       scale_x_continuous(limits = c(leftlim, rightlim), 
-                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+      scale_y_discrete(limits = these_labels)+
+                         breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+  
+      scale_y_discrete(limits = these_labels)+
       scale_color_manual(
         values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                    "FR" = wesanderson::wes_palettes$Darjeeling1[2],
@@ -152,7 +148,43 @@ draw_plot_effects_bycountry = function(effects_pooled,
     v[[attribute]] = p
   }
   
- 
+  if(estimator =="mm")
+  {
+    leftlim_gender=0.1
+    rightlim_gender=0.9
+  }
+  
+  if(estimator =="amce")
+  {
+    leftlim_gender=-0.4
+    rightlim_gender=0.4
+  }
+  
+  v[["Gender"]] = v[["Gender"]] + scale_x_continuous(limits = c(leftlim_gender, rightlim_gender), 
+                                                     breaks = round(seq(leftlim_gender, 
+                                                                        rightlim_gender,
+                                                                        length.out = 7), 
+                                                                    digits=3))
+  
+  if(estimator =="mm")
+  {
+    leftlim_transport=0.3
+    rightlim_transport=0.7
+  }
+  
+  if(estimator =="amce")
+  {
+    leftlim_transport=-0.2
+    rightlim_transport=0.2
+  }
+  
+  v[["Transport"]] = v[["Transport"]] + scale_x_continuous(limits = c(leftlim_transport, rightlim_transport), 
+                                                     breaks = round(seq(leftlim_transport, 
+                                                                        rightlim_transport,
+                                                                        length.out = 7), 
+                                                                    digits=3))
+  
+  return(v)
 }
 
 
@@ -163,7 +195,9 @@ draw_plot_effects_bycountry = function(effects_pooled,
 
 full_interaction_effects_bycountry = function(data,
                                               formula,
-                                              type_of_interaction){
+                                              type_of_interaction,
+                                              leftlim=0.3,
+                                              rightlim=0.7){
   
   effects <- data |>
     cj(formula, 
@@ -218,7 +252,8 @@ full_interaction_effects_bycountry = function(data,
                     show.legend = T)+
     labs(y="",x="Marginal Mean")+
     scale_x_continuous(limits = c(leftlim, rightlim), 
-                       breaks = round(seq(leftlim, rightlim, length.out = 7), digits=3))+
+                       breaks = round(seq(leftlim, rightlim, length.out = 7), 
+                                      digits=3))+
     scale_color_manual(
       values = c("IT" = wesanderson::wes_palettes$Darjeeling1[1],
                  "FR" = wesanderson::wes_palettes$Darjeeling1[2],
@@ -266,17 +301,19 @@ full_analysis_bycountry = function(data,
                                    formula, #the conjoint formula
                                    estimator=c("mm","amce"), #marginal means and amces
                                    subdir, #the subdirectory where the plots will be saved
-                                   continuous=F #to change if we are dealing with continuous outcome
+                                   continuous=F,#to change if we are dealing with continuous outcome
+                                   leftlim=999,
+                                   rightlim=999
 ){
   
-  
+
   ###### This function performs the whole analysis, draws the graphs and saves
   #them in the appropriate repositories. 
   #It calls the other functions previously defined plus the functions in cjregg and
   #patchwork
   
 
-  
+
   estimator=match.arg(estimator)
   
   effects_pooled <- data |>
@@ -292,18 +329,19 @@ full_analysis_bycountry = function(data,
        estimate = estimator
     )
   
-  
-  
   effects_pooled = set_categories_and_levels_visual_bycountry(effects_pooled)
   
   
   effects_bycountry = set_categories_and_levels_visual_bycountry(effects_bycountry)
   
+
   if(continuous==F)
   {
     v = draw_plot_effects_bycountry(effects_pooled,
                                     effects_bycountry,
-                                    estimator=estimator)
+                                    estimator=estimator,
+                                    leftlim = leftlim,
+                                    rightlim = rightlim)
   }
   else
   {
@@ -313,7 +351,6 @@ full_analysis_bycountry = function(data,
                                     leftlim = 0,
                                     rightlim = 10)
   }
-  
   
   effects_pooled$BY = "POOL"
   
@@ -341,14 +378,14 @@ data = readRDS(paste0(gdrive_code, "VIPOP_SURVEY/dataset_finali_per_analisi/cjda
 if(outcome=="ideology")
 {
   formula_outcome = ccd_chosen_rw ~ ccd_gender+
-    ccd_age+ccd_religion+ccd_citysize+ccd_job+
-    ccd_consc+ccd_ope+ ccd_neu+
-    ccd_restaurant+ccd_transport+ccd_animal
+    ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+    ccd_consc+ccd_openness+ ccd_neuroticism+
+    ccd_restaurant+ccd_transport+ccd_pet
   
   formula_continuous = ccd_continuous ~ ccd_gender+
-    ccd_age+ccd_religion+ccd_citysize+ccd_job+
-    ccd_consc+ccd_ope+ ccd_neu+
-    ccd_restaurant+ccd_transport+ccd_animal
+    ccd_age+ccd_religion+ccd_citysize+ccd_profession+
+    ccd_consc+ccd_openness+ ccd_neuroticism+
+    ccd_restaurant+ccd_transport+ccd_pet
 }
 
 
@@ -356,8 +393,8 @@ if(outcome=="populism")
 {
   formula_outcome = ccd_populism ~ ccd_gender +
     ccd_age+ccd_religion+ccd_citysize+ccd_job+
-    ccd_consc+ccd_ope+ ccd_neu+
-    ccd_restaurant+ccd_transport+ccd_animal
+    ccd_consc+ccd_openness+ ccd_neuroticism+
+    ccd_restaurant+ccd_transport+ccd_pet
 
 }
 
@@ -379,18 +416,20 @@ subdir = "MMs/"
 result = full_analysis_bycountry(data,
                             formula_outcome,
                             "mm",
-                            subdir)
+                            subdir,
+                            leftlim=0.4,
+                            rightlim = 0.6)
 
 
 for(attribute in unique(result$effects$feature))
 {
-  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
-                                              caption= "Marginal means")
+  p=result$plot[[attribute]]#+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+                             #                 caption= "Marginal means")
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
          height = 6, 
-         width = 6, 
+         width = 9, 
          create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
@@ -405,17 +444,19 @@ subdir = "AMCEs/"
 result = full_analysis_bycountry(data,
                            formula_outcome,
                            "amce",
-                           subdir)
+                           subdir,
+                           leftlim=-0.1,
+                           rightlim = 0.1)
 
 for(attribute in unique(result$effects$feature))
 {
-  p=result$plot[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
-                                              caption= "Average marginal component effects")
+  p=result$plot[[attribute]]#+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+                             #                 caption= "Average marginal component effects")
   
   ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
          p, 
-         height = 8, 
-         width = 8, 
+         height = 6, 
+         width = 9, 
          create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
@@ -425,33 +466,33 @@ for(attribute in unique(result$effects$feature))
 
 ### continuous outcome
 
-if(outcome == "ideology")
-{
-  subdir = "Continuous/"
-  
-  v= full_analysis_bycountry(data,
-                             formula_continuous,
-                             "mm",
-                             subdir,
-                             continuous = T)
-  
-  for(attribute in unique(attributes))
-  {
-    p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
-                                                caption= "Average marginal component effects")
-    
-    ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
-           p, 
-           height = 8, 
-           width = 8, 
-           create.dir = T)
-    
-    saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
-    
-    
-  }
-  
-}
+# if(outcome == "ideology")
+# {
+#   subdir = "Continuous/"
+#   
+#   v= full_analysis_bycountry(data,
+#                              formula_continuous,
+#                              "mm",
+#                              subdir,
+#                              continuous = T)
+#   
+#   for(attribute in unique(attributes))
+#   {
+#     p=v[[attribute]]+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+#                                                 caption= "Average marginal component effects")
+#     
+#     ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
+#            p, 
+#            height = 8, 
+#            width = 8, 
+#            create.dir = T)
+#     
+#     saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
+#     
+#     
+#   }
+#   
+# }
 
 
 ######################################
@@ -473,7 +514,6 @@ data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_gender, sep =" "
 if(outcome == "ideology")
 {
   formula_interaction_sociodemos = ccd_chosen_rw ~ interacted_sociodemos
-  
 }
 
 if(outcome == "populism")
