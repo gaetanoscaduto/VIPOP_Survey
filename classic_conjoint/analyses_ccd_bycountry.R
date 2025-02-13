@@ -196,8 +196,8 @@ draw_plot_effects_bycountry = function(effects_pooled,
 full_interaction_effects_bycountry = function(data,
                                               formula,
                                               type_of_interaction,
-                                              leftlim=0.3,
-                                              rightlim=0.7){
+                                              leftlim=0.35,
+                                              rightlim=0.65){
   
   effects <- data |>
     cj(formula, 
@@ -281,8 +281,8 @@ full_interaction_effects_bycountry = function(data,
   
   ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, ".png"), 
          p, 
-         height = 12, 
-         width = 8,
+         height = 10, 
+         width = 10,
          create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
@@ -521,7 +521,9 @@ if(outcome == "populism")
   formula_interaction_sociodemos = ccd_populism ~ interacted_sociodemos
 }
 
-full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_agegender")
+full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_agegender",
+                                   leftlim = 0.1,
+                                   rightlim = 0.7)
 
 #Age and religion
 
