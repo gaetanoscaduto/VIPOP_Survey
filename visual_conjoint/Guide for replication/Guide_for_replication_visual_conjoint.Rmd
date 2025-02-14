@@ -1,5 +1,5 @@
 ---
-title: "Visual Conjoint Experiments with Simulated Instagram Profiles: A Guide for Replication and explaining the code in R."
+title: "Visual Conjoint Experiments with Simulated Instagram Profiles: A step-by-step Guide for Replication using R."
 author: "Gaetano Scaduto"
 date: "`r Sys.Date()`"
 output: html_document
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(eval = FALSE)
 ```
 
-First of all, install the necessary packages and call the libraries
+First of all, install the necessary packages and call the libraries.
 
 ```{r, }
 install.packages("magick")
@@ -24,7 +24,7 @@ library(openxlsx)
 library(dplyr)
 ```
 
-Insert the national contexts in which the experiments will be fielded. The code has been designed to be flexible for cross-country research, but works the same for a single country. Yet, folders must be still organized as if the research was conducted in multiple contexts for the code to be executed properly.
+Insert the national contexts in which the experiments will be fielded. The code has been designed to be flexible for cross-country research, but works the same for a single country. Yet, directory must be still organized as if the research was conducted in multiple contexts for the code to be executed properly.
 
 ```{r}
 
@@ -32,7 +32,7 @@ contexts = c("IT","CZ","SW","FR")
 
 ```
 
-Ad this point you assign the attribute and attribute levels of all the information that **is not conveyed by the profile pictures**. The information conveyed by the profile pictures (gender, age, ethinicity) is instead contained in the filename of the profile pictures themselves (see for example [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/tree/main/example_materials/immagini/Propics/Round)).
+Ad this point you assign the attribute and attribute levels of all the information that **is not conveyed by the profile pictures**. The information conveyed by the profile pictures (gender, age, ethinicity) is instead contained in the filename of the profile pictures themselves (e.g.: "black_female_35". More examples [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/tree/main/example_materials/immagini/Propics/Round)).
 
 ```{r}
 job=c("Lawyer","Waiter","Entrepreneur","Teacher","Politician")
@@ -44,7 +44,7 @@ animal=c("catpoor","catrich","dogpoor","dogrich")
 crowd=c("mixedpeople","whitepeople","mixedelite","whiteelite")
 ```
 
-Insert your input directory (main_path).[^1] To see how the directory must be organized, see an example [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/tree/main/example_materials/immagini). The content and name of the directories could be adjusted in order to accomodate different research designs. In that case, all subsequent reference in the code to the name of such directories must be changed as well.
+Insert your input directory (main_path).[^1] To see how the directory must be organized, see an example [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/tree/main/example_materials/immagini). The content and name of the directories could be adjusted to accomodate different research designs. In that case, all subsequent reference in the code to the name of such directories must be changed as well.
 
 [^1]: Note that if working with Google drive, you need to delete the .ini files in the "propic/round/" subfolders.
 
@@ -52,15 +52,15 @@ Insert your input directory (main_path).[^1] To see how the directory must be or
 main_path = "your_path_here"
 ```
 
-Insert your output directory (output_wd) and the path for the excel sheet containing the textual information for each national context. This directory should contain as many subdirectories as the national contexts are and each subdirectory should be named exactly as the contexts in the vector (e.g., IT, FR).
+Insert your output directory (*output_wd*) and the path for the Excel sheet containing the textual information for each national context. This directory should contain as many subdirectories as the national contexts are and each subdirectory should be named exactly as the contexts in the vector (e.g., IT, FR).
 
 ```{r}
 output_wd = "your_output_path_here"
 ```
 
-Insert the excel file containing, for every context, the names of the politicians and the pieces that compose the info available in their bios (job, candidacy statement).
+Insert the Excel file containing, for every context, the names of the politicians and the pieces that compose the info available in their bios (job, candidacy statement).
 
-An example of how this excel sheet must be structured is available [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/blob/main/example_materials/Names%20and%20infos.xlsx):
+An example of how this Excel sheet must be structured is available [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/blob/main/example_materials/Names%20and%20infos.xlsx):
 
 ```{r}
 
@@ -71,6 +71,7 @@ The information in this sheet gets reorganized in a list as follows.
 
 ```{r}
 name_and_info=list()
+
 for(country in contexts)
 {
   data_context = data_name_and_info |>
@@ -121,7 +122,7 @@ for(country in contexts)
 }
 ```
 
-Given the probabilities we assigned to the possibilities of seeing black vs white politicians profiles (5% vs 95%), we assign them accordingly.
+We then assign the probabilities of seeing black vs white politician (5% vs 95%).
 
 ```{r}
 
@@ -129,25 +130,28 @@ probabilities = c(0.0125,0.0125, 0.0125,0.0125,
                    0.2375,0.2375,0.2375,0.2375) 
 ```
 
-We then load the empty template to generate the profiles. Notice that all the size and proportion are based exactly on this specific template. We advise researchers who want to use this code to use the same exact picture for empty templates available [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/blob/main/example_materials/immagini/Template/template_empty1.png).
+We then load the empty template to generate the profiles. Notice that all the sizes and proportion are based exactly on this specific template. Changes in the Instagram template in January 2025 might prompt different choices from the researchers. The template used in the original experiment is available [here](https://github.com/gaetanoscaduto/visual_conjoint_experiment/blob/main/example_materials/immagini/Template/template_empty1.png).
 
 ```{r}
 template = image_read(paste0(main_path,"Template/template_empty1.png"))
 ```
 
 ```{r}
-for(context in contexts)
+for(context in contexts) #Looping over all national contexts
 {
 
-npics=15000 #adjust according to need
+npics=15000 #number of pictures to generate. Adjust according to need
+
 for(i in 1:npics)
 {
  #start building the image name
-  namebuild=context
+  
+  namebuild=context #the image name starts with the context
   
   ###########
   #select the propic at random
   #############
+  
   propic_path = paste0(main_path, "Propics/Round")
   
   propic_dirs <- dir_ls(propic_path, type = "directory")
@@ -157,11 +161,11 @@ for(i in 1:npics)
   
   sel_dir <- sample(propic_dirs, 1, prob=probabilities)
   
-  # workaround to solve the problem with accented and encoding. 
+  # workaround to solve the problem with accented letters and encoding. 
   #Split the main path and paste it every time 
   #and work only on the relevant part of the path
   
-  split_strings <- strsplit(sel_dir, "immagini/", fixed = TRUE)[[1]]
+  split_strings <- strsplit(sel_dir, "Propics/", fixed = TRUE)[[1]]
   
   propics <- dir_ls(paste0(main_path, split_strings[2]), type = "file")
   
@@ -171,11 +175,17 @@ for(i in 1:npics)
   # Choose one file at random from these files
   propic <- sample(propics, 1)
   
-  propic <- strsplit(propic, "immagini/", fixed = TRUE)[[1]][2]
+  propic <- strsplit(propic, "Propics/", fixed = TRUE)[[1]][2]
 
   #keep building the name including ethnicity, 
   #gender and age which are contained in the file name
-  namebuild=gsub(".png", "", paste0(namebuild, "_", gsub("/", "_",strsplit(propic, "Round/", fixed = TRUE)[[1]][2])))
+  namebuild=gsub(".png", "", paste0(namebuild, "
+                                    _",
+                                    gsub("/",
+                                         "_",
+                                         strsplit(propic, 
+                                                  "Round/", 
+                                                  fixed = TRUE)[[1]][2])))
   
   #Read and scale the propic
   propic <- image_read(paste0(main_path,propic)) |>
@@ -200,6 +210,8 @@ for(i in 1:npics)
   temp_name = sample(name_and_info[[context]][["Name"]][[temp_ethnicity]][[temp_gender]], 1)
   temp_surname= sample(name_and_info[[context]][["Surname"]][[temp_ethnicity]][[temp_gender]], 1)
   
+  #Finally, build the name of the picture
+  
   namebuild=paste0(namebuild, "_",
                    temp_name, "_",
                    temp_surname, "_",
@@ -215,13 +227,22 @@ for(i in 1:npics)
                    # unique even if characteristics were the same 
                    ".png")
   
-  #######
-  #Put name and bio in the pic, 
-  #according to gender, ethnicity, and language
-  #######
   
+  #An example of a picture's name is:
+  # "FR_white_female_35_3_Sabrina_Bernard_Politician_rightpos_past2_corruption1_ethnicrich_dogpoor_mixedpeople_8518.png"
+  
+  
+  ###############################
+  #Now we start building all the visual blocks of the pictures
+  ###############################
+  
+  ############## 
+  ############## Name and Bio 
+      #according to gender, ethnicity, and language
+  #######
+  ############## 
 
-    ### annotatate the immage with bio, acording to gender
+      ### annotatate the immage with bio, acording to gender
     
     #jobs, according to gender
     temp_job_context = name_and_info[[context]][["Job"]][[temp_gender]][[temp_job]]
@@ -243,42 +264,66 @@ for(i in 1:npics)
   #Issues
   #######
   
-  issue_pic = image_read(paste0(main_path, "Issue/", context, "/", temp_issue, ".png")) |>
+  issue_pic = image_read(paste0(main_path, 
+                                "Issue/",
+                                context, 
+                                "/", 
+                                temp_issue,
+                                ".png")) |>
       image_scale("480")
   
   ##### 
   #food
   #####
 
-  food_pic = image_read(paste0(main_path, "Food/", temp_food, ".png")) |>
+  food_pic = image_read(paste0(main_path, 
+                               "Food/", 
+                               temp_food, 
+                               ".png")) |>
       image_scale("480")
 
   ##### 
   #nostalgia
   #####
   
-  nostalgia_pic = image_read(paste0(main_path,"Nostalgia/", context, "/", temp_nostalgia, ".png")) |>
+  nostalgia_pic = image_read(paste0(main_path,
+                                    "Nostalgia/", 
+                                    context, 
+                                    "/", 
+                                    temp_nostalgia,
+                                    ".png")) |>
       image_scale("480")
   
   ##### 
   #crowd
   #####
   
-  crowd_pic = image_read(paste0(main_path, "Crowd/", temp_crowd, ".png")) |>
+  crowd_pic = image_read(paste0(main_path, 
+                                "Crowd/",
+                                temp_crowd, 
+                                ".png")) |>
       image_scale("480")
   
   ##### 
   #valence
   #####
     
-  valence_pic = image_read(paste0(main_path, "Valence/", context, "/", temp_valence, ".png")) |>
+  valence_pic = image_read(paste0(main_path, 
+                                  "Valence/",
+                                  context, 
+                                  "/", 
+                                  temp_valence, 
+                                  ".png")) |>
       image_scale("480")
   
   ##### 
   #animal
   #####
   
-  animal_pic = image_read(paste0(main_path, "Animal/", temp_animal, ".png")) |>
+  animal_pic = image_read(paste0(main_path, 
+                                 "Animal/",
+                                 temp_animal, 
+                                 ".png")) |>
       image_scale("480")
 
   ##### 
@@ -286,7 +331,8 @@ for(i in 1:npics)
   #####
   
   pic = template |> 
-    image_annotate(paste(temp_name, temp_surname),
+    image_annotate(paste(temp_name, 
+                         temp_surname),
                    size = 60,
                    color = "Black",
                    font = "helvetica",
@@ -298,13 +344,20 @@ for(i in 1:npics)
                    color = "#392C2B",
                    location = "+50+425"
                    ) |>
-    image_composite(propic, offset = "+60+30") |>
-    image_composite(issue_pic, offset = "+0+1059") |> 
-    image_composite(food_pic, offset = "+489+1059") |>
-    image_composite(nostalgia_pic, offset = "+978+1059") |>
-    image_composite(crowd_pic, offset = "+0+1548") |>
-    image_composite(valence_pic, offset = "+489+1548") |>
-    image_composite(animal_pic, offset = "+978+1548") |>
+    image_composite(propic, 
+                    offset = "+60+30") |>
+    image_composite(issue_pic, 
+                    offset = "+0+1059") |> 
+    image_composite(food_pic, 
+                    offset = "+489+1059") |>
+    image_composite(nostalgia_pic, 
+                    offset = "+978+1059") |>
+    image_composite(crowd_pic, 
+                    offset = "+0+1548") |>
+    image_composite(valence_pic, 
+                    offset = "+489+1548") |>
+    image_composite(animal_pic, 
+                    offset = "+978+1548") |>
       image_scale("x900")
   
   image_write(pic, paste0(output_wd, context, "/", namebuild))
@@ -314,3 +367,5 @@ for(i in 1:npics)
 
 }
 ```
+
+Now the pictures have been generated in your desired output directory. You can randomly extract two of them to performed a forced-choice conjoint experiment in your CAWI survey. Always remember that all the information conveyed visually is contained in the name of the pictures, thus it is of the utmost importance to keep track of the names of the pictures each respondent sees in order to perform conjoint analyses.
