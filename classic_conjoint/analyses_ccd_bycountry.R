@@ -197,7 +197,9 @@ full_interaction_effects_bycountry = function(data,
                                               formula,
                                               type_of_interaction,
                                               leftlim=0.35,
-                                              rightlim=0.65){
+                                              rightlim=0.65,
+                                              height_pic=10,
+                                              width_pic=10){
   
   effects <- data |>
     cj(formula, 
@@ -281,8 +283,8 @@ full_interaction_effects_bycountry = function(data,
   
   ggsave(paste0(output_wd, subdir,"interacted_", type_of_interaction, ".png"), 
          p, 
-         height = 10, 
-         width = 10,
+         height = height_pic, 
+         width = width_pic,
          create.dir = T)
   
   saveRDS(p, file = paste0(output_wd, subdir,"interacted_", type_of_interaction, ".rds"))
@@ -423,19 +425,72 @@ result = full_analysis_bycountry(data,
 
 for(attribute in unique(result$effects$feature))
 {
-  p=result$plot[[attribute]]#+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
-                             #                 caption= "Marginal means")
+  # p=result$plot[[attribute]]#+patchwork::plot_annotation(title = paste("Effects of the attributes of the Classic Conjoint Experiment, by country"),
+  #                            #                 caption= "Marginal means")
+  # 
+  # ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"),
+  #        p,
+  #        height = 6,
+  #        width = 9,
+  #        create.dir = T)
+  # 
+  # saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
+
+
   
-  ggsave(paste0(output_wd, subdir, attribute,"_bycountry.png"), 
-         p, 
-         height = 6, 
-         width = 9, 
-         create.dir = T)
-  
-  saveRDS(p, file = paste0(output_wd, subdir, attribute,"_bycountry.rds"))
-  
+  result$plot[[attribute]] = result$plot[[attribute]]+theme(legend.position = "none",
+                                                            axis.title.y = element_text(size = 14),
+                                                            #axis.title.x = element_text(size = 14),
+                                                            axis.text.y = element_text(size = 14),
+                                                            axis.text.x = element_text(size = 14) )
   
 }
+
+
+### create more synthetic plots by category of traits
+
+
+sociodemographics = result$plot[["Gender"]]/result$plot[["Age"]]/result$plot[["Citysize"]]/result$plot[["Religion"]]/(result$plot[["Profession"]]+theme(legend.position = "bottom",
+                                                                                                                                                        legend.key.size = unit(30, "pt")))
+
+ggsave(paste0(output_wd, subdir, "sociodemographics_bycountry.png"), 
+       sociodemographics, 
+       height = 15, 
+       width = 10, 
+       create.dir = T)
+
+
+psychological = result$plot[["Consc"]]/result$plot[["Openness"]]/(result$plot[["Neuroticism"]]+theme(legend.position = "bottom"))
+
+ggsave(paste0(output_wd, subdir, "psychological_bycountry.png"), 
+       psychological, 
+       height = 12, 
+       width = 8, 
+       create.dir = T)
+
+
+cultural = result$plot[["Restaurant"]]/result$plot[["Transport"]]/(result$plot[["Pet"]]+theme(legend.position = "bottom"))
+
+ggsave(paste0(output_wd, subdir, "cultural_bycountry.png"), 
+       cultural, 
+       height = 12, 
+       width = 8, 
+       create.dir = T)
+
+
+#tolgo la legenda a quelle psicho
+
+psychological = 
+
+psychocultu = result$plot[["Consc"]]/result$plot[["Openness"]]/(result$plot[["Neuroticism"]])/result$plot[["Restaurant"]]/result$plot[["Transport"]]/(result$plot[["Pet"]]+theme(legend.position = "bottom",
+                                                                                                                                                                                  legend.key.size = unit(30, "pt")))+plot_layout(heights = c(2,2,2,4,3,4))
+
+ggsave(paste0(output_wd, subdir, "psycho+cultu_bycountry.png"), 
+       psychocultu, 
+       height = 15, 
+       width = 10, 
+       create.dir = T)
+
 
 ### Same as before, but with AMCes (for appendix)
 
@@ -509,7 +564,7 @@ subdir = "Interactions/"
 
 #Age and gender
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_gender, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_gender, sep =", ")
 
 if(outcome == "ideology")
 {
@@ -525,9 +580,12 @@ full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociod
                                    leftlim = 0.1,
                                    rightlim = 0.7)
 
-#Age and religion
+#Age, religion, profession
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_religion, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, 
+                                         data$ccd_religion,
+                                         data$ccd_profession,
+                                         sep =", ")
 
 if(outcome == "ideology")
 {
@@ -540,11 +598,17 @@ if(outcome == "populism")
   
 }
 
-full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociodemos_agereligion")
+full_interaction_effects_bycountry(data, 
+                                   formula_interaction_sociodemos, 
+                                   "sociodemos_agereligionprofession",
+                                   leftlim=0.3,
+                                   rightlim=0.7,
+                                   height_pic=15,
+                                   width_pic=12)
 
 #Age and job
 
-data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_profession, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_age, data$ccd_profession, sep =", ")
 
 if(outcome == "ideology")
 {
@@ -560,7 +624,7 @@ full_interaction_effects_bycountry(data, formula_interaction_sociodemos, "sociod
 
 #Job and religion
 
-data$interacted_sociodemos = interaction(data$ccd_profession, data$ccd_religion, sep =" ")
+data$interacted_sociodemos = interaction(data$ccd_profession, data$ccd_religion, sep =", ")
 
 if(outcome == "ideology")
 {
@@ -597,7 +661,7 @@ full_interaction_effects_bycountry(data, formula_interaction_psycho, "psycho")
 #lifestyle variables
 ##############
 
-data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep =" ")
+data$interacted_cultural = interaction(data$ccd_restaurant, data$ccd_transport, sep =", ")
 
 if(outcome == "ideology")
 {
